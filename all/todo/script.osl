@@ -1,4 +1,4 @@
-save "set_directory" "todo@mistium"
+save "todo@mistium" "set_directory"
 
 save "tasks.json" "get"
 if save-data.istype("array") (
