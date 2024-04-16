@@ -1,0 +1,3 @@
+# 2048
+
+A popular single-player puzzle game where the objective is to slide numbered tiles on a grid to combine them and create a tile with the number 2048. The game starts with two tiles, typically with a value of 2 or 4, and the player can move the tiles in four directions—up, down, left, and right. When two tiles with the same number collide, they merge into one, doubling the value. The game continues until the player achieves the 2048 tile or can no longer make any valid moves, resulting in a game over. It requires strategic planning, spatial awareness, and quick thinking to reach the highest score possible.
