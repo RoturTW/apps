@@ -1,9 +1,9 @@
 {
-  "title": "2048",
-  "description": "A popular single-player puzzle game where the objective is to slide numbered tiles on a grid to combine them and create a tile with the number 2048. The game starts with two tiles, typically with a value of 2 or 4, and the player can move the tiles in four directions—up, down, left, and right. When two tiles with the same number collide, they merge into one, doubling the value. The game continues until the player achieves the 2048 tile or can no longer make any valid moves, resulting in a game over. It requires strategic planning, spatial awareness, and quick thinking to reach the highest score possible.",
+  "title": "Snake",
+  "description": "Snake is a classic single-player arcade game where the player controls a snake that moves around a bounded area, collecting food items represented by dots. As the snake consumes food, it grows longer. The objective is to navigate the snake around the playfield without colliding with itself or the boundaries. The game ends if the snake collides with itself or the boundaries. It requires reflexes, spatial awareness, and strategic planning to achieve the highest score possible.",
   "author": "Mist",
-  "version": "1.0",
-  "genre": "Puzzle",
+  "version": "2.0",
+  "genre": "Arcade",
   "game_modes": ["Single-player"],
-  "permissions": []
+  "permissions": ["Save Data"]
 }
