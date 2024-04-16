@@ -1,4 +1,4 @@
-save "set_directory" "snake@mistium"
+save "snake@mistium" "set_directory"
 
 save "highscore.txt" "get"
 highscore = save_data
