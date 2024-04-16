@@ -1,0 +1,1 @@
+w 5 c #000 square 0 0 12 12 w 20 square 0 0 4 4 c #64b342 w 4 square 0 9 2 2 square 9 9 2 2 square 9 0 2 2 square -9 0 2 2 c #b34242 square 0 0 2 2 square 9 -9 2 2 square 0 -9 2 2 square -9 -9 2 2 square -9 9 2 2
