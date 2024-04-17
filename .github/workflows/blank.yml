@@ -1,0 +1,32 @@
+name: Generate JSON of Folder Names
+on:
+  push:
+    branches:
+      - main # Change this to your main branch name
+
+jobs:
+  generate_json:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      
+      - name: Generate JSON
+        run: |
+          # Navigate to the folder where the data is located
+          cd /all
+
+          # List all directories and write their names to a JSON file
+          ls -d */ > ../../folder_names.json
+
+      - name: Commit changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add all_apps.json
+          git commit -m "Update folder names JSON file"
+      
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
