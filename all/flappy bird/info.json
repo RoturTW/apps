@@ -1,0 +1,9 @@
+{
+  "title": "Flappy Bird",
+  "description": "Bird does jump :D",
+  "author": "Mist",
+  "version": "1.0",
+  "genre": "Arcade",
+  "game_modes": ["Single-player"],
+  "permissions": []
+}
