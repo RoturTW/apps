@@ -17,7 +17,7 @@ jobs:
           cd all
           echo $(ls)
           # List all directories and write their names to a JSON file
-          ls -d */ > ../folder_names.json
+          ls -d */ > /all_apps.json
 
       - name: Check for changes
         id: git_check
