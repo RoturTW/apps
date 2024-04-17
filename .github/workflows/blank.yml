@@ -14,7 +14,7 @@ jobs:
       - name: Generate JSON
         run: |
           # Navigate to the folder where the data is located
-          cd /all
+          cd all
 
           # List all directories and write their names to a JSON file
           ls -d */ > ../../folder_names.json
