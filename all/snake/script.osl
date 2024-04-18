@@ -54,7 +54,7 @@ if mode == "menu" (
 if mode == "Play" (
   if highscore < snakelen (
     highscore = snakelen
-    save "highscore.txt" highscore
+    save "highscore.txt" "set" highscore
   )
   if "w".onpress and snakedir != "s" "snakedir = "w""
   if "s".pressed and snakedir != "w" "snakedir = "s""
