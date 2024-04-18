@@ -54,6 +54,7 @@ stretch "x" bird_str
 image "https://raw.githubusercontent.com/Mistium/Origin-OS/main/OSL%20Programs/apps/games/assets/flapper.png" 100
 colour #fff
 if "space".released "allowed = True"
+direction 90
 if menu and ( page == "none" ) (
   birdheight = 0
   loc 2 2 20 -30
