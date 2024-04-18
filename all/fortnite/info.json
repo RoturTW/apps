@@ -1,0 +1,9 @@
+{
+  "title": "Your App Name",
+  "description": "A description for your application",
+  "author": "Your Origin Username",
+  "version": "If you update your app later, increment this value",
+  "genre": "Pick the genre your app falls into",
+  "game_modes": ["Single-player","Multiplayer"],
+  "permissions": ["i'll fill these out for you based on your application code"]
+}
