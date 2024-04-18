@@ -1,0 +1,9 @@
+{
+  "title": "Goose",
+  "description": "A funny goose that walks around your desktop.",
+  "author": "Mist",
+  "version": "1.0",
+  "genre": "Desktop Pet",
+  "game_modes": ["Single-player"],
+  "permissions": []
+}
