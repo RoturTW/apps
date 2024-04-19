@@ -1,20 +1,98 @@
+save "fortniteskibidi@rattusdong" "set_directory"
+if save_data == "Success" (
+  save "highscore.txt" "exists"
+  if save_data (
+    save "highscore.txt" "get"
+    highscore = save_data
+  ) else (
+    save "highscore.txt" "set" 0
+    highscore = 0
+  )
+) else (
+  highscore = "unable to access"
+)
+
+
 window "show"
 window "dimensions" 800 450
 window "resizable" False
 
 shotTimer = 0
 
+skibX = 600
+skibY = [-200,200].random
+speed = 1
+score = 0
+dead = false
+dieOff = 0
+
+
 
 mainloop:
 goto 0 0
 image "https://raw.githubusercontent.com/RattusDong/apps/main/all/fortnite/assets/background.png"
-goto -300 -100
+goto -300 -100 + dieOff
 image "https://raw.githubusercontent.com/RattusDong/apps/main/all/fortnite/assets/jonsey.png"
-goto -200 0
+
+goto skibX skibY
+image "https://raw.githubusercontent.com/RattusDong/apps/main/all/fortnite/assets/skibidi.png" 80 120
+if mouse_touching (
+cursor "crosshair"
+)
+if clicked and dead.not (
+skibX += 500 + [0,150].random
+speed += 0.1
+score ++
+if score > highscore (
+  save "highscore.txt" "set" score
+  highscore = score
+)
+skibY = [-200,200].random
+)
+if skibX < -200 (
+dead = true
+)
+
+goto -180 200
+text "Skibidi Kills: " ++ score 20
+goto -150 170
+text "Highest: " ++ highscore 16
+goto -200 0 + dieOff
+
 pointat mouse_x mouse_y
+direction direction.clamp(45,135)
 turnright 45
 image "https://raw.githubusercontent.com/RattusDong/apps/main/all/fortnite/assets/shotgun.png"
-fps = 0
-global "fps" 0
+direction 90
+if dead (
+goto 0 -150
+image "https://raw.githubusercontent.com/RattusDong/apps/main/all/fortnite/assets/fire.png" 800 500
 
-import "win-buttons"
+
+
+goto -200 0
+text "Press Space to restart" 15
+
+dieOff = 2000
+
+if "space".pressed (
+dead = false
+dieOff = 0
+score = 0
+skibX = 600
+skibY = [-200,200].random
+speed = 1
+)
+)
+
+
+skibX -= speed
+
+loc -2 2 -20 -20
+square 20 20 10 : c#222
+icon "close" 0.7 : c#fff
+if clicked (
+  window "stop"
+)
+
+//special thanks to rattus
