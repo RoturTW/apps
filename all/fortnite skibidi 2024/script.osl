@@ -30,12 +30,12 @@ dieOff = 0
 
 mainloop:
 goto 0 0
-image "https://raw.githubusercontent.com/RattusDong/apps/main/all/fortnite/assets/background.png"
+image "https://raw.githubusercontent.com/RattusDong/apps/main/all/fortnite%20skibidi%202024/assets/background.png"
 goto -300 -100 + dieOff
-image "https://raw.githubusercontent.com/RattusDong/apps/main/all/fortnite/assets/jonsey.png"
+image "https://raw.githubusercontent.com/RattusDong/apps/main/all/fortnite%20skibidi%202024/assets/jonsey.png"
 
 goto skibX skibY
-image "https://raw.githubusercontent.com/RattusDong/apps/main/all/fortnite/assets/skibidi.png" 80 120
+image "https://raw.githubusercontent.com/RattusDong/apps/main/all/fortnite%20skibidi%202024/assets/skibidi.png" 80 120
 if mouse_touching (
 cursor "crosshair"
 )
@@ -62,11 +62,11 @@ goto -200 0 + dieOff
 pointat mouse_x mouse_y
 direction direction.clamp(45,135)
 turnright 45
-image "https://raw.githubusercontent.com/RattusDong/apps/main/all/fortnite/assets/shotgun.png"
+image "https://raw.githubusercontent.com/RattusDong/apps/main/all/fortnite%20skibidi%202024/assets/shotgun.png"
 direction 90
 if dead (
 goto 0 -150
-image "https://raw.githubusercontent.com/RattusDong/apps/main/all/fortnite/assets/fire.png" 800 500
+image "https://raw.githubusercontent.com/RattusDong/apps/main/all/fortnite%20skibidi%202024/assets/fire.png" 800 500
 
 
 
