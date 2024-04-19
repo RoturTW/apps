@@ -1,9 +1,9 @@
 {
-  "title": "Your App Name",
-  "description": "A description for your application",
-  "author": "Your Origin Username",
-  "version": "If you update your app later, increment this value",
-  "genre": "Pick the genre your app falls into",
-  "game_modes": ["Single-player","Multiplayer"],
-  "permissions": ["i'll fill these out for you based on your application code"]
+  "title": "Fortnite Skibidi Warrior Defense Simulator 2024",
+  "description": "fortnite defend from villanous skibidi in fast pace action simulator now with vbucks reward hi score download free 2023",
+  "author": "RattusDong",
+  "version": "v1",
+  "genre": "romance, visual novel",
+  "game_modes": ["Online Multiplayer"],
+  "permissions": ["amangous(fortnight)"]
 }
