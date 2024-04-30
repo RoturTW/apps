@@ -19,7 +19,7 @@ mode = "Menu"
 window "resizable" False
 window "dimensions" 400 430
 score = 0
-slider_speed = 0.3
+slider_speed = 0.2
 
 mainloop:
 c #222
