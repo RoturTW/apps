@@ -1,5 +1,7 @@
 seticon "image https://raw.githubusercontent.com/Mistium/Origin-OS/main/OSL%20Programs/apps/games/assets/2048.png 25"
-window "dimensions" 450 450
+window "dimensions" 450 500
+window "resizable" false
+window "show"
 tiles = [
   [2,0,2,0],
   [0,0,0,0],
@@ -124,28 +126,43 @@ loop 4 (
 endef
 mainloop:
 count = 0
+total = 0
 loop 4 (
   count ++
   count2 = 0
   loop 4 (
     count2 ++
     current = tiles.arr[count].arr[count2]
-    goto count2 - 2.5 * 100 count - 2.5 * -100
+    goto count2 - 2.5 * 100 count - 2.5 * -100 + 25
+    total += current.int
     c colours.key(current)
     square 80 80 10
     change_x current.len * -9
     text current 18 : c#776e65
   )
 )
-if "a".onpress (
+loc 999 -2 0 25
+square 500 60 10 : c#333
+loc 2 -2 30 30
+square 20 20 10 : c#555
+if mouse_touching (
+  cursor "pointer"
+  if clicked (
+    window "stop"
+  )
+)
+icon "close" 0.6 : c#fff
+change_x 30
+text "Total:" + total 10
+if "a".onpress or "left arrow".onpress (
   move_left
   generate
 )
-if "d".onpress (
+if "d".onpress or "right arrow".onpress (
   move_right
   generate
 )
-if "w".onpress (
+if "w".onpress or "up arrow".onpress (
   rotate
   move_right
   rotate
@@ -153,7 +170,7 @@ if "w".onpress (
   rotate
   generate
 )
-if "s".onpress (
+if "s".onpress or "down arrow".onpress (
   rotate
   move_left
   rotate
@@ -161,4 +178,3 @@ if "s".onpress (
   rotate
   generate
 )
-import "win-buttons"
