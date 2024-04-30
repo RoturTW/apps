@@ -1,12 +1,10 @@
 seticon "image https://raw.githubusercontent.com/Mistium/Origin-OS/main/OSL%20Programs/apps/games/assets/2048.png 25"
-
 tiles = [
   [2,0,2,0],
   [0,0,0,0],
   [0,0,2,0],
   [0,0,0,0]
 ]
-
 colours = {
   "2": "#eee4da",
   "4": "#ede0c8",
@@ -29,9 +27,7 @@ colours = {
   "524288": "#990000",
   "1048576": "#800000"
 }
-
 window "show"
-
 def "generate"
   empty_tiles = []
   count = 0
@@ -59,9 +55,7 @@ def "generate"
     tiles.[rand1] = temp
   )
 endef
-
-
-def "rotate" dir
+def "rotate"
   out = []
   loop 4 (
     count2 = 1
@@ -79,7 +73,6 @@ def "rotate" dir
   )
   tiles = out
 endef
-
 def "move_left"
 row = 0
 loop 4 (
@@ -90,6 +83,7 @@ loop 4 (
       count ++
       count2 = count - 1
       cur_row = tiles.arr[row]
+      
       if cur_row.arr[count2] == 0 and ( cur_row.arr[count] > 0 ) (
         cur_row.[count2] = cur_row.arr[count]
         cur_row.[count] = 0
@@ -103,7 +97,6 @@ loop 4 (
   )
 )
 endef
-
 def "move_right"
 row = 0
 loop 4 (
@@ -114,6 +107,7 @@ loop 4 (
       count ++
       count2 = count + 1
       cur_row = tiles.arr[row]
+      
       if cur_row.arr[count2] == 0 and ( cur_row.arr[count] > 0 ) (
         cur_row.[count2] = cur_row.arr[count]
         cur_row.[count] = 0
@@ -127,7 +121,6 @@ loop 4 (
   )
 )
 endef
-
 mainloop:
 count = 0
 loop 4 (
@@ -135,11 +128,12 @@ loop 4 (
   count2 = 0
   loop 4 (
     count2 ++
-    goto count2 - 2.5 * 100 count - 2.5 * -100
     current = tiles.arr[count].arr[count2]
+    goto count2 - 2.5 * 100 count - 2.5 * -100
     c colours.key(current)
     square 80 80 10
-    text current 20 : c#776e65
+    change_x current.len * -7
+    text current 14 : c#776e65
   )
 )
 if "a".onpress (
@@ -165,8 +159,5 @@ if "s".onpress (
   rotate
   rotate
   generate
-)
-if "space".onpress (
-  rotate
 )
 import "win-buttons"
