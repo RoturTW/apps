@@ -3,9 +3,9 @@ window "dimensions" 450 500
 window "resizable" false
 window "show"
 tiles = [
-  [2,0,2,0],
   [0,0,0,0],
-  [0,0,2,0],
+  [0,0,0,0],
+  [0,0,0,0],
   [0,0,0,0]
 ]
 colours = {
@@ -58,6 +58,11 @@ def "generate"
     tiles.[rand1] = temp
   )
 endef
+
+generate
+generate
+generate
+
 def "rotate"
   out = []
   loop 4 (
@@ -124,6 +129,35 @@ loop 4 (
   )
 )
 endef
+
+def "left"
+  move_left
+  generate
+endef
+
+def "right"
+  move_right
+  generate
+endef
+
+def "up"
+  rotate
+  move_right
+  rotate
+  rotate
+  rotate
+  generate
+endef
+
+def "down"
+  rotate
+  move_left
+  rotate
+  rotate
+  rotate
+  generate
+endef
+
 mainloop:
 count = 0
 total = 0
@@ -138,7 +172,7 @@ loop 4 (
     c colours.key(current)
     square 80 80 10
     change_x current.len * -9
-    text current 18 : c#776e65
+    text current 18 : c#000
   )
 )
 loc 999 -2 0 25
@@ -155,26 +189,14 @@ icon "close" 0.6 : c#fff
 change_x 30
 text "Total:" + total 10
 if "a".onpress or "left arrow".onpress (
-  move_left
-  generate
+  left
 )
 if "d".onpress or "right arrow".onpress (
-  move_right
-  generate
+  right
 )
 if "w".onpress or "up arrow".onpress (
-  rotate
-  move_right
-  rotate
-  rotate
-  rotate
-  generate
+  up
 )
 if "s".onpress or "down arrow".onpress (
-  rotate
-  move_left
-  rotate
-  rotate
-  rotate
-  generate
+  down
 )
