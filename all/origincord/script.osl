@@ -1,3 +1,4 @@
+
 base = {"op":2,"d":"","s":null,"t":null}
 // base packet
 
@@ -52,6 +53,10 @@ seticon originCord_icn
 permission "request" "notifications"
 
 save "originCord@mistium" "set_directory"
+if save_data == "Failed (Permissions)" (
+  say "OriginCord cannot load without save admin"
+  permission "request" "save admin"
+)
 save "token.txt" "exists"
 if save_data (
   save "token.txt" "get"
@@ -106,13 +111,14 @@ def "draw_chat" "cur_msgs"
   len = cur_msgs.len
   frame window."left" + 300 window."top" - 40 window."right" window."bottom" + 40 len * 40 "chat"
   count = scroll_ychat // 40
-  y = scroll_ychat - 20
+  y = 0
   loop ( window_height // 40 ).clamp(0,len) (
     count ++
     msg = cur_msgs.[count]
+    y = count * -40 + scroll_ychat
     loc 999 2 0 y
     if msg.[4] (
-      square frame_width 20 10 : #625228
+      square frame_width 20 10 : c#625228
     ) else (
       square frame_width 20 10 0 1
     )
@@ -128,7 +134,6 @@ def "draw_chat" "cur_msgs"
         img_display = msg.[5].[1]."url"
       )
     )
-    y -= 40
   )
   frame "clear"
 endef
