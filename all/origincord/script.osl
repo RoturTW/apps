@@ -1,7 +1,6 @@
-
 base = {"op":2,"d":"","s":null,"t":null}
 // base packet
-
+window "dimensions" 1000 600
 properties = {"$os":"originOS","$browser":"originOS","$device":"originOS"}
 properties."$browser" = system_browser.destr
 properties."$device" = system_os.destr
@@ -41,7 +40,8 @@ def "send_message" "content, channel"
 endef
 
 def "dm_user" "content, user_id"
-  channel = ( "https://origin.milosantos.com/discord/createdm.php?recipient_id=" ++ user_id ++ "&token=" ++ token ).get()
+  channel = ( "https://proxy.milosantos.com/turbowarpbot/createdm.php?recipient_id=" ++ user_id ++ "&token=" ++ token ).get()
+  log channel
   send_message content channel
 endef
 
@@ -70,32 +70,94 @@ if save_data (
   )
 )
 connect
-wait 1
+wait 0.6
 login token_in
+wait 0.6
+activity_data = [{"name":"originCord","type":1}]
 messages = {}
 
 def "async_msg" "content, channel"
   link = "https://origin.milosantos.com/discord/sendmessage.php?token=" ++ token ++ "&channelid=" ++ channel ++ "&content=" ++ content.str
-  network "getsync" link
+  network "get" link
 endef
 
-def "draw_channels"
+def "handle_message" "msg, ping"
+  channel = msg."d"."channel_id"
+  msg_cha = messages.[channel]
+  if msg_cha.istype("Array").not (
+    messages.[channel] = []
+    msg_cha = []
+  )
+  temp = msg."d"
+  message = []
+  name = temp."author"."username"
+  content = temp."content"
+  author = temp."author"
+  attachments = temp."attachments"
+  if attachments.len > 0 (
+    out = []
+    each "i" "attachment" attachments (
+      if attachment."content_type" == "image/png" (
+        out.append(attachment)
+      )
+    )
+    attachments = out
+  )
+  pfp = "https://cdn.discordapp.com/avatars/" ++ author."id" ++ "/" ++ author."avatar" ++ ".png"
+  message.append(name)
+  message.append(content)
+  message.append(pfp)
+  message.append(ping)
+  message.append(attachments)
+  messages.[channel] = msg_cha.append(message)
+endef
+
+def "draw_guilds"
+  c window_colour
+  len = guilds.len
+  frame window."left" window."top" - 40 window."left" + 50 window."bottom" len - 0.5 * 50 "guild"
+  count = scroll_yguild // 50
+  loop ( window_height // 50 ).clamp(0,len) (
+    count ++
+    y = count - 0.5 * -50 + scroll_y
+    guild = guilds.[count]
+    loc 2 2 0 y
+    if guild == current_guild (
+      square 0 30 10 : c#fff
+      loc 999 2 0 y
+    ) else (
+      loc 999 2 0 y
+      square 40 40 10 0 1
+      if clicked (
+        current_guild = guild
+      )
+    )
+    image guild.[2] 40 40
+  )
+  frame "clear"
+endef
+
+def "draw_channels" "cur"
   c #333
-  frame window."left" window."top" - 40 window."left" + 300 window."bottom" + 50 channels.len - 0.5 * 40
+  len = cur.len
+  frame window."left" + 50 window."top" - 40 window."left" + 360 window."bottom" + 50 len - 0.5 * 40
+  goto 0 0
+  square frame_width frame_height 10 : c#111
   count = scroll_y // 40
-  loop window_height // 40 (
+  loop ( window_height // 40 ).clamp(0,len) (
     count ++
     y = count - 0.5 * -40 + scroll_y
-    channel = channels.[count]
+    channel = cur.[count]
     loc 999 2 0 y
     if channel == current_channel "c #333" else "c #222"
-    square 270 25 10
+    square frame_width - 15 25 10
+    id = channel."id"
     if clicked (
       current_channel = channel
-      ping_channels.[count] = 0
+      ping_channels.delete(id)
     )
     loc 2 2 20 y
-    if ping_channels.[count] > 0 (
+    if ping_channels.contains(id) (
       change_x 10
       icon "c #de0a26 w 10 dot 0 0 c #fff w 2 line 0 3 0 0 dot 0 -3" 2
       change_x 10
@@ -109,7 +171,7 @@ def "draw_chat" "cur_msgs"
   img_display = ""
   c #333
   len = cur_msgs.len
-  frame window."left" + 300 window."top" - 40 window."right" window."bottom" + 40 len * 40 "chat"
+  frame window."left" + 360 window."top" - 40 window."right" window."bottom" + input_offset len * 40 "chat"
   count = scroll_ychat // 40
   y = 0
   loop ( window_height // 40 ).clamp(0,len) (
@@ -138,6 +200,8 @@ def "draw_chat" "cur_msgs"
   frame "clear"
 endef
 
+guilds = []
+dm_user "test <3" 238745994433396739
 mainloop:
 heartbeat
 
@@ -151,43 +215,28 @@ if discord.wsHasnew() (
     discord_username = discord_user."username"
   )
   if cmd == "GUILD_CREATE" (
-    channels = msg."d"."channels"
+    guild = msg."d"
+    channels = guild."channels"
     out_channels = []
     categories = {}
     ping_channels = []
     loop channels.len (
       out_channels.append("")
-      ping_channels.append(0)
     )
     each "i" "channel" channels (
-      type = channel."type"
       position = channel."position"
       out_channels.[position] = channel.JsonClean()
     )
     channels = out_channels
+    name = guild."name"
+    icon = "https://cdn.discordapp.com/icons/" ++ guild."id" ++ "/" ++ guild."icon" ++ ".png?size=96"
+    temp = []
+    temp.append(name)
+    temp.append(icon)
+    temp.append(channels)
+    guilds.append(temp)
   )
   if cmd == "MESSAGE_CREATE" (
-    channel = msg."d"."channel_id"
-    msg_cha = messages.[channel]
-    if msg_cha.istype("Array").not (
-      messages.[channel] = []
-      msg_cha = []
-    )
-    temp = msg."d"
-    message = []
-    name = temp."author"."username"
-    content = temp."content"
-    author = temp."author"
-    attachments = temp."attachments"
-    if attachments.len > 0 (
-      out = []
-      each "i" "attachment" attachments (
-        if attachment."content_type" == "image/png" (
-          out.append(attachment)
-        )
-      )
-      attachments = out
-    )
     ping = false
     pings = content.regex("/<@\d+>/gm")
     if pings.len > 0 (
@@ -198,18 +247,12 @@ if discord.wsHasnew() (
           notify originCord_icn "You got pinged by" + author."username" "in" + channels.[ping_loc]."name"
           ping_repl = "@" ++ discord_username
           content.replace(my_ping,ping_repl)
-          ping_channels.[ping_loc] += 1
+          ping_channels.append(channel)
           ping = true
         )
       )
     )
-    pfp = "https://cdn.discordapp.com/avatars/" ++ author."id" ++ "/" ++ author."avatar" ++ ".png"
-    message.append(name)
-    message.append(content)
-    message.append(pfp)
-    message.append(ping)
-    message.append(attachments)
-    messages.[channel] = msg_cha.append(message)
+    handle_message msg pinga
   )
 )
 loc 999 2 0 -20
@@ -218,14 +261,15 @@ loc 2 2 20 -20
 icon originCord_icn 1
 change_x 20
 text "originCord" 10 : c#fff
-draw_channels
+draw_guilds
+draw_channels current_guild.[3]
 channel_id = current_channel."id"
 draw_chat messages.[channel_id]
-loc 2 -2 150 25
-square 280 30 10 : c#222
-change_x -120
+loc 2 -2 205 25
+square 300 30 10 : c#222
+change_x -135
 image discord_pfp 30 30
-change_x 20
+change_x 30
 text discord_username 9 : c#fff
 if img_display != "" (
   goto 0 0
@@ -240,13 +284,32 @@ if img_display != "" (
   )
   image img_display.str
 )
-w = window_width - 320
-loc 999 -2 150 25
+w = window_width - 380
+loc 999 -2 180 25
 c #222
 square w 30 10
 input w 30 "message"
 import "win-buttons"
 if "enter".pressed and input_message != "" (
-  async_msg input_message.to("url") channel_id
+  send = input_message
+  spl = send.split(" ")
+  if send.startsWith("!ocord") (
+    if spl.[2] == "status" (
+      status = {"op":3,"d":{"since":null,"status":"online","afk":false}}
+      temp = status."d"
+      temp."status" = spl.[3]
+      temp."activities" = activity_data
+      status."d" = temp
+      discord.wsSend(status)
+    )
+    if spl.[2] == "bgcolour" (
+      window_colour = spl.[3]
+    )
+    if spl.[2] == "version" (
+      async_msg "originCord v2.2".to("url") channel_id
+    )
+  ) else (
+    async_msg send.to("url") channel_id
+  )
   input_message = ""
 )
