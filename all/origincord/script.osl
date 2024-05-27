@@ -78,7 +78,11 @@ messages = {}
 
 def "async_msg" "content, channel"
   link = "https://origin.milosantos.com/discord/sendmessage.php?token=" ++ token ++ "&channelid=" ++ channel ++ "&content=" ++ content.str
-  network "getasync" link
+  if origin."version" < 501 (
+    network "get" link
+  ) else (
+    network "getasync" link
+  )
 endef
 
 def "handle_message" "msg, ping"
@@ -117,7 +121,7 @@ def "draw_guilds"
   loop ( window_height // 50 ).clamp(0,len) (
     count ++
     y = count - 0.5 * -50 + scroll_y
-    guild = guilds.[count]
+    guild = guilds.arr[count]
     loc 2 2 0 y
     if guild == current_guild (
       square 0 30 10 : c#fff
@@ -129,7 +133,7 @@ def "draw_guilds"
         current_guild = guild
       )
     )
-    image guild.[2] 40 40
+    image guild.arr[2] 40 40
   )
   frame "clear"
 endef
@@ -144,7 +148,7 @@ def "draw_channels" "cur"
   loop ( window_height // 40 ).clamp(0,len) (
     count ++
     y = count - 0.5 * -40 + scroll_y
-    channel = cur.[count]
+    channel = cur.arr[count]
     loc 999 2 0 y
     if channel == current_channel "c #333" else "c #222"
     square frame_width - 15 25 10
@@ -173,10 +177,10 @@ def "draw_chat" "cur_msgs"
   y = 0
   loop ( window_height // 40 ).clamp(0,len) (
     count ++
-    msg = cur_msgs.[count]
+    msg = cur_msgs.arr[count]
     y = count * -40 + scroll_ychat
     loc 999 2 0 y
-    if msg.[4] (
+    if msg.arr[4] (
       square frame_width 20 10 : c#625228
     ) else (
       square frame_width 20 10 0 1
@@ -184,13 +188,13 @@ def "draw_chat" "cur_msgs"
     hover = mouse_touching
     loc 2 2 20 y
     author = msg."author"
-    image msg.[3] 30 30
+    image msg.arr[3] 30 30
     change_x 20
-    text msg.[1].str + ">" + msg.[2].str 10 : c#fff
-    if msg.[5] != [] (
+    text msg.arr[1].str + ">" + msg.arr[2].str 10 : c#fff
+    if msg.arr[5] != [] (
       text "(hover to view attachment)" 7 : c#aaa
       if hover (
-        img_display = msg.[5].[1]."url"
+        img_display = msg.arr[5].arr[1]."url"
       )
     )
   )
