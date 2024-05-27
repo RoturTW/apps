@@ -5,7 +5,7 @@ properties = {"$os":"originOS","$browser":"originOS","$device":"originOS"}
 properties."$browser" = system_browser.destr
 properties."$device" = system_os.destr
 // get system properties
-
+loaded = []
 d = {"token":"","intents":513}
 d."properties" = properties
 
@@ -91,10 +91,9 @@ def "handle_message" "msg, ping"
     messages.[channel] = []
     msg_cha = []
   )
-  temp = msg."d"
   message = []
   name = author."username"
-  attachments = temp."attachments"
+  attachments = msg."attachments"
   if attachments.len > 0 (
     out = []
     each "i" "attachment" attachments (
@@ -148,13 +147,25 @@ def "draw_channels" "cur"
   loop ( window_height // 40 ).clamp(0,len) (
     count ++
     y = count - 0.5 * -40 + scroll_y
-    channel = cur.arr[count]
+    chnl = cur.arr[count]
     loc 999 2 0 y
-    if channel == current_channel "c #333" else "c #222"
+    if chnl == current_channel "c #333" else "c #222"
     square frame_width - 15 25 10
-    id = channel."id"
+    id = chnl."id"
     if clicked (
-      current_channel = channel
+      current_channel = chnl
+      if loaded.contains(id).not (
+        link = "https://origin.milosantos.com/discord/channelmessages.php?channelid=" ++ id ++ "&limit=100&token=" ++ token
+        data = link.get().JsonClean()
+        data.reverse
+        channel = id
+        each "int" "load_msg" data (
+          author = load_msg."author"
+          content = load_msg."content"
+          handle_message load_msg false
+        )
+        loaded.append(id)
+      )
       ping_channels.delete(id)
     )
     loc 2 2 20 y
@@ -163,7 +174,7 @@ def "draw_channels" "cur"
       icon "c #de0a26 w 10 dot 0 0 c #fff w 2 line 0 3 0 0 dot 0 -3" 2
       change_x 10
     )
-    text channel."name" 10 : c#fff
+    text chnl."name" 10 : c#fff
   )
   frame "clear"
 endef
@@ -240,24 +251,26 @@ if discord.wsHasnew() (
   if cmd == "MESSAGE_CREATE" (
     msgd = msg."d"
     channel = msgd."channel_id"
-    content = msgd."content"
-    author = msgd."author"
-    ping = false
-    pings = content.regex("/<@\d+>/gm")
-    if pings.len > 0 (
-      my_ping = "<@" ++ discord_id ++ ">"
-      each "i" "ping" pings (
-        if ping == my_ping (
-          ping_loc = channels.getall("id").index(channel)
-          notify originCord_icn "You got pinged by" + author."username" "in" + channels.[ping_loc]."name"
-          ping_repl = "@" ++ discord_username
-          content.replace(my_ping,ping_repl)
-          ping_channels.append(channel)
-          ping = true
+    if loaded.contains(channel) (
+      content = msgd."content"
+      author = msgd."author"
+      ping = false
+      pings = content.regex("/<@\d+>/gm")
+      if pings.len > 0 (
+        my_ping = "<@" ++ discord_id ++ ">"
+        each "i" "ping" pings (
+          if ping == my_ping (
+            ping_loc = channels.getall("id").index(channel)
+            notify originCord_icn "You got pinged by" + author."username" "in" + channels.[ping_loc]."name"
+            ping_repl = "@" ++ discord_username
+            content.replace(my_ping,ping_repl)
+            ping_channels.append(channel)
+            ping = true
+          )
         )
       )
+      handle_message msg."d" ping
     )
-    handle_message msg ping
   )
 )
 if file_dropped != 0 (
