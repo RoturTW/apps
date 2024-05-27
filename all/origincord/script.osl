@@ -78,11 +78,10 @@ messages = {}
 
 def "async_msg" "content, channel"
   link = "https://origin.milosantos.com/discord/sendmessage.php?token=" ++ token ++ "&channelid=" ++ channel ++ "&content=" ++ content.str
-  network "get" link
+  network "getasync" link
 endef
 
 def "handle_message" "msg, ping"
-  channel = msg."d"."channel_id"
   msg_cha = messages.[channel]
   if msg_cha.istype("Array").not (
     messages.[channel] = []
@@ -90,9 +89,7 @@ def "handle_message" "msg, ping"
   )
   temp = msg."d"
   message = []
-  name = temp."author"."username"
-  content = temp."content"
-  author = temp."author"
+  name = author."username"
   attachments = temp."attachments"
   if attachments.len > 0 (
     out = []
@@ -237,6 +234,10 @@ if discord.wsHasnew() (
     guilds.append(temp)
   )
   if cmd == "MESSAGE_CREATE" (
+    msgd = msg."d"
+    channel = msgd."channel_id"
+    content = msgd."content"
+    author = msgd."author"
     ping = false
     pings = content.regex("/<@\d+>/gm")
     if pings.len > 0 (
@@ -266,6 +267,11 @@ if file_dropped != 0 (
   name = temp2 ++ data
   temp.append(name)
   attachments.append(temp)
+)
+if attachments.len == 0 (
+  input_offset = 40
+) else (
+  inpu_offset = 100
 )
 loc 999 2 0 -20
 square window_width 30 10 : c#333
