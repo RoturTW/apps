@@ -201,7 +201,7 @@ def "draw_chat" "cur_msgs"
 endef
 
 guilds = []
-dm_user "test <3" 238745994433396739
+
 mainloop:
 heartbeat
 
@@ -254,6 +254,18 @@ if discord.wsHasnew() (
     )
     handle_message msg ping
   )
+)
+if file_dropped != 0 (
+  file "open" file_dropped "onlyaccess"
+  temp = []
+  file "get" 4
+  temp.append(data)
+  file "get" 2
+  temp2 = data
+  file "get" 1
+  name = temp2 ++ data
+  temp.append(name)
+  attachments.append(temp)
 )
 loc 999 2 0 -20
 square window_width 30 10 : c#333
