@@ -252,7 +252,7 @@ if discord.wsHasnew() (
         )
       )
     )
-    handle_message msg pinga
+    handle_message msg ping
   )
 )
 loc 999 2 0 -20
