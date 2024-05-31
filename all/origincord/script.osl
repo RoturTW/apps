@@ -365,7 +365,7 @@ if "enter".pressed and input_message != "" (
       window_colour = spl.[3]
     )
     if spl.[2] == "version" (
-      async_msg "originCord v2.4".to("url") channel_id
+      async_msg "originCord v2.6".to("url") channel_id
     )
   ) else (
     async_msg send.to("url") channel_id
