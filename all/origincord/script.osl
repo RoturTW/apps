@@ -74,7 +74,9 @@ wait 0.6
 login token_in
 wait 0.6
 activity_data = [{"name":"originCord","type":1}]
+
 messages = {}
+previous_author = {}
 
 def "async_msg" "content, channel"
   link = "https://origin.milosantos.com/discord/sendmessage.php?token=" ++ token ++ "&channelid=" ++ channel ++ "&content=" ++ content.str
@@ -103,23 +105,30 @@ def "handle_message" "msg, ping"
     attachments = out
   )
   pfp = "https://cdn.discordapp.com/avatars/" ++ author."id" ++ "/" ++ author."avatar" ++ ".png"
-  if previous_author != name (
-    previous_author = name
+  authid = author."id"
+  log msg
+  if previous_author.[channel] != authid (
+    msg_cha.append("")
+    previous_author.[channel] = authid
     message = []
     message.append(name)
     message.append("")
     message.append(pfp)
+    message.append(false)
     message.append("")
-    message.append("")
-    messages.[channel] = msg_cha.append(message)
+    msg_cha.append(message)
   )
-  message = []
-  message.append("")
-  message.append(content)
-  message.append("")
-  message.append(ping)
-  message.append(attachments)
-  messages.[channel] = msg_cha.append(message)
+  content.split(newline)
+  each "i" "item" content (
+    message = []
+    message.append("")
+    message.append(item)
+    message.append("")
+    message.append(ping)
+    message.append(attachments)
+    msg_cha.append(message)
+  )
+  messages.[channel] = msg_cha
 endef
 
 def "draw_guilds"
@@ -193,15 +202,15 @@ def "draw_chat" "cur_msgs"
   img_display = ""
   c #333
   len = cur_msgs.len
-  frame window."left" + 360 window."top" - 40 window."right" window."bottom" + input_offset len * 40 "chat"
-  count = scroll_ychat // 40
+  frame window."left" + 360 window."top" - 40 window."right" window."bottom" + input_offset len * 30 "chat"
+  count = scroll_ychat // 30
   y = 0
-  loop ( window_height // 40 ).clamp(0,len) (
+  loop ( window_height // 30 ).clamp(0,len) (
     count ++
     msg = cur_msgs.arr[count]
-    y = count * -40 + scroll_ychat
+    y = count * -30 + scroll_ychat
     loc 999 2 0 y
-    if msg.arr[4] (
+    if msg.arr[4] == true (
       square frame_width 20 10 : c#625228
     ) else (
       square frame_width 20 10 0 1
@@ -209,14 +218,14 @@ def "draw_chat" "cur_msgs"
     hover = mouse_touching
     loc 2 2 20 y
     author = msg."author"
-    if msg.arr[3] != "" (
-      image msg.arr[3] 30 30
+    if msg.arr[1].str != "" (
+      image msg.arr[3].str 30 30
       change_x 20
-      text msg.arr[1].str 10 : c#fff
+      text msg.arr[1].str 12 : c#fff
     ) else (
       change_x 20
       text msg.arr[2].str 10 : c#fff
-      if msg.arr[5] != [] (
+      if msg.arr[5].len > 0 (
         text "(hover to view attachment)" 7 : c#aaa
         if hover (
           img_display = msg.arr[5].arr[1]."url"
