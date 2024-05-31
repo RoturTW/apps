@@ -91,7 +91,6 @@ def "handle_message" "msg, ping"
     messages.[channel] = []
     msg_cha = []
   )
-  message = []
   name = author."username"
   attachments = msg."attachments"
   if attachments.len > 0 (
@@ -104,9 +103,20 @@ def "handle_message" "msg, ping"
     attachments = out
   )
   pfp = "https://cdn.discordapp.com/avatars/" ++ author."id" ++ "/" ++ author."avatar" ++ ".png"
-  message.append(name)
+  if previous_author != name (
+    previous_author = name
+    message = []
+    message.append(name)
+    message.append("")
+    message.append(pfp)
+    message.append("")
+    message.append("")
+    messages.[channel] = msg_cha.append(message)
+  )
+  message = []
+  message.append("")
   message.append(content)
-  message.append(pfp)
+  message.append("")
   message.append(ping)
   message.append(attachments)
   messages.[channel] = msg_cha.append(message)
@@ -199,13 +209,18 @@ def "draw_chat" "cur_msgs"
     hover = mouse_touching
     loc 2 2 20 y
     author = msg."author"
-    image msg.arr[3] 30 30
-    change_x 20
-    text msg.arr[1].str + ">" + msg.arr[2].str 10 : c#fff
-    if msg.arr[5] != [] (
-      text "(hover to view attachment)" 7 : c#aaa
-      if hover (
-        img_display = msg.arr[5].arr[1]."url"
+    if msg.arr[3] != "" (
+      image msg.arr[3] 30 30
+      change_x 20
+      text msg.arr[1].str 10 : c#fff
+    ) else (
+      change_x 20
+      text msg.arr[2].str 10 : c#fff
+      if msg.arr[5] != [] (
+        text "(hover to view attachment)" 7 : c#aaa
+        if hover (
+          img_display = msg.arr[5].arr[1]."url"
+        )
       )
     )
   )
