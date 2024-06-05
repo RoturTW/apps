@@ -264,11 +264,13 @@ if discord.wsHasnew() (
     )
     channels = out_channels
     name = guild."name"
+    id = guild."id"
     icon = "https://cdn.discordapp.com/icons/" ++ guild."id" ++ "/" ++ guild."icon" ++ ".png?size=96"
     temp = []
     temp.append(name)
     temp.append(icon)
     temp.append(channels)
+    temp.append(id)
     guilds.append(temp)
   )
   if cmd == "MESSAGE_CREATE" (
@@ -349,6 +351,7 @@ square w 30 10
 input w 30 "message"
 import "win-buttons"
 if "enter".pressed and input_message != "" (
+  log current_guild
   send = input_message
   spl = send.split(" ")
   if send.startsWith("!ocord") (
