@@ -23,7 +23,7 @@ speed += tar_speed - speed / ( 2000 * delta_time )
 window "x" duck_x
 window "y" duck_y
 goto 0 0
-square 50 50 10 1
+square 50 50 10 1 1
 if clicked (
   held = true
 ) else (
