@@ -9,40 +9,47 @@ duck_y = 0
 window "dimensions" 100 100
 speed = 200
 rand = 1
+held = false
 last = timer
 mainloop:
 
 if timer - last > rand (
-follow = false
-last = timer
-tar_speed = [0,5].random * 50
-rand = [3,10].random
+  follow = false
+  last = timer
+  tar_speed = [0,5].random * 50
+  rand = [3,10].random
 )
 speed += tar_speed - speed / ( 2000 * delta_time )
 window "x" duck_x
 window "y" duck_y
 goto 0 0
-if follow (
-pointat mouse_x mouse_y
-dir = direction + 360
-if [0,0].dist(mouse_x,mouse_y) < 40 "speed = 0"
+square 50 50 10 1
+if clicked (
+  held = true
 ) else (
+  if held and mouse_down.not (
+    held = false
+  )
+)
+if held (
+  duck_x += mouse_x / 2
+  duck_y += mouse_y / 2
+)
 target_dir += [-20,20].random * speed / 250
 dir += target_dir - dir / 10
-)
 duck_x += dir.sin * speed * delta_time
 duck_y += dir.cos * speed * delta_time
 if duck_x - 40 > ( screensize_x / 2 ) (
-duck_x = ( screensize_x / -2 ) - 40
+  duck_x = ( screensize_x / -2 ) - 40
 )
 if duck_x + 40 < ( screensize_x / -2 ) (
-duck_x = ( screensize_x / 2 ) + 40
+  duck_x = ( screensize_x / 2 ) + 40
 )
 if duck_y - 40 > ( screensize_y / 2 ) (
-duck_y = ( screensize_y / -2 ) - 40
+  duck_y = ( screensize_y / -2 ) - 40
 )
 if duck_y + 40 < ( screensize_y / -2 ) (
-duck_y = ( screensize_y / 2 ) + 40
+  duck_y = ( screensize_y / 2 ) + 40
 )
 
 ds = dir.sin
@@ -75,8 +82,8 @@ icon duck_feet 3
 c #fff
 icon duck_body 3
 if clicked (
-follow = true
-last = timer
-rand = 10
+  follow = true
+  last = timer
+  rand = 10
 )
 icon duck_head 3
