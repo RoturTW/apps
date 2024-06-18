@@ -54,7 +54,7 @@ birdheight = 0
 birdvel = 0
 mainloop:
 goto -100 birdheight
-bird_dir += ( birdvel.clamp(-17,17) * -4 + 90 - bird_dir / 10 )
+bird_dir = 90 - ( birdvel.clamp(-82,82) / 4 ).round
 bird_str += ( birdvel.clamp(0,150) / 3 + 100 - bird_str / 20 )
 direction bird_dir
 stretch "x" bird_str
@@ -87,12 +87,13 @@ if menu (
     )
   )
 ) else (
+  loc 2 2 20 -90
   if "space".onpress (
-    birdvel = 500
+    birdvel = 650
     allowed = false
     timer2 = timer
   )
-  birdvel -= 700 * delta_time
+  birdvel -= 1400 * delta_time
   birdvel.clamp(-1000,1000)
   birdheight += birdvel * delta_time
   if birdheight > 300 "birdheight = 300"
