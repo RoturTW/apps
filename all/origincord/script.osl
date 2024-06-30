@@ -14,6 +14,8 @@ window "responsive" true
 
 def "connect"
   discord = "gateway.discord.gg/?v=9&encoding=json:443".newWebsocket()
+  until discord.wsOpen() (
+  )
   log "connected"
 endef
 
