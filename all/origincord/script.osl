@@ -86,7 +86,7 @@ def "async_msg" "content, channel"
 endef
 
 def "handle_message" "msg, ping"
-  msg_cha = messages.[channel]
+  msg_cha = messages[channel]
   if msg_cha.istype("Array").not (
     messages.[channel] = []
     msg_cha = []
@@ -95,34 +95,53 @@ def "handle_message" "msg, ping"
   attachments = msg."attachments"
   if attachments.len > 0 (
     out = []
-    each "i" "attachment" attachments (
+    each i attachment attachments (
       if attachment."content_type" == "image/png" (
         out.append(attachment)
       )
     )
     attachments = out
   )
-  pfp = "https://cdn.discordapp.com/avatars/" ++ author."id" ++ "/" ++ author."avatar" ++ ".png"
+  mentions = msg."mentions"
+  if mentions.len > 0 (
+    each mention mentions (
+      content.replace("<@" ++ mention.id ++ ">","@" ++ mention.username)
+    )
+  )
+  if author.avatar == "null" (
+    pfp = "https://raw.githubusercontent.com/Mistium/apps/main/all/origincord/assets/no-pfp.jpg"
+  ) else (
+    pfp = "https://corsproxy.io/?https://cdn.discordapp.com/avatars/" ++ author."id" ++ "/" ++ author."avatar" ++ ".png"
+  )
   authid = author."id"
-  if previous_author.[channel] != authid (
+  if msg.contains("referenced_message") (
+    referenced = msg.referenced_message
+    message = []
+    message.append("")
+    message.append("reply ->" + referenced.author.username + referenced.content)
+    message.append("reply")
+    message.append(false)
+    msg_cha.append(message)
+  )
+  if previous_author[channel] != authid (
     msg_cha.append("")
-    previous_author.[channel] = authid
+    previous_author[channel] = authid
     message = []
     message.append(name)
     message.append("")
     message.append(pfp)
     message.append(false)
-    message.append("")
     msg_cha.append(message)
   )
   content.split(newline)
-  each "i" "item" content (
+  each i item content (
     message = []
     message.append("")
     message.append(item)
     message.append("")
     message.append(ping)
     message.append(attachments)
+    message.append("")
     msg_cha.append(message)
   )
   messages[channel] = msg_cha
@@ -202,30 +221,35 @@ def "draw_chat" "cur_msgs"
   frame window."left" + 360 window."top" - 40 window."right" window."bottom" + input_offset len * 30 "chat"
   count = scroll_ychat // 30
   y = 0
-  loop ( window_height // 30 ).clamp(0,len) (
+  loop (window_height // 30).clamp(0,len) (
     count ++
     msg = cur_msgs[count]
     y = count * -30 + scroll_ychat
     loc 999 2 0 y
-    if msg.arr[4] == true (
+    if msg[4] == true (
       square frame_width 20 10 : c#625228
     ) else (
       square frame_width 20 10 0 1
     )
     hover = mouse_touching
     loc 2 2 20 y
-    author = msg.author
-    if msg[1].str != "" (
-      image msg[3].str 30 30
-      change_x 20
-      text msg[1].str 12 : c#fff
+    if msg[3] == "reply" (
+      change 5 -25
+      icon "w 2 line -5 -10 -5 -5 cutcircle -1 -4 4 -4.5 45 cont 10 0" 1 : c#fff
+      text msg[2].str 9 : chx#20
     ) else (
-      change_x 20
-      text msg[2].str 10 : c#fff
-      if msg[5].len > 0 (
-        text "(hover to view attachment)" 7 : c#aaa
-        if hover (
-          img_display = msg[5].[1].url
+      if msg[1].str != "" (
+        image msg[3].str 30 30
+        change_x 20
+        text msg[1].str 12 : c#fff
+      ) else (
+        change_x 20
+        text msg[2].str 10 : c#fff
+        if msg[5].len > 0 (
+          text "(hover to view attachment)" 7 : c#aaa
+          if hover (
+            img_display = msg[5].[1].url
+          )
         )
       )
     )
@@ -364,7 +388,7 @@ if "enter".pressed and input_message != "" (
       window_colour = spl[3]
     )
     if spl.[2] == "version" (
-      async_msg "originCord v2.5".to("url") channel_id
+      async_msg "originCord v2.8".to("url") channel_id
     )
   ) else (
     async_msg send.to("url") channel_id
