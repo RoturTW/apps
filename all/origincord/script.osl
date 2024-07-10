@@ -14,9 +14,6 @@ window "responsive" true
 
 def "connect"
   discord = "gateway.discord.gg/?v=9&encoding=json:443".newWebsocket()
-  until discord.wsOpen() (
-  )
-  log "connected"
 endef
 
 def "login" "token"
@@ -43,7 +40,6 @@ endef
 
 def "dm_user" "content, user_id"
   channel = ( "https://proxy.milosantos.com/turbowarpbot/createdm.php?recipient_id=" ++ user_id ++ "&token=" ++ token ).get()
-  log channel
   send_message content channel
 endef
 
@@ -72,9 +68,9 @@ if save_data (
   )
 )
 connect
-wait 0.6
+wait 1
 login token_in
-wait 0.6
+wait 1
 activity_data = [{"name":"originCord","type":1}]
 
 messages = {}
@@ -129,7 +125,7 @@ def "handle_message" "msg, ping"
     message.append(attachments)
     msg_cha.append(message)
   )
-  messages.[channel] = msg_cha
+  messages[channel] = msg_cha
 endef
 
 def "draw_guilds"
@@ -140,7 +136,7 @@ def "draw_guilds"
   loop ( window_height // 50 ).clamp(0,len) (
     count ++
     y = count - 0.5 * -50 + scroll_y
-    guild = guilds.arr[count]
+    guild = guilds[count]
     loc 2 2 0 y
     if guild == current_guild (
       square 0 30 10 : c#fff
@@ -152,7 +148,7 @@ def "draw_guilds"
         current_guild = guild
       )
     )
-    image guild.arr[2] 40 40
+    image guild[2] 40 40
   )
   frame "clear"
 endef
@@ -167,7 +163,7 @@ def "draw_channels" "cur"
   loop ( window_height // 40 ).clamp(0,len) (
     count ++
     y = count - 0.5 * -40 + scroll_y
-    chnl = cur.arr[count]
+    chnl = cur[count]
     loc 999 2 0 y
     if chnl == current_channel "c #333" else "c #222"
     square frame_width - 15 25 10
@@ -208,7 +204,7 @@ def "draw_chat" "cur_msgs"
   y = 0
   loop ( window_height // 30 ).clamp(0,len) (
     count ++
-    msg = cur_msgs.arr[count]
+    msg = cur_msgs[count]
     y = count * -30 + scroll_ychat
     loc 999 2 0 y
     if msg.arr[4] == true (
@@ -218,18 +214,18 @@ def "draw_chat" "cur_msgs"
     )
     hover = mouse_touching
     loc 2 2 20 y
-    author = msg."author"
-    if msg.arr[1].str != "" (
-      image msg.arr[3].str 30 30
+    author = msg.author
+    if msg[1].str != "" (
+      image msg[3].str 30 30
       change_x 20
-      text msg.arr[1].str 12 : c#fff
+      text msg[1].str 12 : c#fff
     ) else (
       change_x 20
-      text msg.arr[2].str 10 : c#fff
-      if msg.arr[5].len > 0 (
+      text msg[2].str 10 : c#fff
+      if msg[5].len > 0 (
         text "(hover to view attachment)" 7 : c#aaa
         if hover (
-          img_display = msg.arr[5].arr[1]."url"
+          img_display = msg[5].[1].url
         )
       )
     )
@@ -285,10 +281,10 @@ if discord.wsHasnew() (
       pings = content.regex("/<@\d+>/gm")
       if pings.len > 0 (
         my_ping = "<@" ++ discord_id ++ ">"
-        each "i" "ping" pings (
+        each i ping pings (
           if ping == my_ping (
             ping_loc = channels.getall("id").index(channel)
-            notify originCord_icn "You got pinged by" + author."username" "in" + channels.[ping_loc]."name"
+            notify "Pinged by" + author.username
             ping_repl = "@" ++ discord_username
             content.replace(my_ping,ping_repl)
             ping_channels.append(channel)
@@ -353,20 +349,22 @@ square w 30 10
 input w 30 "message"
 import "win-buttons"
 if "enter".pressed and input_message != "" (
-  log current_guild
   send = input_message
   spl = send.split(" ")
   if send.startsWith("!ocord") (
-    if spl.[2] == "status" (
+    if spl[2] == "status" (
       status = {"op":3,"d":{"since":null,"status":"online","afk":false}}
       temp = status."d"
-      temp."status" = spl.[3]
+      temp."status" = spl[3]
       temp."activities" = activity_data
       status."d" = temp
       discord.wsSend(status)
     )
     if spl.[2] == "bgcolour" (
-      window_colour = spl.[3]
+      window_colour = spl[3]
+    )
+    if spl.[2] == "version" (
+      async_msg "originCord v2.5".to("url") channel_id
     )
   ) else (
     async_msg send.to("url") channel_id
