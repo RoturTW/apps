@@ -27,7 +27,7 @@ loc 999 2 0 -20
 square window_width 10 30
 c #fff
 loc 2 2 10 -20
-text "Snake | Highest: <highscore>" 9
+text `Snake | Highest: ${highscore}` 9
 
 if mode == "Menu" (
   c #777
@@ -74,8 +74,8 @@ if mode == "Play" (
   count = temp + 1
   loop snakelen (
     count --
-    draw_x = snakex.[count].int
-    draw_y = snakey.[count].int
+    draw_x = snakex[count].int
+    draw_y = snakey[count].int
     goto draw_x draw_y
     if draw_x == head_x and ( draw_y == head_y ) and ( count < snakex.len ) "mode = "menu""
     c #65ad5b
