@@ -52,12 +52,14 @@ bird = save_data
 bird_dir = 0
 birdheight = 0
 birdvel = 0
+bird_str = 0
 mainloop:
 goto -100 birdheight
 bird_dir = 90 - ( birdvel.clamp(-82,82) / 4 ).round
 bird_str += ( birdvel.clamp(0,150) / 3 + 100 - bird_str / 20 )
 direction bird_dir
 stretch "x" bird_str
+log bird_str
 image "https://raw.githubusercontent.com/Mistium/Origin-OS/main/OSL%20Programs/apps/games/assets/flapper.png" 100
 colour #fff
 if "space".pressed.not "allowed = True"
