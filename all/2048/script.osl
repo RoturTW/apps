@@ -39,7 +39,7 @@ def "generate"
     count2 = 0
     loop 4 (
       count2 ++
-      if tiles.arr[count].arr[count2] == 0 (
+      if tiles[count].[count2] == 0 (
         data = [].append(count).append(count2)
         empty_tiles.append(data)
       )
@@ -50,12 +50,12 @@ def "generate"
     if [0,9].random < 9 "random_num = 2" else "random_num = 4"
     rand = [1] + emptlen
     rand = rand.random
-    rand = empty_tiles.arr[rand]
-    rand1 = rand.[1]
-    rand2 = rand.[2]
-    temp = tiles.arr[rand1]
-    temp.[rand2] = random_num
-    tiles.[rand1] = temp
+    rand = empty_tiles[rand]
+    rand1 = rand[1]
+    rand2 = rand[2]
+    temp = tiles[rand1]
+    temp[rand2] = random_num
+    tiles[rand1] = temp
   )
 endef
 
@@ -71,7 +71,7 @@ def "rotate"
       cur = []
       count = 4
       loop 4 (
-        data = tiles.arr[count].arr[count2]
+        data = tiles[count].[count2]
         cur.append(data)
         count --
       )
@@ -90,17 +90,17 @@ loop 4 (
     loop 3 (
       count ++
       count2 = count - 1
-      cur_row = tiles.arr[row]
+      cur_row = tiles[row]
       
-      if cur_row.arr[count2] == 0 and ( cur_row.arr[count] > 0 ) (
-        cur_row.[count2] = cur_row.arr[count]
-        cur_row.[count] = 0
+      if cur_row[count2] == 0 and ( cur_row[count] > 0 ) (
+        cur_row[count2] = cur_row[count]
+        cur_row[count] = 0
       )
-      if cur_row.arr[count] == cur_row.arr[count2] (
-        cur_row.[count2] *= 2
-        cur_row.[count] = 0
+      if cur_row[count] == cur_row[count2] (
+        cur_row[count2] *= 2
+        cur_row[count] = 0
       )
-      tiles.[row] = cur_row
+      tiles[row] = cur_row
     )
   )
 )
@@ -114,17 +114,17 @@ loop 4 (
     loop 4 (
       count ++
       count2 = count + 1
-      cur_row = tiles.arr[row]
+      cur_row = tiles[row]
       
-      if cur_row.arr[count2] == 0 and ( cur_row.arr[count] > 0 ) (
-        cur_row.[count2] = cur_row.arr[count]
-        cur_row.[count] = 0
+      if cur_row[count2] == 0 and ( cur_row[count] > 0 ) (
+        cur_row[count2] = cur_row[count]
+        cur_row[count] = 0
       )
-      if cur_row.arr[count] == cur_row.arr[count2] (
-        cur_row.[count2] *= 2
-        cur_row.[count] = 0
+      if cur_row[count] == cur_row[count2] (
+        cur_row[count2] *= 2
+        cur_row[count] = 0
       )
-      tiles.[row] = cur_row
+      tiles[row] = cur_row
     )
   )
 )
@@ -166,7 +166,7 @@ loop 4 (
   count2 = 0
   loop 4 (
     count2 ++
-    current = tiles.arr[count].arr[count2]
+    current = tiles[count].[count2]
     goto count2 - 2.5 * 100 count - 2.5 * -100 + 25
     total += current.int
     c colours.key(current)
@@ -200,3 +200,5 @@ if "w".onpress or "up arrow".onpress (
 if "s".onpress or "down arrow".onpress (
   down
 )
+
+
