@@ -1,0 +1,84 @@
+swindow "dimensions" 700 450
+windowws "resizable" false
+ def "reset"
+  ball_x = 0
+  ball_y = 0
+  ball_dir = [-180,180].random
+  if ball_dir == -180 (
+  ball_dir = [-45,45].random
+  )
+  if ball_dir == 180 (
+  ball_dir = [-45,45].random
+  )
+endef
+reset
+p1p = 0
+p2p = 0
+speed = 300
+
+mainloop:
+c #fff
+goto -340 p1y
+square 0 100 10
+goto 340 p2y
+square 0 100 10
+if "w".pressed (
+  p1y += 250 * delta_time
+)
+if "s".pressed (
+  p1y -= 250 * delta_time
+)
+if "up arrow".pressed (
+  p2y += 250 * delta_time
+)
+if "down arrow".pressed (
+  p2y -= 250 * delta_time
+)
+p1y.clamp(-225,225)
+p2y.clamp(-225,225)
+goto ball_x ball_y
+square 0 0 20 : c#fff
+ball_x += ball_dir.sin * speed * delta_time
+ball_y += ball_dir.cos * speed * delta_time
+if ball_y > 220 or ball_y < -220 (
+  ball_dir = 180 - ball_dir
+  ball_dir += [-10,10].random
+  ball_y.clamp(-220,220)
+)
+if ball_x > 350 or ball_x < -350 (
+  ball_dir *= -1
+  ball_dir += [10,-10].random
+)
+goto -340 p1y
+hitbox 10 100 ball_x ball_y
+if collided (
+  ball_dir *= -1
+  speed += 30
+  ball_x.clamp(-330,330)
+) else (
+  if ball_x < -340 and can (
+    can = false
+    reset
+    p2p += 1
+  )
+)
+goto 340 p2y
+hitbox 10 100 ball_x ball_y
+if collided (
+  ball_dir *= -1
+  ball_x.clamp(-330,330)
+) else (
+  if ball_x > 340 and can (
+    can = false
+    reset
+    p1p += 1
+  )
+)
+loc 2 2 20 -20
+p1p 10 : c#fff
+p2p 10 : c#fff
+text "score " + p1p + p2p 10
+if ball_x.abs < 340 (
+  can = true
+)
+import "win-buttons"
