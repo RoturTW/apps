@@ -1,7 +1,1 @@
-w 4 c #000
-square 0 0 10 10
-w 24 dot 0 0
-c #fff
-w 4 line 8 8 8 -8
-line -8 8 -8 -8
-dot 0 0
+w 4 c #000 square 0 0 10 10 w 24 dot 0 0 c #fff w 4 line 8 8 8 -8 line -8 8 -8 -8 dot 0 0
