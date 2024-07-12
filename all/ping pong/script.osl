@@ -1,20 +1,37 @@
-swindow "dimensions" 700 450
-windowws "resizable" false
+window "dimensions" 700 450
+window "resizable" false
  def "reset"
+  speed = 200
   ball_x = 0
   ball_y = 0
   ball_dir = [-180,180].random
+  ball_dir += [-40,40].random
   if ball_dir == -180 (
-  ball_dir = [-45,45].random
+    ball_dir = [-45,45].random
   )
   if ball_dir == 180 (
-  ball_dir = [-45,45].random
+    ball_dir = [-45,45].random
+  )
+  if ball_dir.abs < 20 (
+    if ball_dir < 0 (
+      ball_dir = -20
+    ) else (
+      ball_dir = 20
+    )
+  )
+  if ball_dir > 160 and ball_dir < 200 (
+    if ball_dir > 180 (
+      ball_dir = 200
+    ) else (
+      ball_dir = 160
+    )
   )
 endef
+
 reset
 p1p = 0
 p2p = 0
-speed = 300
+paddle_speed = 600
 
 mainloop:
 c #fff
@@ -23,37 +40,36 @@ square 0 100 10
 goto 340 p2y
 square 0 100 10
 if "w".pressed (
-  p1y += 250 * delta_time
+  p1y += paddle_speed * delta_time
 )
 if "s".pressed (
-  p1y -= 250 * delta_time
+  p1y -= paddle_speed * delta_time
 )
 if "up arrow".pressed (
-  p2y += 250 * delta_time
+  p2y += paddle_speed * delta_time
 )
 if "down arrow".pressed (
-  p2y -= 250 * delta_time
+  p2y -= paddle_speed * delta_time
 )
 p1y.clamp(-225,225)
 p2y.clamp(-225,225)
 goto ball_x ball_y
 square 0 0 20 : c#fff
-ball_x += ball_dir.sin * speed * delta_time
+ball_x += ball_dir.sin * speed * delta_time * 2
 ball_y += ball_dir.cos * speed * delta_time
 if ball_y > 220 or ball_y < -220 (
   ball_dir = 180 - ball_dir
-  ball_dir += [-10,10].random
   ball_y.clamp(-220,220)
 )
-if ball_x > 350 or ball_x < -350 (
+if ball_x > 355 or ball_x < -355 (
   ball_dir *= -1
   ball_dir += [10,-10].random
 )
 goto -340 p1y
-hitbox 10 100 ball_x ball_y
+hitbox 10 130 ball_x ball_y
 if collided (
   ball_dir *= -1
-  speed += 30
+  speed += 60
   ball_x.clamp(-330,330)
 ) else (
   if ball_x < -340 and can (
@@ -63,9 +79,10 @@ if collided (
   )
 )
 goto 340 p2y
-hitbox 10 100 ball_x ball_y
+hitbox 10 130 ball_x ball_y
 if collided (
   ball_dir *= -1
+  speed += 60
   ball_x.clamp(-330,330)
 ) else (
   if ball_x > 340 and can (
@@ -75,8 +92,6 @@ if collided (
   )
 )
 loc 2 2 20 -20
-p1p 10 : c#fff
-p2p 10 : c#fff
 text "score " + p1p + p2p 10
 if ball_x.abs < 340 (
   can = true
