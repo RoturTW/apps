@@ -1,0 +1,86 @@
+boards = [
+  ["5","14","12","2","11","16","9","7","4","3","8","10","13","1","6","15"],
+  ["5","12","2","9","1","8","15","6","11","14","4","3","7","16","13","10"],
+  ["15","9","2","13","8","7","6","16","12","5","11","10","1","3","4","14"]
+]
+item = [1].append(boards.len).random
+board = boards[item]
+window.width = 400
+window.height = 450
+window "resizable" false
+window "show"
+
+colours = [
+"#FF0000", "#FF3300", "#FF6600", "#FF9900", "#FFCC00", "#FFFF00",
+"#CCFF00", "#99FF00", "#66FF00", "#33FF00", "#00FF00", "#00FF33",
+"#00FF66", "#00FF99", "#00FFCC", "#00FFFF", "#00CCFF", "#0099FF",
+"#0066FF", "#0033FF", "#0000FF", "#3300FF", "#6600FF", "#9900FF",
+"#CC00FF", "#FF00FF", "#FF00CC", "#FF0099", "#FF0066", "#FF0033",
+"#FF0000"
+]
+
+def "render_grid" "board"
+  set_y 125
+  count = 0
+  loop 4 (
+    set_x -250
+    loop 4 (
+      change_x 100
+      count ++
+      cur = board[count]
+      if cur != 16 (
+        c colours.item(board.item(count))
+        square 80 80 10
+        if clicked and can (
+          can = false
+          if board[count + 1] == 16 (
+            board[count + 1] = cur
+            board[count] = 16
+          )
+          if board[count - 1] == 16 (
+            board[count - 1] = cur
+            board[count] = 16
+          )
+          if board[count + 4] == 16 (
+            board[count + 4] = cur
+            board[count] = 16
+          )
+          if board[count - 4] == 16 (
+            board[count - 4] = cur
+            board[count] = 16
+          )
+        )
+        cha = cur.len * -10
+        change_x cha
+        text cur 20 : c#000
+        change_x cha
+      )
+    )
+    change_y -100
+  )
+endef
+
+started = false
+mainloop:
+loc 999 2 0 -20
+square window.width 40 10 : c#444
+loc 2 2 10 -23
+text "Slider" 10 : c#fff
+if started (
+  time = (timer - start_time * 10).round / 10
+  text time 10 : chx#10
+)
+render_grid board
+if board == ["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16"] (
+  say "You won in" + time + "seconds"
+  window "stop"
+)
+if mouse_down (
+  if started.not (
+    started = true
+    start_time = timer
+  )
+) else (
+  can = true
+)
+import "win-buttons"

@@ -1,0 +1,9 @@
+{
+  "title": "Slider",
+  "description": "A simple game where you slide the tiles to make them all in order, while trying to do so in the shortest time possible",
+  "author": "Mist",
+  "version": "1.0",
+  "genre": "Puzzle",
+  "game_modes": ["Single-player"],
+  "permissions": []
+}
