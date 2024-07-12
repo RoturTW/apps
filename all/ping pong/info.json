@@ -1,0 +1,9 @@
+{
+  "title": "Ping Pong",
+  "description": "Kill your time",
+  "author": "rhel202",
+  "version": "1.0",
+  "genre": "Arcade",
+  "game_modes": ["Local-multiplayer"],
+  "permissions": []
+}
