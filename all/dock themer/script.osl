@@ -1,0 +1,42 @@
+permission "request" "file admin"
+
+include user_folder ++ "/Dock"
+dock = data
+
+mainloop:
+loc 2 2 20 -20
+text "Theme Your Dock Icons" 10 : c#fff
+
+c #333
+frame window.left window.top - 45 window.right window.bottom dock.len - 0.5 * 60
+count = scroll_y // 60
+loop (frame_height // 60 + 1).clamp(0,dock.len) (
+  count ++
+  y = 30 + scroll_y - (count * 60)
+  loc 999 2 0 y
+  square frame_width - 20 40 10 : c#222
+  loc 2 2 30 y
+  file "open" dock[count] "onlyaccess"
+  file "render" 2
+  file "get" 2
+  text data 10 : c#fff chx#30
+  loc -2 2 -135 y
+  square 150 30 10 : c#333 hover_c#444
+  if clicked and can (
+    can = false
+    file "set" 11 clipboard
+  )
+  change_x -70
+  text "Paste New Icon" 10 : c#fff
+  change_x 35
+  square 30 30 10 : c#333 hover_c#444
+  icon "reload" 0.7 : c#fff
+  if clicked and can (
+    can = false
+    file "set" 11 ""
+  )
+)
+
+frame "clear"
+if mouse_down.not "can = true"
+import "win-buttons"
