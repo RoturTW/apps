@@ -1,0 +1,1 @@
+w 12 c #39f square 0 0 7 7 w 10 c #222 square 0 0 7 7 w 20 dot 0 0 w 3 c #666 cutcircle 0 0 8 -4 140 line 8 -1.5 0 -1.5 cont 0 -8 w 10 line 4 2 0 4 cont -4 2 cont -3.5 -3 w 3 c #222 dot 5.5 1 dot 2.5 4.5 dot -2.5 4.5 dot -5.5 1
