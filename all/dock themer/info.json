@@ -1,0 +1,9 @@
+{
+  "title": "Dock Themer",
+  "description": "A simple application that lets you edit and replace the icons of apps and files on your dock, to help you theme it exactly how you want!",
+  "author": "Mist",
+  "version": "1.0",
+  "genre": "Tool",
+  "game_modes": ["Single-player"],
+  "permissions": []
+}
