@@ -1,0 +1,18 @@
+permission "request" "terminal"
+permission "request" "javascript"
+window "hide"
+window "responsive" true
+window.width = 0
+window.height = 0
+
+mainloop:
+  terminal "-get.windows"
+  if temp == windows-names "exit"
+  temp = windows-names
+  if windows-names[1] != "focuser" (
+    eval "document.title = 'originOS > " ++ windows-names[1] ++ "'"
+  ) else (
+    eval "document.title = 'originOS'"
+  )
+
+
