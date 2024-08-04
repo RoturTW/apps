@@ -1,5 +1,6 @@
 permission "request" "terminal"
 permission "request" "javascript"
+permission "request" "start run"
 window "hide"
 window "responsive" true
 window.width = 0
