@@ -15,5 +15,3 @@ mainloop:
   ) else (
     eval "document.title = 'originOS'"
   )
-
-
