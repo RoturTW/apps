@@ -1,0 +1,854 @@
+brushes = []
+entities = []
+
+
+def "clear_data"
+  sidebar = []
+  tools = []
+  entity_types = {}
+endef
+
+textures = {
+  "brick":"https://raw.githubusercontent.com/ThePandaDever/AssetStore/main/mapeditor/brick.png",
+  "lava":"https://raw.githubusercontent.com/ThePandaDever/AssetStore/main/mapeditor/lava.png",
+  "metal":"https://raw.githubusercontent.com/ThePandaDever/AssetStore/main/mapeditor/metal.png",
+  "path":"https://raw.githubusercontent.com/ThePandaDever/AssetStore/main/mapeditor/path.png",
+  "tiles":"https://raw.githubusercontent.com/ThePandaDever/AssetStore/main/mapeditor/tiles.png",
+  "grass":"https://raw.githubusercontent.com/ThePandaDever/AssetStore/main/mapeditor/grass.png"
+}
+entity_types = {}
+tools = []
+
+logs = []
+
+icon_mallet = "w 20 c #d23a3a dot 0 0 w 2 c #2b2b2b line 6 -6 0 0 line 5 -7 7 -5 line 5 -7 2 -4 cont 2.5 -3.5 cont -1.5 0.5 line 7 -5 4 -2 cont 3.5 -2.5 cont -0.5 1.5 w 2 line -4.5 -1.5 1.5 4.5 line -4.5 -1.5 -7.5 1.5 line 1.5 4.5 -1.5 7.5 line -7.5 1.5 -1.5 7.5 w 3 line -5 1 -1 5"
+icon_addon = "c #881bbf w 6 square 0 -2 5 6 square -2 3 3 5 dot 0 -3 w 3 c #6d1499 line 2 9.5 6.5 5 cont 2 5 cont 2 9.5 w 1.5 c #fff line -3.25 -1 -5.75 -4 cont -3.25 -7 line 3.25 -1 5.75 -4 cont 3.25 -7 line -2.5 -4 2.5 -4 line 0 -6.5 0 -1.5"
+
+import "Window_Tools"
+seticon icon_mallet
+window "dimensions" 1100 600
+
+minimised_text = "Mallet"
+
+permission "request" "file viewer"
+
+file "install_type" "map" icon_mallet "Map file" []
+file "use_type" "map"
+file "install_type" "addon" icon_addon "Addon file" []
+
+def "newTool" "id,name,hotkey,icn_size,icn"
+  t = [].append(id).append(name).append(hotkey).append(icn_size).append(icn)
+  tools.append(t)
+endef
+def "newEntity" "id,params"
+  e = {}
+  e["params"] = params
+  entity_types[id] = e
+endef
+def "newSidebar" "id,name"
+  s = [].append(id).append(name)
+  sidebar.append(s)
+endef
+
+def "runaddon" "addon,func"
+  run addons[addon]["scripts"][func]
+endef
+
+def "eventaddon" "func"
+  each "addoni" "addon" addons.getKeys() (
+    if func in addons[addon] (
+      runaddon addon func
+    )
+  )
+endef
+
+def "installdefaultaddons"
+  save "mallet@flufi" "set_directory"
+  save "mallet.addon" "exists"
+  if save_data.not (; installmalletaddon; )
+  save "core.addon" "exists"
+  if save_data.not (; installcoreaddon; )
+endef
+def "installmalletaddon"
+  data = "https://raw.githubusercontent.com/ThePandaDever/mallet/main/mallet.addon".get()
+  save "mallet.addon" "set" data
+endef
+def "installcoreaddon"
+  data = "https://raw.githubusercontent.com/ThePandaDever/mallet/main/core.addon".get()
+  save "core.addon" "set" data
+endef
+
+def "loadfiles"
+  addons = {}
+  addonnames = []
+  save "mallet@flufi" "set_directory"
+  clear_data
+  if save_data == "Success" (
+    // files
+    save "settings.cfg" "exists"
+    if save_data == false (
+      save "settings.cfg" "set" {"sidebar":{"expanded":[]}}
+    )
+    
+    save "addons.cfg" "exists"
+    if save_data == false (
+      save "addons.cfg" "set" {"disabledaddons":[]}
+    )
+    save "addons.cfg" "get"
+    disabledaddons = save_data["disabledaddons"]
+    
+    save "contents"
+    files = save_data
+    each filei file files (
+      filetokens = file.split(".")
+      save file "get"
+      filedata = save_data
+      if filetokens[2] == "cfg" (
+        if filetokens[1] == "settings" (
+          settings = filedata.JsonClean()
+        )
+        if filetokens[1] == "addons" (
+          addon_settings = filedata.JsonClean()
+        )
+      )
+      if filetokens[2] == "addon" (
+        if disabledaddons.contains(filetokens[1]).not (
+          addons[filetokens[1]] = filedata
+          runaddon filetokens[1] "load"
+        )
+        addonnames.append(filetokens[1])
+      )
+    )
+  ) else (
+    say "Fatal Error:" + save_data
+    window "stop"
+  )
+endef
+
+scale = 10
+sidebarexpanded = {}
+
+out = false
+def "getx" "x"
+  out = x - camera_x * scale
+endef
+def "gety" "y"
+  out = y - camera_y * scale
+endef
+def "x.getx()"
+  getx x
+  return out
+endef
+def "y.gety()"
+  gety y
+  return out
+endef
+def "x.ungetx()"
+  return x / scale + camera_x
+endef
+def "y.ungety()"
+  return y / scale + camera_y
+endef
+
+out = false
+def "checkbx" "x,y,ax,ay,bx,by"
+  ix = x > ax and x < bx
+  iy = y > ay and y < by
+  out = ix and iy
+endef
+
+def "checkxy" "x,y,bx,by,bw,bh"
+  checkbx x y bx - bw by - bh bx + bw by + bh
+endef
+
+def "a.mid(b)"
+  return a + ((b - a) / 2)
+endef
+
+draw_guides = false
+
+def "draw_brush" "b"
+  x = b[1].getx()
+  y = b[2].gety()
+  w = b[3] * scale
+  h = b[4] * scale
+  icn = "w" + (.25 * scale) + "square" + x + y + w + h
+  goto 0 0
+  icon icn 1
+  
+  if draw_guides (
+    c #fff
+    pen "opacity" 2
+    goto 0 0; line window_width * -1 y - h window_width * 1 y - h
+    goto 0 0; line x - w window_height * -1 x - w window_height * 1
+    goto 0 0; line window_width * -1 y + h window_width * 1 y + h
+    goto 0 0; line x + w window_height * -1 x + w window_height * 1
+  )
+  draw_guides = false
+endef
+
+def "debug_dot" "x,y"
+  goto x.getx() y.gety()
+  pen "size" 10
+  pen "down"
+  pen "up"
+endef
+
+def "brush_touching"
+  if brushi != selected_brush (; cursor "pointer"; )
+  
+  hovered_brush = brushi
+  if click (
+    if selected_brush != brushi "can_interact = false"
+    selected_brush = brushi
+  )
+endef
+
+def "arr.brush_create()"
+  ax = arr[1]
+  ay = arr[2]
+  bx = arr[3]
+  by = arr[4]
+  x = ax.mid(bx)
+  y = ay.mid(by)
+  w = (bx - ax * .5).abs
+  h = (by - ay * .5).abs
+  return [].append(x).append(y).append(w).append(h).append(current_texture)
+endef
+
+def "brush_handle" "x,y,handle,brsi,cur"
+  goto x y
+  c #fff
+  square 3 3 5
+  if dragging_handle == handle "cursor cur"
+  if mouse_touching (
+    cursor cur
+    hovered_handle = handle
+    if click and can_interact (
+      dragging_brush = brsi
+      dragging_handle = handle
+      dragging_brush_data = brushes[brsi]
+    )
+  )
+endef
+
+def "win-buttons"
+  window "show"
+  direction 90
+  loc -2 2 -45 -20
+  square 70 17 10 : c#444
+  change_x 25
+  icon "close" 0.6 : c#fff hover_size#1.1
+  if clicked (
+    window "stop"
+  )
+  icon "down" 0.6 : chx#-25 hover_size#1.1
+  if clicked (
+    window "minimise"
+  )
+  icon "maximise" 0.6 : chx#-25 hover_size#1.1
+  if clicked (
+    window "maximise"
+  )
+endef
+
+def "loadmap" "map"
+  map_data = map.destr
+  brushes = map_data["brushes"].destr
+  entities = map_data["entities"].destr
+endef
+
+def "SEparams.getparamtype(SEtype)"
+  each "SEparami" "SEparam" SEparams (
+    if SEparam[1] == SEtype (
+      return SEparam[2]
+    )
+  )
+  return null
+endef
+
+cur_col = #000
+def "col" "color"
+  c color
+  cur_col = color
+endef
+
+if passed_data != "" (
+  file "open" passed_data
+  loadmap data
+)
+
+installdefaultaddons
+loadfiles
+
+camera_x = 0
+camera_y = 0
+camera_org_x = 0
+camera_org_y = 0
+camera_drag_x = 0
+cmaera_drag_y = 0
+
+creating_brush_stage = 0
+creating_brush_x = 0
+creating_brush_y = 0
+creating_brush_end_x = 0
+creating_brush_end_y = 0
+
+creating_entity_stage = 0
+creating_entity_type = ""
+creating_entity_x = 0
+creating_entity_y = 0
+
+selected_brush = 0
+selected_entity = 0
+update_selected_entity = 0
+
+dragging_brush = 0
+dragging_handle = ""
+dragging_entity = 0
+
+current_tool = ""
+current_texture = "brick"
+current_entity = ""
+
+viewing_textures = false
+can_interact = false
+
+last_delete_down = false
+last_enter_down = false
+last_down = false
+last_middle_down = false
+last_right_down = false
+mainloop:
+  click = mouse_down and last_down.not
+  last_down = mouse_down
+  middle_click = mouse_middle and last_middle_down.not and false
+  last_middle_down = mouse_middle
+  right_click = mouse_right and last_right_down.not
+  last_right_down = mouse_right
+  delete_click = ("delete".pressed or "backspace".pressed) and last_delete_down.not
+  last_delete_down = ("delete".pressed or "backspace".pressed)
+  enter_click = "enter".pressed and last_enter_down.not
+  last_enter_down = "enter".pressed
+  
+  speed = 1000 / scale * delta_time
+  if "w".pressed "camera_y += speed"
+  if "s".pressed "camera_y -= speed"
+  if "d".pressed "camera_x += speed"
+  if "a".pressed "camera_x -= speed"
+  
+  if "e".pressed "scale += delta_time * 15"
+  if "q".pressed "scale -= delta_time * 15"
+  
+  if "`".pressed "loadfiles"
+  
+  if hovering_ui.not "scale += scroll_velocity * .005"
+  
+  if update_selected_entity != 0 (
+    selected_entity = update_selected_entity
+    update_selected_entity = 0
+  )
+  
+  if new_transmit (
+    if transmit_source == picker_id (
+      file_uuid = transmit_data
+      file "open" file_uuid
+      if picker_type == "open" (
+        loadmap data.JsonClean().destr
+      )
+      new_transmit = false
+    )
+  )
+  
+  if right_click (
+    camera_drag_x = mouse_x.ungetx()
+    camera_drag_y = mouse_y.ungety()
+    camera_org_x = camera_x
+    camera_org_y = camera_y
+  )
+  if mouse_right and false (
+    x = mouse_x.ungetx()
+    y = mouse_y.ungety()
+    camera_x = x - camera_drag_x + camera_org_x
+    camera_y = y - camera_drag_y + camera_org_y
+  )
+  
+  if scale < 2 (
+    scale = 2
+  )
+  
+  if viewing_textures (
+    texture_size = 300
+    
+    per_line = (window_width - 85 / texture_size).floor
+    
+    height = (texture_size / -2) + ((textures.len - 1 / per_line).floor * (texture_size * -1 + -20)) * -1 + (texture_size * .5)
+    
+    frame window_width * -.5 window_height * .5 - 40 (window_width * -.5 + (per_line * texture_size) + 15) window_height * -.5 + 100 height "texturescroll" : c#777
+    
+    each texturei temp textures (
+      texture = textures.getKeys().[texturei]
+      
+      loc 2 2 (texture_size / 2) + (texturei - 1 % per_line * texture_size) (texture_size / -2) + ((texturei - 1 / per_line).floor * (texture_size * -1 + -20)) + scroll_ytexturescroll
+      col = current_texture == texture ? global_accent c#111
+      square texture_size - 20 texture_size 10 : c#col chy#-10
+      
+      if mouse_touching (
+        cursor "pointer"
+        if click (
+          current_texture = texture
+        )
+      )
+      
+      square texture_size - 20 texture_size 5 : c#222
+      
+      image textures[texture].str texture_size - 20 texture_size - 20 : chy#10
+      
+      x = texture_size * -.5 + 12
+      y = texture_size * -.5 + -2
+      text texture 10 : c#fff chx#x chy#y
+    )
+    frame "clear"
+    loc infinity -2 0 52.5
+    square window_width - 20 85 15 : c#333
+    loc 2 -2 10 85
+    text current_texture 12 : c#fff
+    
+    loc -2 2 -45 -58
+    square 90 30 10 : c#111
+    
+    loc -2 2 -45 -55
+    square 70 17 10 : c#444 hover_c#444
+    if mouse_touching "size = 12" else "size = 11"
+    if mouse_touching "x = -22.2" else "x = -20"
+    if mouse_touching and click "viewing_textures = false"
+    text "Exit" size : c#fff chx#x
+  )
+  if viewing_textures.not (
+  
+  if delete_click (
+    if selected_brush != 0 (
+      brushes.delete(selected_brush)
+      selected_brush = 0
+    )
+    if selected_entity != 0 (
+      entities.delete(selected_entity)
+      selected_entity = 0
+    )
+  )
+  
+  // center axis
+  c #006464
+  x = 0.getx()
+  y = 0.gety()
+  pen "size" 1
+  goto 0 0
+  line x window_height x window_height * -1
+  goto 0 0
+  line window_width y window_width * -1 y
+  
+  mouse_wld_x = mouse_x.ungetx().round
+  mouse_wld_y = mouse_y.ungety().round
+  
+  // brushes
+  if mouse_down.not (
+    if dragging_brush != 0 (
+      if "shift".pressed (
+        brs = [].append(org_x).append(org_y).append(org_w).append(org_h).append(org_txt)
+        brushes.append(brs)
+      )
+    )
+    if creating_brush_stage == 1 (
+      creating_brush_stage = 2
+      creating_brush_end_x = mouse_wld_x
+      creating_brush_end_y = mouse_wld_y
+    )
+    dragging_brush = 0
+    dragging_handle = ""
+    dragging_entity = 0
+    can_interact = true
+  )
+  
+  if creating_brush_stage != 0 (
+    can_interact = false
+    if creating_brush_stage == 1 (
+      c #007272
+      brs = [].append(creating_brush_x).append(creating_brush_y).append(mouse_wld_x).append(mouse_wld_y).brush_create()
+      draw_guides = true
+      draw_brush brs
+      
+      brsx = brs[1]
+      brsy = brs[2]
+      brsw = brs[3]
+      brsh = brs[4]
+      sbrsx = brsx.getx()
+      sbrsy = brsy.gety()
+      sbrsw = brsw * scale
+      sbrsh = brsh * scale
+      goto sbrsx + (-4.5 * (brsw * 10).len) sbrsy + sbrsh + 10
+      text (brsw * 10) 9 : c#fff
+      goto sbrsx - sbrsw + (-9 * (brsh * 10).len) - 5 sbrsy
+      text (brsh * 10) 9 : c#fff
+    )
+    if creating_brush_stage == 2 (
+      brs = [].append(creating_brush_x).append(creating_brush_y).append(creating_brush_end_x).append(creating_brush_end_y).brush_create()
+      if brs[3] != 0 and brs[4] != 0 (
+        brushes.append(brs)
+        selected_brush = brushes.len
+      )
+      creating_brush_stage = 0
+    )
+  )
+  if creating_entity_stage != 0 (
+    can_interact = false
+    if creating_entity_stage == 1 (
+      sentx = creating_entity_x.getx()
+      senty = creating_entity_y.gety()
+      
+      goto sentx senty
+      square 15 15 7 : c#1dff4a
+      
+      pen "size" 2
+      
+      goto sentx window_height * -1
+      pen "down"
+      goto sentx window_height * 1
+      pen "up"
+      
+      goto window_width * -1 senty
+      pen "down"
+      goto window_width * 1 senty
+      pen "up"
+      
+      if enter_click "creating_entity_stage = 2"
+    )
+    if creating_entity_stage == 2 (
+      dta = {}
+      
+      type = entity_types[creating_entity_type]
+      
+      each "parami" "param" type["params"] (
+        prm_id = param[1]
+        prm_type = param[2]
+        dta[prm_id] = null
+        if param.len == 3 (
+          dta[prm_id] = param[3]
+        )
+      )
+      ent = [].append(creating_entity_x).append(creating_entity_y).append(creating_entity_type).append(dta)
+      entities.append(ent)
+      creating_entity_stage = 0
+    )
+  )
+  
+  if dragging_brush != 0 (
+    c #ff0000
+    draw_guides = true
+    draw_brush dragging_brush_data
+    c #ff0000
+    x = dragging_brush_data[1].getx()
+    y = dragging_brush_data[2].gety()
+    goto x y
+    icon "close" .4
+  )
+  
+  win_w = window.width
+  win_h = window.height
+  wr = win_w * .5
+  wl = win_w * -.5
+  wt = win_h * .5
+  wb = win_h * -.5
+  
+  hovered_brush = 0
+  hovered_handle = ""
+  each brushi brush brushes (
+    getx brush[1]
+    brsx = out
+    gety brush[2]
+    brsy = out
+    brstext = brush[5]
+    if brsx < wr and brsx > wl and brsy < wt and brsy > wb (
+      brsw = brush[3] * scale
+      brsh = brush[4] * scale
+      col #0064b6
+      // interaction detecting
+      checkxy mouse_x mouse_y brsx brsy brsw + 4 brsh + 4
+      int = false
+      if out (
+        temp = out
+        checkxy mouse_x mouse_y brsx brsy brsw - 4 brsh - 4
+        touching = temp and out.not
+        int = out
+        
+        // brush body
+        if touching (; brush_touching; )
+        
+        goto brsx brsy
+        square 10 10 0 0 1 : tooltip#brstext
+        if mouse_touching (; brush_touching; )
+      )
+      
+      // brush body
+      if brushi == selected_brush (; col #ff0000; )
+      if brushi == dragging_brush (; col #0064b6; )
+      
+      if brushi == selected_brush or brushi == dragging_brush (; draw_guides = true; )
+      
+      draw_brush brush
+      
+      c cur_col
+      
+      // draw cross
+      goto brsx brsy
+      icon "close" .4
+      
+      // dimensions
+      if brushi == selected_brush (
+        goto brsx + (-4.5 * (brush[3] * 10).len) brsy + brsh + 10
+        text (brush[3] * 10) 9 : c#fff
+        goto brsx - brsw + (-9 * (brush[4] * 10).len) - 5 brsy
+        text (brush[4] * 10) 9 : c#fff
+        ax = brsx - brsw
+        ay = brsy - brsh
+        bx = brsx + brsw
+        by = brsy + brsh
+        // corners
+        brush_handle ax ay "bl" brushi "sw-resize"
+        brush_handle bx ay "br" brushi "se-resize"
+        brush_handle ax by "tl" brushi "nw-resize"
+        brush_handle bx by "tr" brushi "ne-resize"
+        // sides
+        brush_handle brsx ay "b" brushi "s-resize"
+        brush_handle brsx by "t" brushi "n-resize"
+        brush_handle ax brsy "l" brushi "w-resize"
+        brush_handle bx brsy "r" brushi "e-resize"
+        if int (
+          if can_interact (; cursor "move"; )
+          hovered_brush = brushi
+          if click and can_interact (
+            dragging_handle = "drag"
+            dragging_org_x = mouse_wld_x
+            dragging_org_y = mouse_wld_y
+            dragging_brush = brushi
+            dragging_brush_data = brushes[brushi]
+          )
+        )
+      )
+  
+      eventaddon "update_brush"
+    )
+  )
+  eventaddon "gui_brush_update"
+  hovered_entity = 0
+  if entities.len > 0 (
+    each entityi entity entities (
+      entx = entity[1].getx()
+      enty = entity[2].gety()
+      enttype = entity[3]
+      if enttype.str != "enttype" (
+        goto entx enty
+        col = selected_entity == entityi ? #c0c #a0a
+        square 15 15 7 : c#col
+        if mouse_touching (; cursor "pointer"; if click (
+          if selected_entity != entityi (; can_interact = false; )
+          selected_entity = entityi
+          type = entities[selected_entity][3]
+          params = entity_types[type]["params"]
+          each "parami" "param" params (
+            id = param[1]
+            if true "input_" ++ id + "=" + entities[selected_entity][4][id]
+          )
+        ); )
+        
+        x = enttype.len * -4
+        if enttype.str != "enttype" (; text enttype 8 : c#fff chx#x chy#20; )
+        
+        checkxy mouse_x mouse_y entx enty 20 20
+        if out and entityi == selected_entity (
+          hovered_entity = entityi
+          if can_interact (
+            cursor "move"
+            //log click
+            if click (
+              dragging_org_x = mouse_wld_x
+              dragging_org_y = mouse_wld_y
+              dragging_entity = entityi
+              dragging_entity_data = entities[entityi]
+            )
+          )
+        )
+      //eventaddon "update_entity"
+      )
+    )
+    eventaddon "gui_ent_update"
+  )
+  // unselect brush if clicked off.
+  if hovered_brush == 0 and click and hovering_ui.not (
+    selected_brush = 0
+    if current_tool == "brush" (
+      if creating_brush_stage == 0 (
+        creating_brush_stage = 1
+        creating_brush_x = mouse_wld_x
+        creating_brush_y = mouse_wld_y
+      )
+    )
+  )
+  // unselect entity if clicked off.
+  if hovered_entity == 0 and click and hovering_ui.not (
+    selected_entity = 0
+    if current_tool == "entity" and current_entity != "" (
+      if creating_entity_stage < 2 (
+        creating_entity_stage = 1
+        creating_entity_x = mouse_wld_x
+        creating_entity_y = mouse_wld_y
+        creating_entity_type = current_entity
+      )
+    )
+  )
+  // apply entity movement
+  //log dragging_entity
+  if dragging_entity != 0 (
+    org_x = dragging_entity_data[1]
+    org_y = dragging_entity_data[2]
+    ent = entities[dragging_entity]
+    ent[1] = mouse_wld_x - dragging_org_x + org_x
+    ent[2] = mouse_wld_y - dragging_org_y + org_y
+    entities[dragging_entity] = ent
+  )
+  // apply brush handle movement
+  if dragging_brush != 0 (
+    org_x = dragging_brush_data[1]
+    org_y = dragging_brush_data[2]
+    org_w = dragging_brush_data[3]
+    org_h = dragging_brush_data[4]
+    org_txt = brushes[dragging_brush][5]
+    if dragging_handle == "drag" (
+      brushes[brsi] = [].append(mouse_wld_x - dragging_org_x + org_x).append(mouse_wld_y - dragging_org_y + org_y).append(org_w).append(org_h).append(org_txt)
+    )
+    if dragging_handle != "drag" (
+      ax = org_x - org_w
+      ay = org_y - org_h
+      bx = org_x + org_w
+      by = org_y + org_h
+      if dragging_handle == "tl" (
+        ax = mouse_wld_x
+        by = mouse_wld_y
+      )
+      if dragging_handle == "t" (
+        by = mouse_wld_y
+      )
+      if dragging_handle == "tr" (
+        bx = mouse_wld_x
+        by = mouse_wld_y
+      )
+      if dragging_handle == "r" (
+        bx = mouse_wld_x
+      )
+      if dragging_handle == "br" (
+        bx = mouse_wld_x
+        ay = mouse_wld_y
+      )
+      if dragging_handle == "b" (
+        ay = mouse_wld_y
+      )
+      if dragging_handle == "bl" (
+        ax = mouse_wld_x
+        ay = mouse_wld_y
+      )
+      if dragging_handle == "l" (
+        ax = mouse_wld_x
+      )
+      brushes[brsi] = [].append(ax.mid(bx)).append(ay.mid(by)).append((bx - ax * .5).abs).append((by - ay * .5).abs).append(org_txt)
+    )
+  )
+  
+  // tools
+  loc 2 infinity 40 0
+  square 54 tools.len * 60 - 5 10 : c#222
+  each "tooli" "tool" tools (
+    loc 2 infinity 40 tools.len * .5 + .5 - tooli * 60
+    square 45 45 7 0 1
+    col = current_tool == tool[1] ? "#555" "#444"
+    c col.destr
+    square 45 45 7
+    if mouse_touching (; cursor "pointer"; if click "current_tool = tool.[1]"; )
+    icon tool[5].str tool[4]
+  )
+  
+  if current_tool != "brush" "creating_brush_stage = 0"
+  if current_tool != "entity" "creating_entity_stage = 0"
+  
+  // sidebar
+  hovering_ui = false
+  sidebarx = window_width * .5 - 145
+  frame sidebarx - 140 window_height * .5 - 45 sidebarx + 145 window_height * -.5 + 10 sidebarheight "sidebarscroll" : c#444
+  goto 0 0
+  square frame_width - 20 frame_height - 10 10 : c#202020
+  if mouse_touching "hovering_ui = true"
+  sidebarx = 0
+  //sidebary = window_height - 70 * .5 - 33 * -1
+  sidebary = frame_height / -2 - scroll_ysidebarscroll + 20
+  start_sidebary = 0
+  each "sidebartabi" "sidebartab" sidebar (
+    goto sidebarx sidebary * -1
+    square 250 20 10 : c#474747
+    text sidebartab[2].str 10 : c#fff chx#-125
+    sidebary += 35
+    start_sidebary = sidebary
+    
+    sidebarid = sidebartab[1]
+    expanded = sidebarexpanded[sidebarid]
+    if (sidebarid in sidebarexpanded).not (
+      expanded = false
+    )
+    
+    goto sidebarx + 110 sidebary * -1 + 35
+    direction (expanded) ? 90 0
+    icon "minimise" .8 : c#fff
+    square 20 20 0 0 1
+    if mouse_touching (
+      cursor "pointer"
+      if click (
+        sidebarexpanded[sidebarid] = expanded.not
+      )
+    )
+    direction 90
+    
+    if expanded == true (
+      eventaddon "sidebar_" ++ sidebarid
+      
+      goto 0 0
+      pen "size" 4
+      line sidebarx - 125 sidebary * -1 + 25 sidebarx - 125 start_sidebary * -1 + 10 : c#474747 
+    )
+  )
+  frame "clear"
+  sidebarheight = sidebary - (frame_height / -2 - scroll_ysidebarscroll + 30) - 40
+  // end of state if
+  eventaddon "gui_edt_update"
+  )
+  eventaddon "gui_glb_update"
+  //log window.code.join(newline)
+  
+  // top bar
+  loc infinity 2 0 -15
+  square window_width 40 10 : c#111
+  
+  loc 2 2 15 -18
+  text "Mallet editor" 11 : c#fff
+  
+  text " " + fps 11
+  
+  text " " + mouse_wld_x 11
+  text " " + mouse_wld_y 11
+  
+  loop logs.len - 15 (
+    logs.delete(1)
+  )
+  if false (
+    each logi log logs (
+      loc 2 2 5 -35 + (logi * -15)
+      text log 7 : c#fff
+    )
+  )
+win-buttons
