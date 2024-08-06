@@ -1,23 +1,21 @@
 brushes = []
 entities = []
 
-
+tools = [
+  ["empty","Empty","n",1.7,"w 4 c #f00 dot 10 10 dot -10 10 dot -10 -10 dot 10 -10 w 1 c #999 line -10 -5 -10 -2 line -10 5 -10 2 line 10 -5 10 -2 line 10 5 10 2 line -5 -10 -2 -10 line 5 -10 2 -10 line -5 10 -2 10 line 5 10 2 10"],
+  ["entity","Entity","e",2.3,"c #ffc200 w 10 dot 0 3.2 w 2 line -2 -1 -2 -3 line 2 -1 2 -3 w 4 line 0 -1 0 -3 w .4 c #c67700 cutcircle 1.5 2 .9 4 125 cutcircle -1.5 2 .9 -4 125 line -.6 2 -.6 -4 line .6 2 .6 -4 line -1.6 1.1 1.6 1.1 w 3 c #585858 dot 0 -6.8 w 1.1 c #7b7b7b line -2 -4.5 2 -4.5 w 1.5 line -1.8 -4.7 -1.8 -7 line 1.8 -4.7 1.8 -7 line -1.8 -7 1.8 -7 w 3 dot 0 -6 w .75 c #585858 line -2.4 -5 2.4 -5 line -2.4 -6.5 2.4 -6.5"],
+  ["brush","Brush","b",1.7,"c #fff w 2 line 0 -10 0 2 line -9.5 -6 -9.5 6 line 9.5 -6 9.5 6 line -9.5 6 0 2 line 0 2 9.5 6 line -9.5 6 0 10 line 9.5 6 0 10 line -9.5 -6 0 -10 line 0 -10 9.5 -6"],
+  ["texture","Texture","t",1.7,"c #d7d7d9 w 2 square 0 0 10 10 w 9 square 0 0 6 6 dot 0 0 c #bd5b3e w 2.75 square -5.3 8 3.5 .75 square 5.3 8 3.5 .75 square -8 2.5 1 .75 square 0 2.5 3.5 .75 square 8 2.5 1 .75 square -5.3 -2.5 3.5 .75 square 5.3 -2.5 3.5 .75 square -8 -8 1 .75 square 0 -8 3.5 .75 square 8 -8 1 .75"]
+]
 def "clear_data"
   sidebar = []
   tools = []
   entity_types = {}
+  textures = {}
 endef
 
-textures = {
-  "brick":"https://raw.githubusercontent.com/ThePandaDever/AssetStore/main/mapeditor/brick.png",
-  "lava":"https://raw.githubusercontent.com/ThePandaDever/AssetStore/main/mapeditor/lava.png",
-  "metal":"https://raw.githubusercontent.com/ThePandaDever/AssetStore/main/mapeditor/metal.png",
-  "path":"https://raw.githubusercontent.com/ThePandaDever/AssetStore/main/mapeditor/path.png",
-  "tiles":"https://raw.githubusercontent.com/ThePandaDever/AssetStore/main/mapeditor/tiles.png",
-  "grass":"https://raw.githubusercontent.com/ThePandaDever/AssetStore/main/mapeditor/grass.png"
-}
+textures = {}
 entity_types = {}
-tools = []
 
 logs = []
 
@@ -49,6 +47,9 @@ def "newSidebar" "id,name"
   s = [].append(id).append(name)
   sidebar.append(s)
 endef
+def "newTexture" "id,url"
+  textures[id] = url
+endef
 
 def "runaddon" "addon,func"
   run addons[addon]["scripts"][func]
@@ -61,13 +62,17 @@ def "eventaddon" "func"
     )
   )
 endef
-
+includebase = false
 def "installdefaultaddons"
   save "mallet@flufi" "set_directory"
   save "mallet.addon" "exists"
   if save_data.not (; installmalletaddon; )
   save "core.addon" "exists"
   if save_data.not (; installcoreaddon; )
+  if includebase (
+    save "base.addon" "exists"
+    if save_data.not (; installbaseaddon; )
+  )
 endef
 def "installmalletaddon"
   data = "https://raw.githubusercontent.com/ThePandaDever/mallet/main/mallet.addon".get()
@@ -76,6 +81,10 @@ endef
 def "installcoreaddon"
   data = "https://raw.githubusercontent.com/ThePandaDever/mallet/main/core.addon".get()
   save "core.addon" "set" data
+endef
+def "installbaseaddon"
+  data = "https://raw.githubusercontent.com/ThePandaDever/mallet/main/base.addon".get()
+  save "base.addon" "set" data
 endef
 
 def "loadfiles"
@@ -122,6 +131,9 @@ def "loadfiles"
   ) else (
     say "Fatal Error:" + save_data
     window "stop"
+  )
+  if current_texture notIn textures.getKeys() or current_texture == "" (
+    current_texture = textures.getKeys()[1]
   )
 endef
 
@@ -308,7 +320,7 @@ dragging_handle = ""
 dragging_entity = 0
 
 current_tool = ""
-current_texture = "brick"
+current_texture = textures.getKeys()[1]
 current_entity = ""
 
 viewing_textures = false
@@ -566,10 +578,10 @@ mainloop:
     brsx = out
     gety brush[2]
     brsy = out
+    brsw = brush[3] * scale
+    brsh = brush[4] * scale
     brstext = brush[5]
-    if brsx < wr and brsx > wl and brsy < wt and brsy > wb (
-      brsw = brush[3] * scale
-      brsh = brush[4] * scale
+    if brsx - brsw < wr and brsx + brsw > wl and brsy - brsh < wt and brsy + brsh > wb (
       col #0064b6
       // interaction detecting
       checkxy mouse_x mouse_y brsx brsy brsw + 4 brsh + 4
@@ -677,7 +689,7 @@ mainloop:
             )
           )
         )
-      //eventaddon "update_entity"
+      eventaddon "update_entity"
       )
     )
     eventaddon "gui_ent_update"
