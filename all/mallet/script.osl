@@ -244,7 +244,7 @@ def "brush_handle" "x,y,handle,brsi,cur"
   )
 endef
 
-def "win-buttons"
+def "win_buttons"
   window "show"
   direction 90
   loc -2 2 -45 -20
@@ -863,4 +863,4 @@ mainloop:
       text log 7 : c#fff
     )
   )
-win-buttons
+win_buttons
