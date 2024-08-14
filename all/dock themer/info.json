@@ -5,5 +5,6 @@
   "version": "1.0",
   "genre": "Tool",
   "game_modes": ["Single-player"],
-  "permissions": ["file admin"]
+  "permissions": ["file admin"],
+  "supports":["originOS"]
 }
