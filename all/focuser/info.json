@@ -4,5 +4,6 @@
   "author": "Mist, Flufi",
   "version": "1.0",
   "genre": "Utility",
-  "permissions": []
+  "permissions": [],
+  "supports":["originOS"]
 }

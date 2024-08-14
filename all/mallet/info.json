@@ -4,5 +4,6 @@
   "author": "Flufi",
   "version": "1.1",
   "genre": "Utility",
-  "permissions": ["file viewer"]
+  "permissions": ["file viewer"],
+  "supports":["originOS"]
 }
