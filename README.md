@@ -17,7 +17,8 @@ Create `info.json` and fill out this json
   "version": "If you update your app later, increment this value",
   "genre": "Pick the genre your app falls into",
   "game_modes": ["Single-player","Multiplayer"],
-  "permissions": ["i'll fill these out for you based on your application code"]
+  "permissions": ["i'll fill these out for you based on your application code"],
+  "supports": ["systems that your app supports"]
 }
 ```
 
