@@ -13,6 +13,8 @@ Put Screenshots into `all/YourAppName/screenshots`
 
 Screenshots need to be 16:9
 
+You can have a maximum of 5 screenshots
+
 ```json
 {
   "title": "Your App Name",
