@@ -20,7 +20,7 @@ Put Screenshots into `all/YourAppName/screenshots`
   "genre": "Pick the genre your app falls into",
   "game_modes": ["Single-player","Multiplayer"],
   "permissions": ["i'll fill these out for you based on your application code"],
-  "supports": ["systems that your app supports"]
+  "supports": ["systems that your app supports"],
   "screenshots": ["the name of a screenshot file"]
 }
 ```
