@@ -11,6 +11,8 @@ Create `info.json` and fill out this json
 
 Put Screenshots into `all/YourAppName/screenshots`
 
+Screenshots need to be 16:9
+
 ```json
 {
   "title": "Your App Name",
