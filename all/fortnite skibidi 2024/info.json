@@ -6,5 +6,6 @@
   "genre": "romance, visual novel",
   "game_modes": ["Online Multiplayer"],
   "permissions": [],
-  "supports":["originOS"]
+  "supports": ["originOS"],
+  "screenshots": ["Screenshot%202024-08-18%20at%2019.52.38.png"]
 }
