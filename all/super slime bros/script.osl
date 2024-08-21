@@ -2,9 +2,6 @@ window.framerate = 60
 
 github = "https://raw.githubusercontent.com/Mistium/Super-Slime-Bros/main/"
 
-import "window_tools"
-seticon "image https://raw.githubusercontent.com/Mistium/Super-Slime-Bros/main/assets/icon.png 20"
-
 def "switchslime" "type,player"
   if type == "basic" (
     out_speed = 4
