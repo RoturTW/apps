@@ -1,0 +1,10 @@
+{
+  "title": "super slime bros",
+  "description": "A super smash bros game built in osl, made in OSL",
+  "author": "Mist",
+  "version": "2.0",
+  "genre": "Social",
+  "game_modes": ["local-multi-player"],
+  "permissions": [],
+  "supports":["originOS"]
+}
