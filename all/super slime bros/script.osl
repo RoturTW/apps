@@ -641,7 +641,7 @@ if stage == 0 and ( page == "main" ) (
       )
     )
 
-    if player2_anim != "attack1" a (
+    if player2_anim != "attack1" (
       move = "right arrow".pressed or "left arrow".pressed
       if player2_anim != "walk" and move (
         player2_anim = "walk"
