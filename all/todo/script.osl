@@ -1,8 +1,8 @@
 save "todo@mistium" "set_directory"
 
 save "tasks.json" "get"
-if save-data.istype("array") (
-  tasks = save-data
+if save_data.istype("array") (
+  tasks = save_data
 ) else (
   tasks = []
 )
