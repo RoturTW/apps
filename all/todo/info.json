@@ -2,7 +2,7 @@
   "title": "Todo",
   "description": "Todo is a simple utility application that lets you save things that you need to do to a small list and remove them when you have completed them!",
   "author": "Mist",
-  "version": "1.0",
+  "version": "1.1",
   "genre": "Utility",
   "game_modes": ["Single-player"],
   "permissions": ["Save Data"],
