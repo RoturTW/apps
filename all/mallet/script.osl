@@ -100,6 +100,8 @@ def "installdefaultaddons"
   if save_data.not (; installmalletaddon; )
   save "core.addon" "exists"
   if save_data.not (; installcoreaddon; )
+  save "marketplace.addon" "exists"
+  if save_data.not (; installmarketplaceaddon; )
   if includebase (
     save "base.addon" "exists"
     if save_data.not (; installbaseaddon; )
@@ -108,6 +110,10 @@ endef
 def "installmalletaddon"
   data = "https://raw.githubusercontent.com/ThePandaDever/mallet/main/mallet.addon".get()
   save "mallet.addon" "set" data
+endef
+def "installmarketplaceaddon"
+  data = "https://raw.githubusercontent.com/ThePandaDever/mallet/main/marketplace.addon".get()
+  save "marketplace.addon" "set" data
 endef
 def "installcoreaddon"
   data = "https://raw.githubusercontent.com/ThePandaDever/mallet/main/core.addon".get()
@@ -977,3 +983,4 @@ mainloop:
   
   eventaddon "gui_glb_update"
 win_buttons
+
