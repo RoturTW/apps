@@ -1,10 +1,10 @@
 {
     "title": "Oskee Browser",
-    "description": "A Revolutionary New Browser for originOS, used to view the Oskee Network",
+    "description": "A Revolutionary New Browser for originOS, used to view the Oskee Network (Currently In Need of Rework, Disfunctional)",
     "author": "ThatBeaverDev",
     "version": "1",
     "genre": "Web",
     "game_modes": ["N/A"],
     "permissions": [],
-    "supports":["originOS"]
+    "supports":["originOS","Constellinux"]
   }
