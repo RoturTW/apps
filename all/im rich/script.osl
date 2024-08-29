@@ -1,0 +1,26 @@
+msg = ""
+
+window.width = 400
+window.height = 400
+window "resizable" false
+rotur "advert" "250x250" "mist"
+mainloop:
+
+owned = itemOwns("ae5f656a31d53d745c51d592b89193ac")
+
+if owned (
+  msg = "You are Rich!"
+) else (
+  msg = "You are poor :("
+  goto 0 -20
+  c #444
+  button "become rich" 200 40 10 : hover_c#555
+  if onclick (
+    items "purchase" "ae5f656a31d53d745c51d592b89193ac"
+  )
+)
+
+goto msg.len * -10 50
+text msg 20 : c#fff
+
+import "win-buttons"
