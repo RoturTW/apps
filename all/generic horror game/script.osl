@@ -1,0 +1,339 @@
+// this game is unfinished, and in a beta stage
+
+github_url = "https://raw.githubusercontent.com/RoturTW/apps/main/all/generic%20horror%20game"
+base = github_url ++ "/assets/layers/base.png"
+player_img = github_url ++ "/assets/player/player.png"
+vignette_img = github_url ++ "/assets/player/shadows.png"
+key_popup_img = github_url ++ "/assets/ui/keypopup.png"
+item_slot_img = github_url ++ "/assets/ui/item-slot.png"
+
+window.framerate = 60
+window_accent = #aaa
+
+// keybinds
+keys = {}
+keys.interact = "e"
+keys.drop = "q"
+keys.left = "a"
+keys.right = "d"
+keys.up = "w"
+keys.down = "s"
+
+zoom = 1
+
+player_x = -150
+player_y = 150
+player_xv = 0
+player_yv = 0
+player_stretch = 100
+player_stretch_target = 100
+player_held_item = ""
+mul = 62.5
+
+
+lantern = {"x":-130,"y":100}
+lantern.img = github_url ++ "/assets/items/lantern.png"
+
+def "handle_zoom" "this.scale"
+  w = window.width * this.scale
+  h = window.height * this.scale
+  if w > h (
+    this.mul = w
+  ) else (
+    this.mul = h
+  )
+  zoom = this.mul.int
+  scale = 5 * zoom
+endef
+
+def "position_item" "this.x, this.y"
+  set_x player_x - this.x / 100 * zoom
+  set_y player_y - this.y / 100 * zoom
+endef
+
+def "render_base"
+  position_item 0 0
+  direction 90
+  image base scale scale
+endef
+
+def "player_controller" "this.speed"
+  this.left = keys.left.pressed
+  this.right = keys.right.pressed
+  this.up = keys.up.pressed
+  this.down = keys.down.pressed
+  // keybind checks
+  
+  if this.left and this.right.not (
+    player_xv += this.speed
+  )
+  if this.right and this.left.not (
+    player_xv -= this.speed
+  )
+  if this.up and this.down.not (
+    player_yv -= this.speed
+  )
+  if this.down and this.up.not (
+    player_yv += this.speed
+  )
+  // velocity changes
+  prev_x = player_x
+  prev_y = player_y
+  player_x += player_xv
+  player_y += player_yv
+  player_xv *= 0.7
+  player_yv *= 0.7
+endef
+
+def "player"
+  if (player_xv * 10).round != 0 or (player_yv * 10).round != 0 (
+    direction (timer * 400).sin * 5 + 90
+  ) else (
+    direction = 0
+  )
+  if player_xv > 0 (
+    player_stretch_target = 100
+  ) else if player_xv < 0 (
+    player_stretch_target = -100
+  )
+  player_stretch += player_stretch_target - player_stretch / 10
+  goto 0 0
+  stretch "x" player_stretch
+  stretch "y" 100
+  this.s = scale / mul * 2
+  image player_img this.s
+endef
+
+def "interact(this.key)"
+  if dist(0,0,x_position,y_position) < (scale / 50) (
+    change_y scale / 50
+    this.s = scale / 180
+    image key_popup_img scale / mul
+    change_x this.s / -2
+    text this.key.toUpper() this.s : c#000
+    if this.key.onpress (
+      return true
+    )
+  )
+  return false
+endef
+
+def "render_ui"
+  vignette
+  this.s = scale / mul * 4
+  loc 2 -2 this.s / 2 this.s / 2
+  image item_slot_img this.s
+  
+  this.s = scale / mul
+  loc 2 -2 this.s / 2 this.s / 2
+  switch player_held_item (
+    case "lantern"
+      image lantern.img scale / mul
+      break
+    default
+      break
+  )
+endef
+
+def "vignette"
+  position_item lantern.x lantern.y
+  direction 90
+  stretch [100,100]
+  image vignette_img scale
+endef
+
+def "lantern"
+  position_item lantern.x lantern.y
+  direction 90
+  stretch [100,100]
+  image lantern.img scale / mul
+  if player_held_item != "lantern" (
+    if interact(keys.interact) (
+      player_held_item = "lantern"
+    )
+  ) else (
+    this.tx = player_x + (player_stretch_target == 100 ? 5 -5)
+    lantern.x += this.tx - lantern.x / 5
+    lantern.y += player_y - lantern.y / 5
+  )
+endef
+
+def "collision" "this.x, this.y, this.w, this.h"
+  if dist(this.x,this.y,player_x,player_y) < (this.w + this.h * 5) (
+    position_item this.x this.y
+    this.w = this.w * scale / 62.5
+    this.h = this.h * scale / 62.5
+    hitbox this.w this.h 0 scale / -80
+    if collided (
+      player_x = prev_x
+      player_y = prev_y
+      player_xv = 0
+      player_yv = 0
+    )
+  )
+endef
+
+def "hitboxes"
+  hitboxes_shown = false
+  c #fff
+  // outer walls
+  collision 0 230 60 4
+  collision 0 -220 60 4
+  collision 220 0 4 60
+  collision -220 0 4 60
+  
+  // rocks
+  collision -105 145 4 4
+  collision -135 210 4 4
+  collision -53 199 4 7
+  collision -9 210 7 1
+  collision -123 60 3 3
+  collision -164 45 2.5 2
+  collision -189 97 3 4
+  collision -183 83 2.4 2
+  collision 125 199 2 2
+  collision 91 185 2.3 2
+  collision 68 191 2.4 2
+  collision 47 185 2 2
+  collision 199 89 4 4
+  collision 200 67 2 2
+  
+  // dead trees
+  collision -142 76 1 4
+  collision -159 70 1 4
+  collision -189 55 1 3
+  collision -80 119 1 4
+  collision -13 157 1 3
+  collision 1 174 1 2
+  collision 36 183 1 2
+  collision 112 184 1 2
+  
+  // power plant
+  collision 96 141 4 4
+  collision 166 180 10 10
+  collision 139 153 7 7
+  collision 142 128 3 3
+  
+  // building top right
+  collision -204 -172 4 10
+  
+  // tree cluster left
+  collision 148 -40 10 6
+  collision 160 -10 5 5
+  
+  // TREES
+  collision 4 120 1 2
+  collision 37 -39 1 2
+  collision 3 -43 1 2
+  collision -29 -43 1 2
+  collision -70 51 1 2
+  collision 47 -101 1 2
+  collision -61 -79 1 2
+  collision -29 -97 1 2
+  collision -15 39 1 2
+  collision -138 26 2 4
+  
+  // buildings
+  collision -23 105 4 4
+  collision -38 -152 5.5 4
+  collision 4 -142 2.8 2.5
+  collision -117 -194 4 4
+  collision 150 53 7 6
+  if player_y > 0 (
+    collision 94 1 4 7
+  )
+  collision 153 -100 1 2
+  // car
+  collision 50 63 4 2
+endef
+
+def "obj" "this.obj, this.c"
+  image github_url ++ "/assets/layers/" ++ this.obj ++ this.c ++ ".png" scale scale
+endef
+
+def "find_render_order"
+  before = []
+  after = []
+  each this.i this.y tree_ys (
+    if (this.y - player_y).abs < 100 (
+      if this.y < player_y (
+        before.append("trees" ++ this.i)
+      ) else (
+        after.append("trees" ++ this.i)
+      )
+    )
+  )
+  each this.i this.y building_ys (
+    if (this.y - player_y).abs < 100 (
+      if this.y < player_y (
+        before.append("building" ++ this.i)
+      ) else (
+        after.append("building" ++ this.i)
+      )
+    )
+  )
+endef
+
+def "render"
+  // render behind player
+  direction 90
+  position_item 0 0
+  each this.t before (
+    obj this.t
+  )
+
+  lantern
+  player
+
+  // render ontop of player
+  direction 90
+  position_item 0 0
+  each this.t after (
+    obj this.t
+  )
+endef
+
+tree_ys = [
+  "-44","-46","-1000","-1000",
+  "111","99","47","-100",
+  "-78","-96","38","16"
+]
+building_ys = [
+  "105","-143","-100","53",
+  "10","","-100","61"
+]
+
+find_render_order
+last = timer
+mainloop:
+
+if timer - last > 0.1 (
+  // calculate what is infront and behind the player every 0.1 seconds
+  find_render_order
+)
+
+// find correct scaling and zoom values
+handle_zoom 0.7
+
+// render the map
+render_base
+
+// render the player, trees and buildings
+render
+
+// run the hitboxes and collisions system
+hitboxes
+
+// run the player controller with a movement speed of 0.15
+player_controller 0.15
+
+direction 90
+// draw the hotbar slot
+render_ui
+loc 2 2 20 -20
+text player_x.str + player_y + fps 10 : c#fff
+if "space".onpress (
+  clipboard "set" "collision" + player_x.round + player_y.round + 4 + 4
+)
+
+import "win-buttons"
