@@ -3,7 +3,7 @@
 
 Fork the repo
 
-Create a file called `all/YourAppName/script.osl` and put your osl code there
+Create a file called `all/YourAppName/script.osl` and put your OSL code there (for originOS Apps)
 
 Create `icon.icn` in the same folder, and add your applications .icn file in there
 
@@ -19,7 +19,7 @@ You can have a maximum of 5 screenshots
 {
   "title": "Your App Name",
   "description": "A description for your application",
-  "author": "Your Origin Username",
+  "author": "Your Rotur Username",
   "version": "If you update your app later, increment this value",
   "genre": "Pick the genre your app falls into",
   "game_modes": ["Single-player","Multiplayer"],
