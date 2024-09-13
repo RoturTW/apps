@@ -6,6 +6,9 @@ player_img = github_url ++ "/assets/player/player.png"
 vignette_img = github_url ++ "/assets/player/shadows.png"
 key_popup_img = github_url ++ "/assets/ui/keypopup.png"
 item_slot_img = github_url ++ "/assets/ui/item-slot.png"
+note_item = github_url ++ "/assets/items/note.png"
+note_fullscreen = github_url ++ "/assets/ui/big-note.png"
+
 
 assets = []
 assets.append(base)
@@ -19,6 +22,7 @@ assets.append(item_slot_img)
 assets.append(vignette_img)
 assets.append(key_popup_img)
 assets.append(player_img)
+assets.append(note_item)
 
 window.framerate = 60
 window_accent = #aaa
@@ -41,8 +45,14 @@ player_yv = 0
 player_stretch = 100
 player_stretch_target = 100
 player_held_item = ""
+total_collected_notes = 0
+fuel_collected = 0
 mul = 62.5
+popup = ""
 
+notes = [
+  "There are 5 notes,\nCollect them,\nCollect fuel,\nGet out of here.\nSomething follows"
+]
 
 lantern = {"x":-130,"y":100}
 lantern.img = github_url ++ "/assets/items/lantern.png"
@@ -134,18 +144,15 @@ endef
 
 def "render_ui"
   vignette
-  this.s = scale / mul * 4
-  loc 2 -2 this.s / 2 this.s / 2
-  image item_slot_img this.s
-  
-  this.s = scale / mul
-  loc 2 -2 this.s / 2 this.s / 2
-  switch player_held_item (
-    case "lantern"
-      image lantern.img scale / mul
-      break
-    default
-      break
+  if popup != "" (
+    goto 0 0
+    image note_fullscreen scale / 10
+    change scale / -40 scale / 40
+    c #000
+    text popup.wrapText(30) scale / 400
+    if (player_xv.abs * 10).round > 0 or (player_yv.abs * 10).round > 0 (
+      popup = ""
+    )
   )
 endef
 
@@ -169,6 +176,16 @@ def "lantern"
     this.tx = player_x + (player_stretch_target == 100 ? 5 -5)
     lantern.x += this.tx - lantern.x / 5
     lantern.y += player_y - lantern.y / 5
+  )
+endef
+
+def "notes"
+  position_item -100 90
+  direction 90
+  stretch [100,100]
+  image note_item scale / mul
+  if interact(keys.interact) (
+    popup = notes[1]
   )
 endef
 
@@ -320,6 +337,7 @@ def "render"
     obj this.t
   )
 
+  notes
   lantern
   player
 
@@ -331,9 +349,10 @@ def "render"
   )
 endef
 
+
 tree_xs = [
   "0","156","-1000","-1000",
-  "156","156","-73","56",
+  "4","30","-73","56",
   "-56","-34","-20","-136",
 ]
 tree_ys = [
@@ -382,10 +401,9 @@ player_controller 0.15
 direction 90
 // draw the hotbar slot
 render_ui
-loc 2 2 20 -20
-text player_x.round.str + player_y.round + fps 10 : c#fff
-if "space".onpress (
-  clipboard "set" "collision" + player_x.round + player_y.round + 4 + 4
-)
+loc 2 2 10 -20
+text "Notes : " ++ total_collected_notes ++ "/5" 10 : c#fff
+loc 2 2 10 -40
+text "Fuel  : " ++ fuel_collected ++ "/1" 10
 
 import "win-buttons"
