@@ -1,1 +1,1 @@
-w 8 c #F00 square 0 0 7 7 square 0 0 2 2 w 3 c #FFF line 3 0 -2.5 3 cont -2.5 -3 cont 3 0 dot 0 0
+c #fff w 10 square 0 0 5 5 c #f00 w 8 square 0 0 5 5 dot 0 0 w 3 c #fff line 3 0 -2.5 3 cont -2.5 -3 cont 3 0 dot 0 0
