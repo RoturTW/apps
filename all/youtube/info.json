@@ -1,0 +1,10 @@
+{
+  "title": "Youtube",
+  "description": "A simple youtube client that lets you search for and watch youtube videos",
+  "author": "Shima",
+  "version": "1.1",
+  "genre": "Entertainment",
+  "game_modes": ["Single-player"],
+  "permissions": [],
+  "supports":["originOS"]
+}
