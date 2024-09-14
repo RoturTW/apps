@@ -1,0 +1,110 @@
+yt_icn = "w 8 c #F00 square 0 0 7 7 square 0 0 2 2 w 3 c #FFF line 3 0 -2.5 3 cont -2.5 -3 cont 3 0 dot 0 0"
+page = "search"
+term = ""
+search = ""
+
+player = ""
+
+prim = user.theme.primary
+seco = user.theme.secondary
+tert = user.theme.tertiary
+txtc = user.theme.text
+window_colour = user.theme.background
+
+window.width = 800
+window.height = 500
+
+drag_box = [[-2,2,-140,0],[-2,2,-90,-30]]
+
+mainloop:
+
+window "set_dragbox" drag_box
+switch page (
+  case "search"
+    drag_box = [[-2,2,-140,0],[-2,2,-90,-30]]
+    window "responsive" false
+    goto -70 window.top - 20
+    square window.width - 160 20 10 : c#prim
+    change_x 10
+    input window.width - 200 26 "search" "Search Youtube"
+    if selected_input == "search" and "enter".onpress (
+      search = ""
+      term = input_search
+    )
+    loc 2 2 20 -20
+    icon yt_icn 1
+    if search == "" and term != "" (
+      network "get" "https://api.codetabs.com/v1/proxy?quest=https://www.youtube.com/results?search_query=" ++ term.to("url")
+      if data != "loading" (
+        out = data.regex("/\/watch\?v=([a-zA-Z0-9_-]{11})/g")
+        search = []
+        each i result out (
+          result.trim(10,-1)
+          if search.contains(result).not (
+            search.append(result)
+          )
+        )
+        out = []
+      )
+    ) else (
+      c prim
+      frame window.left window.top - 40 window.right window.bottom search.len * 200
+      i = (scroll_y / 200).floor
+      loop (frame_height / 200 + 1).clamp(0,search.len) (
+        i ++
+        result = search[i]
+        y = i - 0.5 * -200 + scroll_y
+        network "get" "https://www.youtube.com/oembed?url=http%3A//youtube.com/watch%3Fv%3D" ++ result ++ "&format=json"
+        if data != "loading" (
+          loc 9999 2 0 y
+          square frame.width - 25 170 15 : c#prim
+          if onclick (
+            page = "player"
+            player_id = result
+            p_url = "https://www.youtube.com/embed/" ++ result
+            if player == "" (
+              player = p_url.iframeNew()
+            ) else (
+              player.iframeRedirect(p_url)
+            )
+            player_info = data
+            player.iframeShow()
+          )
+          loc 2 2 152 y
+          image "https://api.codetabs.com/v1/proxy?quest=" ++ data.thumbnail_url 280 170
+          loc 2 2 330 y + 30
+          text data.title 10 : c#txtc
+          loc 2 2 330 y - 20
+          text data.author_name 8
+        )
+      )
+      frame "clear"
+    )
+    if term == "" (
+       goto 0 0
+       icon yt_icn 4
+       txt = "Youtube"
+       goto txt.len * -5 -60
+       text txt 10 : c#txtc
+    )
+    break
+  case "player"
+    drag_box = [[2,2,80,0],[-2,2,-90,-30]]
+    window "responsive" true
+    player.iframeShow()
+    goto -45 window.top - 20
+    square window.width - 110 20 10 : c#prim
+    loc 2 2 20 -20
+    icon "left-arrow" 0.7 : c#txtc
+    if onclick (
+      page = "search"
+      player.iframeHide()
+    )
+    icon yt_icn 0.7 : chx#30
+    text player_info.title 8 : chx#30
+    player.iframeResize(window_width - 20,window_height - 60)
+    player.iframeGoto(0,-20)
+    break
+)
+
+import "win-buttons"
