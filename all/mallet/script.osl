@@ -1,5 +1,3 @@
-
-
 brushes = []
 entities = []
 
@@ -558,10 +556,19 @@ def "tools_update"
     brs = [].append(drgtl_start_x).append(drgtl_start_y).append(mouse_wld_x).append(mouse_wld_y).brush_create()
     c #006464
     draw_brush brs
-    x = (brs[1]).getx()
-    y = (brs[2] + (brs[4] * -1)).gety()
-    goto x y
-    text "blah" 10 : c#text
+    
+    brsx = brs[1]
+    brsy = brs[2]
+    brsw = brs[3]
+    brsh = brs[4]
+    sbrsx = brsx.getx()
+    sbrsy = brsy.gety()
+    sbrsw = brsw * scale
+    sbrsh = brsh * scale
+    goto sbrsx + (-4.5 * (brsw * 10).len) sbrsy + sbrsh + 10
+    text (brsw * 10) 9 : c#text
+    goto sbrsx - sbrsw + (-9 * (brsh * 10).len) - 5 sbrsy
+    text (brsh * 10) 9
   )
   if mouse_down.not (
     drgtl_set = false
