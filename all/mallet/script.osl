@@ -12,7 +12,7 @@ setdefaults
 
 state = "main"
 
-topbar_text = "Mallet - Editor"
+topbar_text = "Mallet - untitled.map"
 
 tools = [
   ["empty","Empty","n",1.7,"w 4 c #f00 dot 10 10 dot -10 10 dot -10 -10 dot 10 -10 w 1 c #999 line -10 -5 -10 -2 line -10 5 -10 2 line 10 -5 10 -2 line 10 5 10 2 line -5 -10 -2 -10 line 5 -10 2 -10 line -5 10 -2 10 line 5 10 2 10"],
@@ -316,14 +316,17 @@ def "win_buttons"
     square 70 17 10 : c#secondary
     change_x 25
     icon "close" 0.6 : c#text hover_size#1.1
+    if mouse_touching (; cursor "pointer"; )
     if clicked (
       window "stop"
     )
     icon "down" 0.6 : chx#-25 hover_size#1.1
+    if mouse_touching (; cursor "pointer"; )
     if clicked (
       window "minimise"
     )
     icon "maximise" 0.6 : chx#-25 hover_size#1.1
+    if mouse_touching (; cursor "pointer"; )
     if clicked (
       window "maximise"
     )
@@ -482,8 +485,9 @@ def "state_textures"
     square 70 17 10 : c#secondary
     if mouse_touching "size = 12" else "size = 11"
     if mouse_touching "x = -22.2" else "x = -20"
-    if mouse_touching and click "viewing_textures = false"
+    if mouse_touching and click (; state = "main"; )
     text "Exit" size : c#text chx#x
+    if mouse_touching (; cursor "pointer"; )
 endef
 
 def "sidebar_update"
@@ -501,11 +505,13 @@ def "sidebar_update"
   each sidebartabi sidebartab sidebar (
     goto sidebarx sidebary * -1
     square 250 20 10 : c#secondary
+    author = sidebar_authors[sidebartab[1]]
+    tooltip = author + ":" + sidebartab[1]
     if sidebartab.len == 2 (
-      text sidebartab[2].str 10 : c#text chx#-125 tooltip#sidebartab[1]
+      text sidebartab[2].str 10 : c#text chx#-125 tooltip#tooltip
     ) else (
       icon sidebartab[3].str sidebartab[4] : c#text chx#-115
-      text sidebartab[2].str 10 : c#text chx#17 tooltip#sidebartab[1]
+      text sidebartab[2].str 10 : c#text chx#17 tooltip#tooltip
     )
     sidebary += 35
     start_sidebary = sidebary
@@ -552,7 +558,15 @@ def "sidebar_update"
 endef
 
 def "tools_update"
-  if mouse_down and drgtl_set and hovering_ui.not (
+  shouldntdrag = dragging_handle != ""
+  shouldntdrag = shouldntdrag or dragging_brush != 0
+  shouldntdrag = shouldntdrag or selected_brush != 0
+  shouldntdrag = shouldntdrag or hovered_brush != 0
+  shouldntdrag = shouldntdrag or hovered_handle != ""
+  shouldntdrag = shouldntdrag or dragging_entity != 0
+  shouldntdrag = shouldntdrag or selected_entity != 0
+  shouldntdrag = shouldntdrag or hovered_entity != 0
+  if mouse_down and drgtl_set and hovering_ui.not and shouldntdrag.not (
     brs = [].append(drgtl_start_x).append(drgtl_start_y).append(mouse_wld_x).append(mouse_wld_y).brush_create()
     c #006464
     draw_brush brs
@@ -604,6 +618,7 @@ def "tools_update"
 endef
 
 def "scene_brush_update"
+  eventaddon "gui_brush_update_early"
   hovered_brush = 0
   hovered_handle = ""
   each brushi brush brushes (
@@ -802,6 +817,7 @@ def "scene_brush_update"
 endef
 
 def "scene_entity_update"
+  eventaddon "gui_ent_update_early"
   hovered_entity = 0
   if entities.len > 0 (
     each entityi entity entities (
@@ -998,6 +1014,8 @@ mainloop:
       file "open" file_uuid
       if picker_type == "open" (
         loadmap data.JsonClean().destr
+        name = file[2]
+        topbar_text = "Mallet -" + name ++ ".map"
       )
       new_transmit = false
     )
