@@ -1,3 +1,6 @@
+
+import "window_tools"
+
 seticon "image https://raw.githubusercontent.com/Mistium/Origin-OS/main/OSL%20Programs/apps/games/assets/2048.png 25"
 window "dimensions" 450 500
 window "resizable" false
@@ -31,33 +34,25 @@ colours = {
   "1048576": "#800000"
 }
 window "show"
-def "generate"
+
+
+def "generate" (
   empty_tiles = []
-  count = 0
-  loop 4 (
-    count ++
-    count2 = 0
-    loop 4 (
-      count2 ++
-      if tiles[count].[count2] == 0 (
-        data = [].append(count).append(count2)
-        empty_tiles.append(data)
+  for count 4 (
+    for count2 4 (
+      if tiles[count][count2] == 0 (
+        empty_tiles.append([].append(count).append(count2))
       )
     )
   )
   emptlen = empty_tiles.len
   if emptlen > 0 (
-    if [0,9].random < 9 "random_num = 2" else "random_num = 4"
-    rand = [1] + emptlen
-    rand = rand.random
-    rand = empty_tiles[rand]
+    rand = empty_tiles[random(1,emptlen)]
     rand1 = rand[1]
     rand2 = rand[2]
-    temp = tiles[rand1]
-    temp[rand2] = random_num
-    tiles[rand1] = temp
+    tiles[rand1][rand2] = random(0,9) < 9 ? 2 4
   )
-endef
+)
 
 generate
 generate
@@ -66,24 +61,22 @@ generate
 def "rotate"
   out = []
   loop 4 (
-    count2 = 1
-    loop 4 (
+    for count2 4 (
       cur = []
       count = 4
       loop 4 (
-        data = tiles[count].[count2]
-        cur.append(data)
+        cur.append(tiles[count][count2])
         count --
       )
       out.append(cur)
-      count2 ++
     )
   )
   tiles = out
 endef
+
 def "move_left"
 row = 0
-loop 4 (
+loop 5 (
   row ++
   loop 4 (
     count = 1
@@ -105,18 +98,19 @@ loop 4 (
   )
 )
 endef
+
 def "move_right"
 row = 0
-loop 4 (
+loop 5 (
   row ++
   loop 4 (
     count = 0
-    loop 4 (
+    loop 3 (
       count ++
       count2 = count + 1
       cur_row = tiles[row]
       
-      if cur_row[count2] == 0 and ( cur_row[count] > 0 ) (
+      if cur_row[count2] == 0 and (cur_row[count] > 0) (
         cur_row[count2] = cur_row[count]
         cur_row[count] = 0
       )
@@ -159,17 +153,14 @@ def "down"
 endef
 
 mainloop:
-count = 0
+
 total = 0
-loop 4 (
-  count ++
-  count2 = 0
-  loop 4 (
-    count2 ++
-    current = tiles[count].[count2]
+for count 4 (
+  for count2 4 (
+    current = tiles[count][count2]
     goto count2 - 2.5 * 100 count - 2.5 * -100 + 25
     total += current.int
-    c colours.key(current)
+    c colours[current]
     square 80 80 10
     change_x current.len * -9
     text current 18 : c#000
@@ -200,5 +191,3 @@ if "w".onpress or "up arrow".onpress (
 if "s".onpress or "down arrow".onpress (
   down
 )
-
-
