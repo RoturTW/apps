@@ -1,17 +1,12 @@
 save "fortniteskibidi@rattusdong" "set_directory"
-if save_data == "Success" (
-  save "highscore.txt" "exists"
-  if save_data (
-    save "highscore.txt" "get"
-    highscore = save_data
-  ) else (
-    save "highscore.txt" "set" 0
-    highscore = 0
-  )
+save "highscore.txt" "exists"
+if save_data (
+  save "highscore.txt" "get"
+  highscore = save_data
 ) else (
-  highscore = "unable to access"
+  save "highscore.txt" "set" 0
+  highscore = 0
 )
-
 
 window "show"
 window "dimensions" 800 450
@@ -27,8 +22,6 @@ dead = false
 dieOff = 0
 click = flase
 
-
-
 mainloop:
 goto 0 0
 image "https://raw.githubusercontent.com/RattusDong/apps/main/all/fortnite%20skibidi%202024/assets/background.png"
@@ -38,25 +31,25 @@ image "https://raw.githubusercontent.com/RattusDong/apps/main/all/fortnite%20ski
 goto skibX skibY
 image "https://raw.githubusercontent.com/RattusDong/apps/main/all/fortnite%20skibidi%202024/assets/skibidi.png" 80 120
 if mouse_touching (
-cursor "crosshair"
+  cursor "crosshair"
 )
 if clicked and dead.not (
-skibX += 500 + [0,150].random
-speed += 0.1
-score ++
-if score > highscore (
-  save "highscore.txt" "set" score
-  highscore = score
-)
-skibY = [-200,200].random
+  skibX += 500 + [0,150].random
+  speed += 0.1
+  score ++
+  if score > highscore (
+    save "highscore.txt" "set" score
+    highscore = score
+  )
+  skibY = [-200,200].random
 )
 if skibX < -200 (
-dead = true
-click = true
+  dead = true
+  click = true
 )
 
 if clicked.not (
-click = false
+  click = false
 )
 
 goto -180 200
@@ -71,32 +64,29 @@ turnright 45
 image "https://raw.githubusercontent.com/RattusDong/apps/main/all/fortnite%20skibidi%202024/assets/shotgun.png"
 direction 90
 if dead (
-goto 0 -150
-image "https://raw.githubusercontent.com/RattusDong/apps/main/all/fortnite%20skibidi%202024/assets/fire.png" 800 500
+  goto 0 -150
+  image "https://raw.githubusercontent.com/RattusDong/apps/main/all/fortnite%20skibidi%202024/assets/fire.png" 800 500
 
+  goto -200 0
+  text "Press Space to restart" 15
 
+  dieOff = 2000
 
-goto -200 0
-text "Press Space to restart" 15
-
-dieOff = 2000
-
-if "space".pressed (
-dead = false
-dieOff = 0
-score = 0
-skibX = 600
-skibY = [-200,200].random
-speed = 1
+  if "space".pressed (
+    dead = false
+    dieOff = 0
+    score = 0
+    skibX = 600
+    skibY = [-200,200].random
+    speed = 1
+  )
 )
-)
-
 
 skibX -= speed
 
 loc -2 2 -20 -20
 square 20 20 10 : c#222
-icon "close" 0.7 : c#fff
+icon "w 4 line 10 10 -10 -10 line -10 10 10 -10" 0.7 : c#fff
 if clicked (
   window "stop"
 )
