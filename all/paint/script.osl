@@ -1,0 +1,275 @@
+// Upgraded Paint-like App in OSL
+// =============================================
+
+// 1. Canvas Initialization
+canvas = new Canvas(width: 800, height: 600);
+context = canvas.getContext("2d");
+
+// 2. Layers Management
+layers = [];
+currentLayer = new Canvas(width: 800, height: 600);  // Current layer where drawing is done
+layers.push(currentLayer);  // Add initial layer
+
+undoStack = [];
+redoStack = [];
+
+// 3. Brush and Tool Settings
+currentColor = "black";   // Default color is black
+brushSize = 5;            // Default brush size
+isDrawing = false;        // Track whether the user is currently drawing
+currentTool = "brush";    // Default tool is the brush
+
+// For Shapes
+startX = 0;
+startY = 0;
+tempX = 0;
+tempY = 0;
+
+// 4. Start Drawing when Mouse is Pressed
+onMouseDown(event) {
+    isDrawing = true;
+    startX = event.x;
+    startY = event.y;
+    
+    if (currentTool == "brush" || currentTool == "eraser") {
+        context.beginPath();
+        context.moveTo(event.x, event.y);
+    }
+}
+
+// 5. Draw or Use Tool while Mouse is Moved
+onMouseMove(event) {
+    if (isDrawing) {
+        if (currentTool == "brush" || currentTool == "eraser") {
+            context.lineWidth = brushSize;
+            context.strokeStyle = currentColor;
+            context.lineTo(event.x, event.y);
+            context.stroke();
+        } else if (currentTool == "rectangle" || currentTool == "ellipse" || currentTool == "line") {
+            tempX = event.x;
+            tempY = event.y;
+            // Redraw shape temporarily (for shapes, update on release)
+            previewShape(startX, startY, tempX, tempY);
+        }
+    }
+}
+
+// 6. Stop Drawing when Mouse is Released
+onMouseUp(event) {
+    isDrawing = false;
+    context.closePath();
+
+    // Add to undo stack
+    saveState();
+    
+    // Finalize shapes on mouse release
+    if (currentTool == "rectangle") {
+        drawRectangle(startX, startY, event.x, event.y);
+    } else if (currentTool == "ellipse") {
+        drawEllipse(startX, startY, event.x, event.y);
+    } else if (currentTool == "line") {
+        drawLine(startX, startY, event.x, event.y);
+    }
+}
+
+// 7. Tool Functions
+selectBrush() {
+    currentTool = "brush";
+    currentColor = "black";  // Default color
+}
+
+selectEraser() {
+    currentTool = "eraser";
+    currentColor = "white";  // Assuming white as the background color
+}
+
+drawRectangle(x1, y1, x2, y2) {
+    context.beginPath();
+    context.rect(x1, y1, x2 - x1, y2 - y1);
+    context.strokeStyle = currentColor;
+    context.stroke();
+    context.closePath();
+}
+
+drawEllipse(x1, y1, x2, y2) {
+    context.beginPath();
+    context.ellipse((x1 + x2) / 2, (y1 + y2) / 2, Math.abs(x2 - x1) / 2, Math.abs(y2 - y1) / 2, 0, 0, 2 * Math.PI);
+    context.strokeStyle = currentColor;
+    context.stroke();
+    context.closePath();
+}
+
+drawLine(x1, y1, x2, y2) {
+    context.beginPath();
+    context.moveTo(x1, y1);
+    context.lineTo(x2, y2);
+    context.strokeStyle = currentColor;
+    context.lineWidth = brushSize;
+    context.stroke();
+    context.closePath();
+}
+
+// 8. Preview Shapes before finalizing them
+previewShape(x1, y1, x2, y2) {
+    clearPreview();
+    if (currentTool == "rectangle") {
+        drawRectangle(x1, y1, x2, y2);
+    } else if (currentTool == "ellipse") {
+        drawEllipse(x1, y1, x2, y2);
+    } else if (currentTool == "line") {
+        drawLine(x1, y1, x2, y2);
+    }
+}
+
+clearPreview() {
+    // Clear the canvas for shape previews
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    restoreState();
+}
+
+// 9. Undo/Redo Functionality
+saveState() {
+    undoStack.push(canvas.toDataURL());
+    redoStack = [];  // Clear redo stack when a new action is taken
+}
+
+undo() {
+    if (undoStack.length > 0) {
+        redoStack.push(canvas.toDataURL());  // Save current state to redo stack
+        imageData = undoStack.pop();         // Restore previous state
+        loadFromDataURL(imageData);
+    }
+}
+
+redo() {
+    if (redoStack.length > 0) {
+        undoStack.push(canvas.toDataURL());  // Save current state to undo stack
+        imageData = redoStack.pop();         // Restore next state
+        loadFromDataURL(imageData);
+    }
+}
+
+loadFromDataURL(dataURL) {
+    image = new Image();
+    image.src = dataURL;
+    image.onload = () => {
+        context.drawImage(image, 0, 0, canvas.width, canvas.height);
+    };
+}
+
+// 10. Layers Management
+createNewLayer() {
+    newLayer = new Canvas(width: 800, height: 600);
+    layers.push(newLayer);
+    switchToLayer(newLayer);
+}
+
+switchToLayer(layer) {
+    currentLayer = layer;
+    context = currentLayer.getContext("2d");
+}
+
+mergeLayers() {
+    // Merge all layers into the main canvas
+    for (layer in layers) {
+        context.drawImage(layer, 0, 0);
+    }
+    layers = [canvas];  // Reset to a single canvas after merging
+}
+
+// 11. Color and Brush Size Selection
+selectColor(color) {
+    currentColor = color;
+}
+
+adjustBrushSize(size) {
+    brushSize = size;
+}
+
+// 12. Clear Canvas Function
+clearCanvas() {
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    saveState();  // Save state for undo
+}
+
+// 13. Save Drawing in Multiple Formats
+saveDrawing(format = "png") {
+    if (format == "png") {
+        canvas.saveAsImage("drawing.png");
+    } else if (format == "jpeg") {
+        canvas.saveAsImage("drawing.jpeg", "image/jpeg");
+    } else if (format == "custom") {
+        saveCustomFormat();
+    }
+}
+
+// 14. Save in Custom Format (Layered Data)
+saveCustomFormat() {
+    // Save data of each layer (as an array or other format)
+    saveFile(layers, "drawing.custom");
+}
+
+// 15. Load Image into Canvas
+loadDrawing(filePath) {
+    if (filePath.endsWith(".custom")) {
+        loadCustomFormat(filePath);
+    } else {
+        image = new Image();
+        image.src = filePath;
+        image.onload = () => {
+            context.drawImage(image, 0, 0, canvas.width, canvas.height);
+        };
+    }
+}
+
+loadCustomFormat(filePath) {
+    // Load data and restore layers from custom format
+    layersData = openFile(filePath);
+    for (layerData in layersData) {
+        layer = new Canvas(width: 800, height: 600);
+        loadLayerData(layer, layerData);
+        layers.push(layer);
+    }
+}
+
+// 16. Create the UI for the Application
+createUI() {
+    // Tool Buttons
+    addButton("Brush", selectBrush());
+    addButton("Eraser", selectEraser());
+    addButton("Rectangle", () => { currentTool = "rectangle"; });
+    addButton("Ellipse", () => { currentTool = "ellipse"; });
+    addButton("Line", () => { currentTool = "line"; });
+
+    // Color Picker
+    addButton("Black", selectColor("black"));
+    addButton("Red", selectColor("red"));
+    addButton("Blue", selectColor("blue"));
+
+    // Brush Size Selector
+    addButton("Small Brush", adjustBrushSize(2));
+    addButton("Medium Brush", adjustBrushSize(5));
+    addButton("Large Brush", adjustBrushSize(10));
+
+    // Save, Load, Clear, Undo, Redo Buttons
+    addButton("Save", () => { saveDrawing("png"); });
+    addButton("Load", () => {
+        filePath = openFileDialog();
+        loadDrawing(filePath);
+    });
+    addButton("Clear", clearCanvas);
+    addButton("Undo", undo);
+    addButton("Redo", redo);
+
+    // Layer Controls
+    addButton("New Layer", createNewLayer);
+    addButton("Merge Layers", mergeLayers);
+}
+
+// Attach mouse events to the canvas
+canvas.onMouseDown = onMouseDown;
+canvas.onMouseMove = onMouseMove;
+canvas.onMouseUp = onMouseUp;
+
+// Call the function to set up the UI
+createUI();
