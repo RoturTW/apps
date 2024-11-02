@@ -5,7 +5,13 @@ wt:load_theme
 proxy_url = "https://proxy.milosantos.com/cors.php?url="
 
 
-domains = ["https://safebooru.org","https://rule34.xxx","https://gelbooru.org"]
+domains = [
+  "https://safebooru.org",
+  "https://rule34.xxx",
+  "https://realbooru.com",
+  "https://tbib.org",
+  "https://xbooru.com"
+]
 domain = domains[1]
 
 
@@ -114,11 +120,27 @@ def "renderSearch" (
 
 def "renderImg" "this.w,this.url" (
   square this.w - 10 480 10 : c#prim
-  if this.url.imageinfo("loaded") (
-    w = this.w - 30 / (this.url.imageinfo("width") / 100)
-    h = 45000 / this.url.imageinfo("height")
+  this.vid = this.url.endsWith(".webm") or this.url.endsWith(".mp4")
+  if this.url.imageinfo("loaded") or this.url.videoinfo("loaded") (
+    iw = this.vid ? this.url.videoinfo("width") this.url.imageinfo("width")
+    ih = this.vid ? this.url.videoinfo("height") this.url.imageinfo("height")
     
-    image this.url (((h > w) ? w h) * 4.50)
+    w = this.w / iw
+    h = 480 / ih
+    if h > w (
+      w = this.w
+      h = null
+    ) else (
+      w = null
+      h = 480
+    )
+    if this.vid (
+      video this.url "play"
+      video this.url w h
+    ) else (
+      image this.url w h
+    )
+    this.pos = x_position
     this.x = this.w / 2 - 20
     change this.x 225
     square 20 20 10 : c#prim hover_c#seco
@@ -126,13 +148,28 @@ def "renderImg" "this.w,this.url" (
       clipboard "set" this.url
     )
     icon "copy" 0.8 : c#txtc
-    change -this.x -225
+    change_x this.x * -2
+    text iw ++ "x" ++ ih 8
+    set_x this.pos
+    change_y -225
   ) else (
-    image this.url 0
+    if this.vid (
+      video this.url 0
+    ) else (
+      image this.url 0
+    )
     direction timer * 200
     icon "cutcircle 0 0 10 0 90" 2 : c#txtc
     direction 90
   )
+)
+
+def getUrl(obj) (
+  this.url = obj.file_url ?? "none"
+  if this.url.startsWith("https://") (
+    return this.url
+  )
+  return domain ++ "/images/" ++ obj.directory ++ "/" ++ obj.image
 )
 
 def "renderList" (
@@ -147,11 +184,11 @@ def "renderList" (
   loop main_results.len / 2 (
     if y < ft and y > fb (
       set_x lp
-      renderImg this.w proxy_url ++ main_results[i].sample_url
+      renderImg this.w proxy_url ++ getUrl(main_results[i])
       i ++
       
       set_x rp
-      renderImg this.w proxy_url ++ main_results[i].sample_url
+      renderImg this.w proxy_url ++ getUrl(main_results[i])
       i ++
     ) else (
       i += 2
@@ -167,4 +204,3 @@ renderMain
 handleRequests
 
 import "win-buttons"
-
