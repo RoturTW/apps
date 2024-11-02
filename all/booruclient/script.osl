@@ -4,18 +4,18 @@ wt:load_theme
 
 proxy_url = "https://proxy.milosantos.com/cors.php?url="
 
+domains = {
+  "https://safebooru.org":{},
+  "https://rule34.xxx":{},
+  "https://realbooru.com":{},
+  "https://tbib.org":{},
+  "https://xbooru.com":{},
+}
 
-domains = [
-  "https://safebooru.org",
-  "https://rule34.xxx",
-  "https://realbooru.com",
-  "https://tbib.org",
-  "https://xbooru.com"
-]
-domain = domains[1]
+domain = domains.getKeys()[1]
+domain_inf = domains[domain]
 
-
-query_url = proxy_url ++ domain ++ "/autocomplete.php?q="
+query_url = proxy_url ++ domain ++ (domain_inf.autocomplete ?? "/autocomplete.php?q=")
 query_temp = ""
 query_fetched = true
 query_results = []
@@ -197,6 +197,8 @@ def "renderList" (
     change_y -500
   )
 )
+
+log window.code.join(newline).destr
 
 mainloop:
 
