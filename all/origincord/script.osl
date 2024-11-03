@@ -29,6 +29,23 @@ def "login" "token" (
   last_heartbeat = timer + 41.25
 )
 
+def "setStatus" "type,title" (
+  status = {
+    "op": 3,
+    "d": {
+      "since": null,
+      "activities": [{
+        "name": "originCord",
+        "type": 0
+      }],
+      "status": "online",
+      "afk": false
+    }
+  }
+
+  discord.wsSend(status)
+)
+
 def "heartbeat" (
   if last_heartbeat < timer (
     last_heartbeat = timer + 41.25
@@ -100,7 +117,7 @@ edits = {}
 previous_author = {}
 
 def "async_msg" "content, channel" (
-  link = "https://origin.milosantos.com/discord/sendmessage.php?token=" ++ token ++ "&channelid=" ++ channel ++ "&content=" ++ content.str
+  link = "https://origin.milosantos.com/discord/sendmessage.php?token=" ++ token ++ "&channelid=" ++ channel ++ "&content=" ++ encodeURIComponent(content.toStr())
   this.result = link.getAsync()
 )
 
@@ -366,6 +383,7 @@ current_attachment = ""
 attachment_offset = 40
 
 disc_connect
+setStatus "online" "originCord"
 
 guild_info_shift = 0
 
@@ -600,36 +618,36 @@ import "win-buttons"
 if "enter".isKeyDown() and input_message != "" (
   send = input_message
   spl = send.split(" ")
-  if send.startsWith("!ocord") (
-    if spl[2] == "status" (
-      status = {"op":3,"d":{"since":null,"status":"online","afk":false}}
-      temp = status.d
-      temp.status = spl[3]
-      temp.activities = activity_data
-      status.d = temp
-      discord.wsSend(status)
+  if send.startsWith(".eval") (
+    this.func = def() -> ()
+    data = send.trim(6,-1)
+    comp = data.oslCompile()[2].prepend("return ")
+    this.func.code = [].append(comp)
+    
+    async_msg data ++ " -> " ++ this.func() current_channel
+    input_message = ""
+    exit
+  )
+  if send.startsWith(".version") (
+    async_msg "originCord v4.2" current_channel
+    input_message = ""
+    exit
+  )
+  if send.contains("@") (
+    pings = send.regex("/@[^ ]+/g")
+    ping_users = current_members.getValues().getKeys("user")
+    ping_usernames = ping_users.getKeys("username")
+    each ping pings (
+      send.replace(ping,"<@" ++ ping_users[ping_usernames.index(ping.trim(2,-1))].id ++ ">")
     )
-    if spl[2] == "version" (
-      async_msg "originCord v4.1".to("url") current_channel
-    )
+    ping_users = []
+    ping_usernames = []
+  )
+  if current_attachment == "" (
+    async_msg send current_channel
   ) else (
-    if send.contains("@") (
-      pings = send.regex("/@[^ ]+/g")
-      ping_users = current_members.getValues().getKeys("user")
-      ping_usernames = ping_users.getKeys("username")
-      each ping pings (
-        send.replace(ping,"<@" ++ ping_users[ping_usernames.index(ping.trim(2,-1))].id ++ ">")
-      )
-      ping_users = []
-      ping_usernames = []
-    )
-    send = encodeURIComponent(send)
-    if current_attachment == "" (
-      async_msg send current_channel
-    ) else (
-      send_file send current_channel current_attachment[3] current_attachment[2]
-      current_attachment = ""
-    )
+    send_file send current_channel current_attachment[3] current_attachment[2]
+    current_attachment = ""
   )
   input_message = ""
 )
