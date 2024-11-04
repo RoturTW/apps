@@ -1,0 +1,130 @@
+import as "glass" from "packages"
+import "window_tools" as "wt"
+
+wt:load_theme
+
+sidebar_width = 300
+oz = 0
+goal = 100
+
+window "dimensions" 1000 600
+
+days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
+month_days = [31,28,31,30,31,30,31,31,30,31,30,31]
+
+def findFirstDay() (
+  today = days.index(day)
+  loop day_number (
+    today -= 1
+  )
+  i = today % 7 + 1
+  if i < 0 (
+    i += 7
+  )
+  return i
+)
+
+start_day = findFirstDay()
+
+mainloop:
+w = window
+
+top_w = w.width - sidebar_width
+goto sidebar_width / 2 w.top - 20
+square top_w 40 0 : c#prim
+change_x top_w / -2 + 10
+text "Heya " ++ username 10 : c#txtc
+
+glass:frame w.left w.top w.left + sidebar_width w.bottom
+  loc 2 2 10 -20
+  text "AquaHabit" 10 : c#txtc
+  
+  y = frame.top - 210
+  goto 0 y
+  icon "cutcircle 0 0 100 0 140" 1
+  
+  dir = -164
+  tot = 13
+  amt = 328 / (tot + 1)
+  for i tot (
+    dir += amt
+    s = dir.sin
+    c = dir.cos
+    goto 0 y
+    line s * 80 c * 80 s * 100 c * 100
+  )
+  goto oz.len * -20 y
+  text oz 40
+  goto -12 y - 40
+  text "oz" 12
+  
+  if oz == 0 (
+    goal_txt = "Get Drinking!"
+  ) else (
+    goal_txt = (oz / goal * 100).round() ++ "% to your goal"
+  )
+  goto goal_txt.len * -5 y - 145
+  text goal_txt 10
+  
+  goal_txt = goal - oz ++ "oz remaining"
+  goto goal_txt.len * -5 y - 120
+  text goal_txt 10
+  
+  goto 0 frame.bottom + 40
+  square sidebar_width - 45 30 30 : c#prim
+  
+  change_x -27.5
+  wi = frame.width - 100
+  square wi 30 20 : c#window_colour
+  input wi 25 "oz" "Enter Oz"
+  set_x wi / 2 + 12.5
+  square 30 30 20 : c#window_colour
+  if onclick (
+    oz += input_oz.toNum()
+    input_oz = ""
+  )
+  icon "add" 0.8 : c#txtc
+frame "clear"
+
+frame w.left + sidebar_width w.top - 40 w.right w.bottom
+  pen "size" 4
+  goto frame.left + 370
+  line 0 frame.top - 20 0 frame.bottom + 20 : c#prim
+  loc 2 2 20 -40
+  text month.trim(1,3) 20 : c#txtc
+  
+  loc 2 2 20 -80
+  for i 7 (
+    text days[i].trim(1,3) 10
+    change_x 20
+  )
+  
+  loc 2 2 -13 -80
+  x = x_position
+  y = y_position
+  c = 0
+  d = month_days[month_number]
+  for i2 5 (
+    for i 7 (
+      if (i2 != 1 or i >= start_day) and c + 1 < d (
+        c ++
+        goto x + (i * 50) y - (i2 * 50)
+        c c <= day_number ? seco prim
+        square 0 0 45
+        if mouse_touching (
+          square 0 0 50 : c#seco
+          square 0 0 45 : c#prim
+        )
+        change_x c.len * -4.5
+        text c 9 : c#txtc
+      )
+    )
+  )
+  
+  loc 2 2 20 -40
+  set_x frame.left + 390
+  text "Goals" 20 : c#txtc
+  
+frame "clear"
+
+import "win-buttons"
