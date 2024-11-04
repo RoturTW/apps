@@ -634,7 +634,7 @@ if "enter".isKeyDown() and input_message != "" (
     exit
   )
   if send.startsWith(".version") (
-    async_msg "originCord v4.3".to("url") current_channel
+    async_msg "originCord v4.3" current_channel
     input_message = ""
     exit
   )
