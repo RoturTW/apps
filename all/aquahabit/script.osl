@@ -6,11 +6,14 @@ wt:load_theme
 sidebar_width = 300
 oz = 0
 goal = 100
-
+day_heights = 31.newArray()
+window "min_size" 1000 500
 window "dimensions" 1000 600
 
 days = ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"]
 month_days = [31,28,31,30,31,30,31,31,30,31,30,31]
+selected = "water"
+
 
 def findFirstDay() (
   today = days.index(day)
@@ -22,6 +25,33 @@ def findFirstDay() (
     i += 7
   )
   return i
+)
+chips = {}
+
+def "chip" "width, this.txt, this.x" (
+  goto this.x y + 10
+  square width 30 0 0 1
+  change_y -10
+  this.h = 1
+  if selected != this.txt (
+    if mouse_touching and !mouse_down (
+      this.h = 5
+    ) else (
+      this.h = 4
+    )
+  )
+  chips[this.txt] ??= 1
+  chips[this.txt] += this.h - chips[this.txt].toNum() / 4
+  this.h = chips[this.txt]
+  change_y this.h
+  square width this.h * 2 30 : c#window_colour
+  if clicked (
+    selected = this.txt
+  )
+  change_y this.h
+  square width 0 30 : c#prim
+  change_x this.txt.len * -5
+  text this.txt 10 : c#txtc
 )
 
 start_day = findFirstDay()
@@ -70,13 +100,19 @@ glass:frame w.left w.top w.left + sidebar_width w.bottom
   goto goal_txt.len * -5 y - 120
   text goal_txt 10
   
+  y = frame.bottom + 90
+  chip 40 "Water" -105
+  chip 40 "Cola" -29
+  chip 30 "Milk" 43
+  chip 30 "Tea" 110
+  
   goto 0 frame.bottom + 40
   square sidebar_width - 45 30 30 : c#prim
   
   change_x -27.5
   wi = frame.width - 100
   square wi 30 20 : c#window_colour
-  input wi 25 "oz" "Enter Oz"
+  input wi 25 "oz" "Enter " ++ selected ++ " Oz"
   set_x wi / 2 + 12.5
   square 30 30 20 : c#window_colour
   if onclick (
@@ -108,13 +144,18 @@ frame w.left + sidebar_width w.top - 40 w.right w.bottom
     for i 7 (
       if (i2 != 1 or i >= start_day) and c + 1 < d (
         c ++
+        cur = day_heights[c]
         goto x + (i * 50) y - (i2 * 50)
         c c <= day_number ? seco prim
         square 0 0 45
+        h = 0
         if mouse_touching (
-          square 0 0 50 : c#seco
-          square 0 0 45 : c#prim
+          h = mouse_down ? 2 5
         )
+        cur += h - cur / 2
+        day_heights[c] = cur
+        change_y cur
+        square 0 0 45
         change_x c.len * -4.5
         text c 9 : c#txtc
       )
@@ -124,7 +165,6 @@ frame w.left + sidebar_width w.top - 40 w.right w.bottom
   loc 2 2 20 -40
   set_x frame.left + 390
   text "Goals" 20 : c#txtc
-  
 frame "clear"
 
 import "win-buttons"
