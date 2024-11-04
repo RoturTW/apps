@@ -132,6 +132,7 @@ def "handle_message" "msg, ping" (
   if msg.istype("object") (
     author = msg.author
     member = current_members[author.id]
+    type = msg["type"]
   
     msg_cha = messages[channel]
   
@@ -158,19 +159,24 @@ def "handle_message" "msg, ping" (
       pfp += "https://cdn.discordapp.com/avatars/" ++ author.id ++ "/" ++ author.avatar ++ ".png?size=64"
     )
     authid = author.id
-    if msg.contains("referenced_message") (
+    if type == 19 (
       referenced = msg.referenced_message
       message = [""]
       message.append(referenced.author.username + referenced.content)
       message.append("reply")
       message.append(false)
       msg_cha.append(message)
+      authid = ""
     )
     if previous_author[channel] != authid (
       msg_cha.append("")
       previous_author[channel] = authid
       message = []
-      message.append(name)
+      if type == 7 (
+        message.append("Welcome: " ++ name)
+      ) else (
+        message.append(name)
+      )
       message.append("")
       message.append(pfp)
       message.append(false)
@@ -256,7 +262,7 @@ def "draw_channels" "cur" (
     
       id = chnl.id
       if id != "" (
-        if chnl.nsfw !== "" (
+        if chnl["type"] !== 4 (
           if current_channel == id (
             square w 25 15 : c#seco
            square w 25 10 : c#window_colour
@@ -620,16 +626,15 @@ if "enter".isKeyDown() and input_message != "" (
   spl = send.split(" ")
   if send.startsWith(".eval") (
     this.func = def() -> ()
-    data = send.trim(6,-1)
-    comp = data.oslCompile()[2].prepend("return ")
-    this.func.code = [].append(comp)
+    data = send.trim(7,-1)
+    this.func.code = ("return " ++ data).oslCompile()
     
     async_msg data ++ " -> " ++ this.func() current_channel
     input_message = ""
     exit
   )
   if send.startsWith(".version") (
-    async_msg "originCord v4.2" current_channel
+    async_msg "originCord v4.3".to("url") current_channel
     input_message = ""
     exit
   )
