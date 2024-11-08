@@ -6,10 +6,7 @@ proxy_url = "https://proxy.milosantos.com/cors.php?url="
 
 domains = {
   "https://safebooru.org":{},
-  "https://rule34.xxx":{},
-  "https://realbooru.com":{},
   "https://tbib.org":{},
-  "https://xbooru.com":{},
 }
 
 domain = domains.getKeys()[1]
