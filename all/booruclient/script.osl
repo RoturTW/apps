@@ -2,6 +2,8 @@ import "window_tools" as "wt"
 wt:load_theme
 // import the theme colours
 
+wt:seticon "image https://raw.githubusercontent.com/RoturTW/apps/refs/heads/main/all/booruclient/assets/appicon.png 20"
+
 proxy_url = "https://proxy.milosantos.com/cors.php?url="
 
 domains = {
