@@ -1,4 +1,5 @@
 import "window_tools" as "wt"
+import as "glass" from "packages"
 wt:load_theme
 // import the theme colours
 
@@ -10,7 +11,7 @@ domains = {
   "https://safebooru.org":{},
   "https://konachan.net":{
     "autocomplete":"/tag.json?limit=10&name=",
-    "posts":"/post.json?limit=40&tags="
+    "posts":"/post.json?limit=40&tags=rating:safe ",
   }
 }
 
@@ -26,7 +27,7 @@ domains = {
 domain = domains.getKeys()[2]
 domain_inf = domains[domain]
 
-query_url = proxy_url ++ domain ++ encodeURIComponent(domain_inf.autocomplete ?? "/autocomplete.php?q=")
+query_url = domain ++ (domain_inf.autocomplete ?? "/autocomplete.php?q=")
 query_temp = ""
 query_fetched = true
 query_results = []
@@ -34,7 +35,7 @@ query_results = []
 
 main_api = domain ++ (domain_inf.posts ?? "/index.php?page=dapi&s=post&q=index&limit=50&json=1&pid=0&tags=")
 main_tag = ""
-main_temp = ""
+main_temp = "none"
 main_fetched = true
 main_results = []
 // setup the main api
@@ -55,7 +56,7 @@ def "handleLoadingTags" (
   )
   
   if main_fetched.not (
-    data = (proxy_url ++ main_api ++ encodeURIComponent(main_tag)).getAsync()
+    data = (proxy_url ++ encodeURIComponent(main_api.strip() ++ main_tag)).getAsync()
     if data != "loading" (
       main_fetched = true
       main_results = data.destr.JsonParse()
@@ -71,7 +72,7 @@ def "handleSearch" (
   )
 
   if query_fetched.not (
-    data = (query_url ++ query_temp).getAsync()
+    data = (proxy_url ++ encodeURIComponent(query_url ++ query_temp)).getAsync()
     // fetch the new search data
     if data != "loading" (
       query_fetched = true
@@ -82,20 +83,23 @@ def "handleSearch" (
 )
 
 def "renderMain" (
+  goto 0 0
+  glass:frame window.left window.top window.right window.bottom; frame "clear"
+  prim = window_colour
   goto 0 window.top - 20
   square window.width 40 0 : c#prim
   loc 2 2 10 -20
   text "BooruClient" 10 : c#txtc
   
-  this.divider = window.left + (window.width / 4)
+  this.divider = window.left + 300
   this.top = window.top - 50
   
-  c prim
+  c seco
   frame window.left this.top this.divider window.bottom (
     renderSearch
   )
   
-  c prim
+  c seco
   frame this.divider this.top window.right window.bottom main_results.len * 250 "list" (
     renderList
   )
@@ -176,7 +180,7 @@ def "renderImg" "this.w,this.url" (
 )
 
 def getUrl(obj) (
-  this.url = obj.file_url ?? "none"
+  this.url = obj.jpeg_url ?? obj.file_url ?? "none"
   if this.url.startsWith("https://") (
     return encodeURIComponent(this.url)
   )
