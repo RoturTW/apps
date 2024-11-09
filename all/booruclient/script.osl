@@ -8,25 +8,36 @@ proxy_url = "https://proxy.milosantos.com/cors.php?url="
 
 domains = {
   "https://safebooru.org":{},
-  "https://tbib.org":{},
+  "https://konachan.net":{
+    "autocomplete":"/tag.json?limit=10&name=",
+    "posts":"/post.json?limit=40&tags="
+  }
 }
 
-domain = domains.getKeys()[1]
+/*
+  "https://rule34.xxx":{},
+  "https://realbooru.com":{},
+  "https://tbib.org":{},
+  "https://xbooru.com":{},
+  "https://hypnohub.net":{},
+*/
+// these sites do work, however, by using them, you agree that you are over 18
+
+domain = domains.getKeys()[2]
 domain_inf = domains[domain]
 
-query_url = proxy_url ++ domain ++ (domain_inf.autocomplete ?? "/autocomplete.php?q=")
+query_url = proxy_url ++ domain ++ encodeURIComponent(domain_inf.autocomplete ?? "/autocomplete.php?q=")
 query_temp = ""
 query_fetched = true
 query_results = []
 // setup the query variables
 
-main_api = domain ++ "/index.php?page=dapi&s=post&q=index&limit=50&json=1"
+main_api = domain ++ (domain_inf.posts ?? "/index.php?page=dapi&s=post&q=index&limit=50&json=1&pid=0&tags=")
 main_tag = ""
 main_temp = ""
 main_fetched = true
 main_results = []
 // setup the main api
-
 
 def aspectRatio(this.img) (
   return this.img.imageinfo("width") / this.img.imageinfo("height")
@@ -44,7 +55,7 @@ def "handleLoadingTags" (
   )
   
   if main_fetched.not (
-    data = (proxy_url ++ encodeURIComponent(main_api ++ "&pid=0" ++ "&tags=" ++ encodeURIComponent(main_tag))).getAsync()
+    data = (proxy_url ++ main_api ++ encodeURIComponent(main_tag)).getAsync()
     if data != "loading" (
       main_fetched = true
       main_results = data.destr.JsonParse()
@@ -104,12 +115,13 @@ def "renderSearch" (
     set_x 0
     square this.w 15 10 : c#prim hover_c#seco
     if onclick (
-      main_tag = item.value
+      main_tag = item.value ?? item.name
     )
     // render the background of a search result
     
     set_x frame.left + 10
-    text item.label.trimText(this.w / 8) 8 : c#txtc
+    name = item.label ?? item.name
+    text name.trimText(this.w / 8) 8 : c#txtc
     // render the text os a search result
     
     change_y -28
@@ -166,7 +178,7 @@ def "renderImg" "this.w,this.url" (
 def getUrl(obj) (
   this.url = obj.file_url ?? "none"
   if this.url.startsWith("https://") (
-    return this.url
+    return encodeURIComponent(this.url)
   )
   return domain ++ "/images/" ++ obj.directory ++ "/" ++ obj.image
 )
@@ -196,8 +208,6 @@ def "renderList" (
     change_y -500
   )
 )
-
-log window.code.join(newline).destr
 
 mainloop:
 
