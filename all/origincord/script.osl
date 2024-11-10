@@ -9,9 +9,7 @@ loaded = []
 d = {"token":"","intents":4194303}
 d.properties = properties
 
-proxy = "https://proxy.milosantos.com/cors.php?url="
 proxy = "https://apps.mistium.com/cors?url="
-//proxy = "https://proxy.mistium.com?url="
 
 message_rightclick = {}
 
