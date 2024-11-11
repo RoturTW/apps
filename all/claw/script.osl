@@ -1,0 +1,337 @@
+import as "glass" from "packages"
+import "window_tools" as "wt"
+
+permission "request" "rotur token"
+
+token = roturToken()
+
+posts = {"got":false,"feed":"Loading"}
+
+api = "https://claw.rotur.dev/"
+
+url = "feed"
+
+hovered_post = ""
+attachment = ""
+
+proxy = "https://apps.mistium.com/cors?url="
+
+window "dimensions" 1200 700
+
+def "send_post" "this.content,this.attachment" (
+  this.url = "https://claw.rotur.dev/post?auth=" ++ token
+  this.url += "&content=" ++ encodeURIComponent(this.content)
+  if this.attachment != "" (
+    this.url += "&attachment=" ++ encodeURIComponent(this.attachment)
+  )
+  return this.url.getAsync()
+)
+
+def "delete_post" "this.id" (
+  this.url = "https://claw.rotur.dev/delete?auth=" ++ token ++ "&id=" ++ this.id
+  return this.url.getAsync()
+)
+
+def "set_rating" "this.id, this.rating" (
+  this.url = "https://claw.rotur.dev/rate?auth=" ++ token ++ "&id=" ++ this.id ++ "&rating=" ++ this.rating.toNum()
+  return this.url.getAsync()
+)
+
+def "load_profile" "this.username" (
+  posts.got = false
+  posts.feed = []
+  url = "profile?name=" ++ this.username
+  hovered_post = ""
+)
+
+def "render_main" "feed" (
+  this.ih = 110
+  
+  if url == "feed" (
+    feed.prepend({"isinput":true})
+  )
+  
+  len = feed.len
+  count = (scroll_yfeed // this.ih).clamp(0,100)
+  y = scroll_yfeed % this.ih
+  y -= this.ih / 2
+  
+  this.w = frame.width - 25
+  loop (window_height // this.ih + 2).clamp(0,len) (
+    count ++
+    if count > len (
+      return
+    )
+    this.post = feed[count]
+    loc 9999 2 0 y
+    square this.w 90 10 : c#window_colour
+    if this.post.isinput == true (
+      change_y 25
+      input this.w - 15 23 "claw" "Type your post..."
+      input_claw.trim(0,100)
+      loc 2 2 20 y - 25
+      text input_claw.len ++ "/100" 8 : c#txtc
+      
+      text "Click Here To Paste An Image URL" 8 : chx#30
+      if onclick (
+        attachment = clipboard
+        if attachment.startsWith("https://").not (
+          attachment = ""
+          say "Invalid, must be https:// image"
+        )
+      )
+      if attachment != "" (
+        image attachment 30 30 : chx#30
+      )
+      loc -2 2 -30 y - 25
+      icon "send" 0.8
+      if onclick (
+        send_post input_claw attachment
+        input_claw = ""
+        attachment = ""
+        posts.got = false
+        posts.feed = []
+      )
+      y -= this.ih    
+    ) else (
+      if mouse_touching (
+        square this.w 90 15 : c#seco
+        square this.w 90 10 : c#prim
+        if onclick (
+          hovered_post = this.post
+        )
+      )
+      loc 9999 2 0 y + 25
+      square this.w 40 10 : c#prim
+      loc 2 2 33 y + 25
+      image this.post.pfp 40 40
+      text this.post.user 10 : c#txtc chx#30
+    
+      this.time = this.post.timestamp
+      if timestamp - this.time > 6400000 (
+        this.time = this.time.timestamp("convert-date")
+      ) else (
+        this.time = this.time.timestamp("convert-relative").trim(1,-5)
+      )
+      this.tw = this.time.len * 8
+      loc -2 2 -20 - this.tw y + 25
+      text this.time 8
+      change_x this.tw * -1 - 30
+      this.likes = this.post.likes
+      if this.likes == "" (
+        this.total_likes = 0
+        this.i_liked = false
+      ) else (
+        this.total_likes = this.likes.len
+        this.i_liked = this.likes.contains(username.toLower())
+      )
+      icon this.i_liked ? "favorites-full" "favorites" 0.8
+      if onclick (
+        feed[count].likes ??= []
+        if this.i_liked (
+          feed[count].likes = feed[count].likes.delete(username.toLower())
+          this.rating = 0
+        ) else (
+          feed[count].likes = feed[count].likes.append(username.toLower())
+          this.rating = 1
+        )
+        set_rating this.post.id this.rating
+        if url == "feed" (
+          posts.feed = feed.delete(1)
+        ) else (
+          posts.feed = feed
+        )
+      )
+      change_x this.total_likes.len * -8 - 20
+      text this.total_likes 8
+
+      
+      
+      if this.post.attachment == "" (
+        this.offset = 0
+      ) else (
+        this.offset = 3
+        loc -2 2 -30 y - 25
+        icon "image" 0.8
+      )
+      loc 2 2 20 y - 25
+      text this.post.content.trimText(this.w / 10 - 2 - this.offset) 10
+      y -= this.ih
+    )
+  )
+)
+
+def "render_sidebar" (
+  y = -25
+  this.w = frame.width - 25
+  c prim
+  each this.op options (
+    loc 9999 2 0 y
+    square this.w 35 10
+    if mouse_touching (
+      if onclick (
+        switch this.op.text (
+          case "My Profile"
+            load_profile username
+            break
+          case "Reload Feed"
+            posts.got = false
+            posts.feed = []
+            break
+          case "Back To Feed"
+            posts.got = false
+            posts.feed = []
+            url = "feed"
+            break
+        )
+      )
+      square this.w 35 10 : c#seco
+      square this.w 35 5 : c#prim
+    )
+    y -= 50
+  )
+  y = -25
+  
+  c txtc
+  each this.op options (
+    loc 2 2 30 y
+    icon this.op.icon 0.7
+    text this.op.text 9 : chx#30
+    y -= 50
+  )
+)
+
+def "render_rightbar" (
+  goto 0 0
+  this.w = frame.width - 25
+  square this.w frame.height - 25 10 : c#window_colour
+  this.p = hovered_post
+  loc 2 2 30 -30
+  image this.p.pfp 30
+  text this.p.user 10 : c#txtc chx#30
+  if mouse_touching (
+    cursor "pointer"
+    if onclick (
+      load_profile this.p.user
+    )
+  )
+  loc -2 2 -30 -30
+  icon "close" 0.7
+  if onclick (
+    hovered_post = ""
+  )
+  if this.p.user == username (
+    change_x -30
+    icon "bin" 0.7 : tooltip#"Delete Post"
+    if onclick (
+      delete_post this.p.id
+      hovered_post = ""
+      posts.got = false
+      posts.feed = []
+    )
+  )
+  
+  
+  loc 2 2 20 -60
+  text this.p.content.wrapText(this.w / 10) 10
+  
+  if this.p.attachment != "" (
+    goto 0 frame.bottom + (this.w / 2)
+    square this.w this.w 10 : c#prim
+    
+    this.att = this.p.attachment
+    if this.att.imageinfo("width") > this.att.imageinfo("height") (
+      image this.att this.w
+    ) else (
+      image this.att null this.w
+    )
+  )
+)
+
+main_options = [
+  {"icon":"reload","text":"Reload Feed"},
+  {"icon":"","text":"My Profile"}
+]
+main_options[2].icon = "image" + user.pfp + "35"
+
+profile_options = [
+  {"icon":"left-arrow","text":"Back To Feed"},
+]
+
+options = main_options
+
+mainloop:
+if url == "feed" (
+  wt:load_theme
+  window_accent = user.theme.accent
+) else (
+  theme = posts.data.theme
+  prim = theme.primary
+  seco = theme.secondary
+  tert = theme.tertiary
+  txtc = theme.text
+  window_accent = theme.accent
+  window_colour = theme.background
+)
+
+w = window
+
+glass:frame w.left + 300 w.top w.right w.bottom
+  goto 0 0
+  pen "size" w.width + w.height
+  c window_colour
+  pen "opacity" 50
+  pen "down"
+  pen "up"
+frame "clear"
+glass:frame w.left w.top w.left + 300 w.bottom
+  goto 0 0
+  pen "size" w.width + w.height
+  c window_colour
+  pen "opacity" 70
+  pen "down"
+  pen "up"
+frame "clear"
+
+if posts.got (
+  c prim
+  len = posts.feed.len
+  if url == "feed" (
+    len ++
+  )
+  right = w.right
+  if hovered_post != "" (
+    right -= 400
+  )
+  frame w.left + 300 w.top - 60 right w.bottom len * 110 "feed"
+    render_main posts.feed
+  frame "clear"
+) else (
+  posts.feed = (api ++ url).getAsync()
+  if posts.feed != "Loading" (
+    posts.got = true
+    options = main_options
+    if url.startsWith("profile?name=") (
+      posts.data = posts.feed.delete("posts")
+      posts.feed = posts.feed.posts
+      options = profile_options
+    )
+  )
+)
+c prim
+frame w.left w.top - 60 w.left + 300 w.bottom
+  render_sidebar
+frame "clear"
+
+if hovered_post != "" (
+  frame w.right - 400 w.top - 55 w.right w.bottom
+    render_rightbar
+  frame "clear"
+)
+
+goto 0 w.top - 20
+square w.width 40 10 : c#window_colour
+loc 2 2 10 -20
+text url == "feed" ? "Claw - The first rotur based social platform" url.split("=").last() 10 : c#txtc
+
+import "win-buttons"
