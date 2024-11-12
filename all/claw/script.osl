@@ -161,45 +161,6 @@ def "render_main" "feed" (
   )
 )
 
-def "render_sidebar" (
-  y = -25
-  this.w = frame.width - 25
-  c prim
-  each this.op options (
-    loc 9999 2 0 y
-    square this.w 35 10
-    if mouse_touching (
-      if onclick (
-        switch this.op.text (
-          case "My Profile"
-            load_profile username
-            break
-          case "Reload Feed"
-            posts.got = false
-            posts.feed = []
-            break
-          case "Back To Feed"
-            posts.got = false
-            posts.feed = []
-            url = "feed"
-            break
-        )
-      )
-      square this.w 35 10 : c#seco
-      square this.w 35 5 : c#prim
-    )
-    y -= 50
-  )
-  y = -25
-  
-  c txtc
-  each this.op options (
-    loc 2 2 30 y
-    icon this.op.icon 0.7
-    text this.op.text 9 : chx#30
-    y -= 50
-  )
-)
 
 def "render_rightbar" (
   goto 0 0
@@ -248,18 +209,6 @@ def "render_rightbar" (
   )
 )
 
-main_options = [
-  {"icon":"reload","text":"Reload Feed"},
-  {"icon":"","text":"My Profile"}
-]
-main_options[2].icon = "image" + user.pfp + "35"
-
-profile_options = [
-  {"icon":"left-arrow","text":"Back To Feed"},
-]
-
-options = main_options
-
 mainloop:
 if url == "feed" (
   wt:load_theme
@@ -276,19 +225,11 @@ if url == "feed" (
 
 w = window
 
-glass:frame w.left + 300 w.top w.right w.bottom
+glass:frame w.left w.top w.right w.bottom
   goto 0 0
   pen "size" w.width + w.height
   c window_colour
   pen "opacity" 50
-  pen "down"
-  pen "up"
-frame "clear"
-glass:frame w.left w.top w.left + 300 w.bottom
-  goto 0 0
-  pen "size" w.width + w.height
-  c window_colour
-  pen "opacity" 70
   pen "down"
   pen "up"
 frame "clear"
@@ -303,25 +244,19 @@ if posts.got (
   if hovered_post != "" (
     right -= 400
   )
-  frame w.left + 300 w.top - 60 right w.bottom len * 110 "feed"
+  frame w.left + 50 w.top - 60 right w.bottom len * 110 "feed"
     render_main posts.feed
   frame "clear"
 ) else (
   posts.feed = (api ++ url).getAsync()
   if posts.feed != "Loading" (
     posts.got = true
-    options = main_options
     if url.startsWith("profile?name=") (
       posts.data = posts.feed.delete("posts")
       posts.feed = posts.feed.posts
-      options = profile_options
     )
   )
 )
-c prim
-frame w.left w.top - 60 w.left + 300 w.bottom
-  render_sidebar
-frame "clear"
 
 if hovered_post != "" (
   frame w.right - 400 w.top - 55 w.right w.bottom
@@ -329,9 +264,40 @@ if hovered_post != "" (
   frame "clear"
 )
 
+goto w.left + 25 0
+square 40 w.height 10 : c#prim
+loc 2 2 25 -75
+image user_icon 40
+if mouse_touching (
+  cursor "pointer"
+  if onclick (
+    load_profile username
+  )
+)
+change_y -50
+icon "reload" 0.7 : c#txtc
+if mouse_touching (
+  cursor "pointer"
+  if onclick (
+    posts.got = false
+    posts.feed = []
+  )
+)
+
 goto 0 w.top - 20
 square w.width 40 10 : c#window_colour
+c txtc
 loc 2 2 10 -20
-text url == "feed" ? "Claw - The first rotur based social platform" url.split("=").last() 10 : c#txtc
+if url == "feed" (
+  text "Claw - The first rotur based social platform" 10
+) else (
+  icon "left-arrow" 0.7 : chx#10
+  if onclick (
+    posts.got = false
+    posts.feed = []
+    url = "feed"
+  )
+  text url.split("=").last() 10 : chx#20
+)
 
 import "win-buttons"
