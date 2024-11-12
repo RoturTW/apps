@@ -2,7 +2,7 @@
   "title": "OriginCord",
   "description": "An osl based discord client that you can use to talk through bots",
   "author": "Mist",
-  "version": "4.4",
+  "version": "4.5",
   "genre": "Social",
   "game_modes": ["Single-player"],
   "permissions": ["notifications"],
