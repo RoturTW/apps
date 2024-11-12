@@ -16,6 +16,7 @@ attachment = ""
 
 proxy = "https://apps.mistium.com/cors?url="
 
+window "set_dragbox" [[2,2,30,0],[-2,2,-100,-40]]
 window "dimensions" 1200 700
 
 def "send_post" "this.content,this.attachment" (
@@ -92,7 +93,7 @@ def "render_main" "feed" (
         posts.got = false
         posts.feed = []
       )
-      y -= this.ih    
+      y -= this.ih
     ) else (
       if mouse_touching (
         square this.w 90 15 : c#seco
