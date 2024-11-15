@@ -3,7 +3,9 @@
 
 Fork the repo
 
-Create a file called `all/YourAppName/script.osl` and put your OSL code there (for originOS Apps)
+Create a file called `all/YourAppName/script.(file extension)` and put your app code there (varies per OS)
+- .osl for OSL apps (originOS)
+- .crl for CRL apps (Constellinux / Derivatives)
 
 Create `icon.icn` in the same folder, and add your applications .icn file in there
 
