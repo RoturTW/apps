@@ -6,6 +6,6 @@
   "genre": "Social",
   "game_modes": ["Single-PLayer"],
   "permissions": ["rotur token"],
-  "supports":["originOS"],
+  "supports":["originOS","ConstellinuxProject"],
   "screenshots":["Screenshot 2024-11-12 at 10.44.57.png"]
 }
