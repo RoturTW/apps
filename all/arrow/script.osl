@@ -1,0 +1,457 @@
+// base github url for all assets, files and data
+github = "https://raw.githubusercontent.com/RoturTW/apps/main/all/arrow/"
+
+// asset urls
+player_eye = github ++ "assets/Player/Eye.svg"
+player_body = github ++ "assets/Player/White.svg"
+player_blue = github ++ "assets/Player/Blue.svg"
+arrow_main = github ++ "assets/Arrow/Main.svg"
+arrow_charged = github ++ "assets/Arrow/Charged.svg"
+enemy_body = github ++ "assets/Enemy/Body.svg"
+map_main = github ++ "assets/Map/Main.svg"
+
+// the queue to handle loading images
+load_queue = []
+
+// a command to simply add urls to the load_queue
+def "load" "url" (
+  load_queue.append(url)
+)
+
+// this command is run to reset the game
+def "setup" (
+  // setup the player object
+  player = {
+    "x":0,
+    "y":0,
+    "xvel":0,
+    "yvel":0,
+    "health":10
+  }
+  
+  notifs = []
+  notif_y = 20
+
+  // handle the arrow pullback charge feature
+  mouse_down_start = timer
+  
+  // wave timer and text notification data
+  current_wave = 0
+  wave_popup = {
+    "y":60
+  }
+  wave_popup.time = timer
+  
+  // a flag variable that controls the white flash when the player gets hit
+  damaged = timer - 2
+  
+  // setup the max number of each thing that can exist
+  enemy_cap = 20
+  arrow_cap = 10
+  particle_cap = 50
+  bullet_cap = 30
+
+  // the arrays of each item to be rendered
+  arrows = []
+  enemies = []
+  particles = []
+  bullets = []
+)
+
+// run the setup
+setup
+
+// 'move steps' block from scratch recreation
+def "move" "this.dist" (
+  change direction.sin * this.dist direction.cos * this.dist
+)
+
+// add an arrow object to the scene
+def "create_arrow" "this.x, this.y ,this.dir, this.vel" (
+  if arrows.len > arrow_cap (
+    arrows.delete(1)
+  )
+  this.obj = {}
+  this.obj.x = this.x + (this.dir.sin * this.vel * 2)
+  this.obj.y = this.y + (this.dir.cos * this.vel * 2)
+  this.obj.vel = this.vel
+  this.obj.dir = this.dir
+  arrows.append(this.obj)
+)
+
+// generate the positon from x y to world space
+def position_entity(this.x, this.y) (
+  this.x = player.x - this.x * s * -1
+  this.y = player.y - this.y * s * -1
+  return this
+)
+
+// add an enemy object to the scene
+def "create_enemy" "this.x, this.y" (
+  // delete enemies if the total number exceeds the cap
+  if enemies.len > enemy_cap (
+    enemies.delete(1)
+  )
+
+  this.obj = {}
+  this.obj.x = this.x
+  this.obj.y = this.y
+  this.obj.dir = 0
+  this.obj.vel = 3
+  this.obj.last = timer
+  enemies.append(this.obj)
+)
+
+// add an enemy bullet object to the scene
+def "create_bullet" "this.x, this.y, this.dir, this.vel" (
+  if bullets.len > bullet_cap (
+    bullets.delete(1)
+  )
+  this.obj = this
+  bullets.append(this.obj)
+)
+
+// add a simple particle object to the scene
+def "create_particle" "this.x, this.y, this.dir, this.costume" (
+  if particles.len > particle_cap (
+    particles.delete(1)
+  )
+  this.frames = 0
+  particles.append(this)
+)
+
+// a command to handle simple character controlling with wasd and space for dashing
+def "movement" "this.speed" (
+  if "d".pressed (
+    player.xvel += this.speed
+  )
+  if "a".pressed (
+    player.xvel -= this.speed
+  )
+  if "w".pressed (
+    player.yvel += this.speed
+  )
+  if "s".pressed (
+    player.yvel -= this.speed
+  )
+  goto 0 0
+  pointat player.xvel player.yvel
+  player.dir = direction
+  if "space".pressed (
+    if boosted.not (
+      move_player 100
+      boosted = true
+    )
+  ) else (
+    boosted = false
+  )
+  player.x += player.xvel
+  player.y += player.yvel
+  player.xvel *= 0.8
+  player.yvel *= 0.8
+  
+  this.d = dist(0,0,player.x,player.y) - 1730
+  if this.d > 0 (
+    pointat -player.x -player.y
+    player.x += direction.sin * this.d
+    player.y += direction.cos * this.d
+  )
+)
+
+// add velocity to the player in the direction its facing
+def "move_player" "this.speed" (
+  player.xvel += player.dir.sin * this.speed
+  player.yvel += player.dir.cos * this.speed
+)
+
+def "create_random_enemy" (
+  goto player.x player.y
+  direction random(-180,180)
+  create_enemy direction.sin * 2000 * s direction.cos * 2000 * s
+)
+def "go" "this.x, this.y" (
+  goto this.x + cam_x this.y + cam_y
+)
+
+for i 11 (
+  load github ++ "assets/Charge/" ++ i ++ ".svg"
+)
+
+load enemy_body
+load player_blue
+load player_body
+load player_eye
+load map_main
+load arrow_main
+load arrow_charged
+
+per = 0
+s = 0.7
+s_target = 0.7
+
+cam_x = 0
+cam_y = 0
+
+mainloop:
+
+s += s_target - s / 10
+
+if "q".pressed (
+  s_target += 0.1
+)
+if "e".pressed (
+  s_target -= 0.1
+)
+
+if upgrade_mode (
+
+)
+
+if timer > (last_timer + 0.02) (
+  goto random(-100,100) random(-100,100)
+  pointat 0 0
+  create_particle player.x + x_position player.y + y_position direction player_blue
+
+  last_timer = timer
+)
+
+if load_queue.len > 0 (
+  for i load_queue.len (
+    image load_queue[i] 0 0
+    if load_queue[i].imageinfo("loaded") (
+      load_queue.delete(i)
+    )
+    i --
+  )
+  import "win-buttons"
+  exit
+)
+
+movement 1
+
+
+w = window
+
+cam_x += mouse_x / -5 - cam_x / 5
+cam_y += mouse_y / -5 - cam_y / 10
+frame w.left * 2 + cam_x w.top * 2 + cam_y w.right * 2 + cam_x w.bottom * 2 + cam_y
+
+for i particles.len (
+  particle @= particles[i]
+  pos = position_entity(particle.x, particle.y)
+  goto pos.x pos.y
+  direction particle.dir
+  effect "transparency" particle.frames * 5
+  image particle.costume 20 * s 20 * s
+  particle.frames ++
+  particle.x += particle.dir.sin * s * -3
+  particle.y += particle.dir.cos * s * -3
+  if particle.frames > 20 (
+    particles.delete(i)
+    i --
+  )
+)
+effect "clear"
+
+goto 0 0
+pointat player.xvel player.yvel
+if timer - damaged < 0.3 (
+  effect "brightness" 100
+)
+stretch [100,100]
+image player_blue 50 * s
+image player_body 40 * s
+pointat mouse_x mouse_y
+move 40 * s
+image player_eye 90 * s
+move 30 * s
+image github ++ "assets/Charge/" ++ (per * 10 + 1).floor() ++ ".svg" 25 * s
+move -30 * s
+effect "clear"
+
+if mouse_down (
+  dif = (timer - mouse_down_start * 2000).clamp(0,300)
+  per = dif / 300
+  move 70 - (dif / 10) * s
+  image per == 1 ? arrow_charged arrow_main 90 * s
+  arrow_charging = true
+) else (
+  if per * 11 > 8 (
+    create_arrow player.x player.y direction per * 33
+  )
+  per = 0
+  mouse_down_start = timer
+)
+
+// arrows
+arrows_del = []
+for i arrows.len (
+  arrow @= arrows[i]
+  arrow.x += arrow.dir.sin * arrow.vel
+  arrow.y += arrow.dir.cos * arrow.vel
+  direction arrow.dir
+  pos = position_entity(arrow.x,arrow.y)
+  goto pos.x pos.y
+  if dist(x_position,y_position,0,0) > (1500 * s) (
+    arrows_del.append(i)
+  )
+  image arrow_main 90 * s
+)
+offset = 0
+each i arrows_del (
+  arrows.delete(i - offset)
+  offset ++
+)
+
+// bullets
+bullets_del = []
+for i bullets.len (
+  bullet @= bullets[i]
+  bullet.x += bullet.dir.sin * bullet.vel
+  bullet.y += bullet.dir.cos * bullet.vel
+  direction bullet.dir
+  pos = position_entity(bullet.x, bullet.y)
+  goto pos.x pos.y
+  dist = dist(x_position,y_position,0,0)
+  if dist > (2000 * s) (
+    bullets_del.append(i)
+  )
+  if dist < (30 * s) (
+    bullets_del.append(i)
+    player.health --
+    damaged = timer
+  )
+  image player_body 30 * s
+)
+offset = 0
+each i bullets_del (
+  bullets.delete(i - offset)
+  offset ++
+)
+
+
+dist = 50 * s
+
+// enemies
+enemies_del = []
+for i enemies.len (
+  enemy @= enemies[i]
+  x = player.x - enemy.x * -s
+  y = player.y - enemy.y * -s
+  goto x y
+  pointat 0 0
+
+  enemy.dir += direction - enemy.dir / 10 + random(-10,10)
+  direction enemy.dir
+  dist00 = dist(0,0,x,y).abs()
+  if dist00 < (2000 * s) (
+    if timer - enemy.last > 3 (
+      pointat 0 0
+      create_bullet player.x + (x / s) player.y + (y / s) direction + random(-5,5) 20
+      enemy.last = timer
+    )
+    if dist00 > (300 * s) and dist < (500 * s) (
+      enemy.x += direction.sin * enemy.vel
+      enemy.y += direction.cos * enemy.vel
+    ) else (
+      if dist00 < dist (
+        move_player -100
+        damaged = timer - 0.3
+        player.health -= 0.5
+        enemies_del.append(i)
+      )
+    )
+    for i2 arrows.len (
+      arrow @= arrows[i2]
+      pos = position_entity(arrow.x,arrow.y)
+      if dist(pos.x, pos.y, x, y).abs() < dist (
+        enemies_del.append(i)
+        arrows.delete(i2)
+        loop 5 (
+          direction random(-180,180)
+          create_particle player.x + (x / s) player.y + (y / s) direction player_main
+        )
+      )
+    )
+    direction 90
+    image enemy_body 80 * s
+  )
+)
+
+offset = 0
+each i enemies_del (
+  enemy = enemies[i - offset]
+  goto player.x - enemy.x * -s player.y - enemy.y * -s
+  x = x_position
+  y = y_position
+  
+  loop 5 (
+    direction random(-180,180)
+    create_particle player.x + (x / s) player.y + (y / s) direction player_main
+  )
+
+  enemies.delete(i - offset)
+  obj = {"txt":"Enemy Killed"}
+  obj.time = timer
+  notifs.insert(1,obj)
+  notif_y = 0
+  offset ++
+)
+
+direction 90
+goto -player.x * s -player.y * s
+image map_main 4050 * s
+frame "clear"
+
+
+player.health = player.health.clamp(0,10)
+
+goto 0 window.bottom + 30
+c #333
+bar 400 0 20 player.health / 10 #fff
+
+if player.health == 0 (
+  setup
+)
+
+if enemies.len == 0 (
+  current_wave ++
+  loop current_wave * 2 (
+    create_random_enemy
+  )
+  wave_popup.time = timer
+  player.health ++
+  upgrade_mode = true
+)
+
+if timer - wave_popup.time < 10 (
+  wave_text = "Wave" + current_wave
+  goto wave_text.len * -5 window.top + wave_popup.y
+  if timer - wave_popup.time < 4 (
+    wave_popup.y += -30 - wave_popup.y / 10
+  )
+  text wave_text 10 : c#fff
+)
+
+c #fff
+
+direction 90
+loc 2 2 10 notif_y
+each i notif notifs (
+  set_x window.left + 10
+  time = timer - notif.time
+  pen "opacity" time > 2 ? 100 - (time - 2 * 100) 100
+  text notif.txt 10
+  if timer - notif.time > 3 (
+    notifs.delete(i)
+    i --
+  )
+  change_y -20
+)
+notif_y += -20 - notif_y / 10
+
+
+c #fff
+loc 2 -2 10 20
+text bullets.len + enemies.len + particles.len + arrows.len + "Objects" 10
+import "win-buttons"
