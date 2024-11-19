@@ -62,15 +62,18 @@ switch page (
         y = i - 0.5 * -200 + scroll_y
         if result.isType("string") (
           result = ("https://www.youtube.com/oembed?url=http%3A//youtube.com/watch%3Fv%3D" ++ result ++ "&format=json").getAsync()
+          if result.isType("object") (
+            result.id = search[i]
+            search[i] = result
+          )
         )
-
-        if result != "loading" (
+        if result.isType("object") (
           loc 9999 2 0 y
           square frame.width - 25 170 15 : c#prim
           if onclick (
             page = "player"
             player_id = result
-            p_url = "https://www.youtube.com/embed/" ++ result
+            p_url = "https://www.youtube.com/embed/" ++ result2.id
             if player == "" (
               player = p_url.iframeNew()
             ) else (
@@ -85,7 +88,6 @@ switch page (
           text result.title 10 : c#txtc
           loc 2 2 330 y - 20
           text result.author_name 8
-          search[i] = result
         )
       )
       frame "clear"
