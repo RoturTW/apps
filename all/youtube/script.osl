@@ -73,13 +73,13 @@ switch page (
           if onclick (
             page = "player"
             player_id = result
-            p_url = "https://www.youtube.com/embed/" ++ result2.id
+            p_url = "https://www.youtube.com/embed/" ++ result.id
             if player == "" (
               player = p_url.iframeNew()
             ) else (
               player.iframeRedirect(p_url)
             )
-            player_info = data
+            player_info = result
             player.iframeShow()
           )
           loc 2 2 152 y
