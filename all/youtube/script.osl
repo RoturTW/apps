@@ -5,6 +5,8 @@ search = ""
 
 player = ""
 
+proxy = "https://apps.mistium.com/cors?url="
+
 prim = user.theme.primary
 seco = user.theme.secondary
 tert = user.theme.tertiary
@@ -36,8 +38,8 @@ switch page (
     if search == "" and term != "" (
       formatted = term.replace("+","%2B").replace(" ","+")
       formatted = "https://www.youtube.com/results?search_query=" ++ formatted
-      search_url = "https://api.codetabs.com/v1/proxy?quest=" ++ formatted.to("url")
-      network "get" search_url
+      search_url = proxy ++ formatted.to("url")
+      data = search_url.getAsync()
       if data != "loading" (
         out = data.regex("/\/watch\?v=([a-zA-Z0-9_-]{11})/g")
         search = []
@@ -48,18 +50,21 @@ switch page (
           )
         )
         out = []
-        network "clear" search_url
       )
     ) else (
       c prim
       frame window.left window.top - 40 window.right window.bottom search.len * 200
-      i = (scroll_y / 200).floor
+      i = (scroll_y / 200).floor()
       loop (frame_height / 200 + 1).clamp(0,search.len) (
         i ++
         result = search[i]
+        
         y = i - 0.5 * -200 + scroll_y
-        network "get" "https://www.youtube.com/oembed?url=http%3A//youtube.com/watch%3Fv%3D" ++ result ++ "&format=json"
-        if data != "loading" (
+        if result.isType("string") (
+          result = ("https://www.youtube.com/oembed?url=http%3A//youtube.com/watch%3Fv%3D" ++ result ++ "&format=json").getAsync()
+        )
+
+        if result != "loading" (
           loc 9999 2 0 y
           square frame.width - 25 170 15 : c#prim
           if onclick (
@@ -75,11 +80,12 @@ switch page (
             player.iframeShow()
           )
           loc 2 2 152 y
-          image "https://api.codetabs.com/v1/proxy?quest=" ++ data.thumbnail_url 280 170
+          image proxy ++ result.thumbnail_url 280 170
           loc 2 2 330 y + 30
-          text data.title 10 : c#txtc
+          text result.title 10 : c#txtc
           loc 2 2 330 y - 20
-          text data.author_name 8
+          text result.author_name 8
+          search[i] = result
         )
       )
       frame "clear"
