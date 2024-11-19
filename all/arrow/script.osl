@@ -10,8 +10,16 @@ arrow_charged = github ++ "assets/Arrow/Charged.svg"
 enemy_body = github ++ "assets/Enemy/Body.svg"
 map_main = github ++ "assets/Map/Main.svg"
 
+crosshair = "w 3 line 7 7 10 10 line -7 7 -10 10 line -7 -7 -10 -10 line 7 -7 10 -10"
+
 // the queue to handle loading images
+
+window.framerate = 90
+
 load_queue = []
+
+dir_x = 0
+dir_y = 0
 
 // a command to simply add urls to the load_queue
 def "load" "url" (
@@ -26,7 +34,8 @@ def "setup" (
     "y":0,
     "xvel":0,
     "yvel":0,
-    "health":10
+    "health":10,
+    "speed":1
   }
   
   notifs = []
@@ -46,10 +55,10 @@ def "setup" (
   damaged = timer - 2
   
   // setup the max number of each thing that can exist
-  enemy_cap = 20
+  enemy_cap = 40
   arrow_cap = 10
   particle_cap = 50
-  bullet_cap = 30
+  bullet_cap = 40
 
   // the arrays of each item to be rendered
   arrows = []
@@ -98,7 +107,7 @@ def "create_enemy" "this.x, this.y" (
   this.obj.y = this.y
   this.obj.dir = 0
   this.obj.vel = 3
-  this.obj.last = timer
+  this.obj.last = timer + (random(10,30) / 10)
   enemies.append(this.obj)
 )
 
@@ -137,10 +146,11 @@ def "movement" "this.speed" (
   goto 0 0
   pointat player.xvel player.yvel
   player.dir = direction
-  if "space".pressed (
+  if "space".pressed and timer - last_dash > 1 (
     if boosted.not (
       move_player 100
       boosted = true
+      last_dash = timer
     )
   ) else (
     boosted = false
@@ -167,8 +177,9 @@ def "move_player" "this.speed" (
 def "create_random_enemy" (
   goto player.x player.y
   direction random(-180,180)
-  create_enemy direction.sin * 2000 * s direction.cos * 2000 * s
+  create_enemy direction.sin * random(300,2000) direction.cos * random(300,2000)
 )
+
 def "go" "this.x, this.y" (
   goto this.x + cam_x this.y + cam_y
 )
@@ -187,21 +198,14 @@ load arrow_charged
 
 per = 0
 s = 0.7
-s_target = 0.7
+s_target = 0.5
 
 cam_x = 0
 cam_y = 0
 
 mainloop:
 
-s += s_target - s / 10
-
-if "q".pressed (
-  s_target += 0.1
-)
-if "e".pressed (
-  s_target -= 0.1
-)
+s += s_target - s / 5
 
 if upgrade_mode (
 
@@ -223,11 +227,13 @@ if load_queue.len > 0 (
     )
     i --
   )
+  loc 2 2 10 -20
+  text load_queue + "Remaining" 10 : c#fff
   import "win-buttons"
   exit
 )
 
-movement 1
+movement player.speed
 
 
 w = window
@@ -255,7 +261,11 @@ effect "clear"
 
 goto 0 0
 pointat player.xvel player.yvel
+s_target = 0.8
 if timer - damaged < 0.3 (
+  if timer - damaged < 0.1 (
+    s_target = 0.6
+  )
   effect "brightness" 100
 )
 stretch [100,100]
@@ -282,6 +292,9 @@ if mouse_down (
   per = 0
   mouse_down_start = timer
 )
+
+turnleft 180
+player.aim = direction
 
 // arrows
 arrows_del = []
@@ -329,7 +342,6 @@ each i bullets_del (
   offset ++
 )
 
-
 dist = 50 * s
 
 // enemies
@@ -339,11 +351,15 @@ for i enemies.len (
   x = player.x - enemy.x * -s
   y = player.y - enemy.y * -s
   goto x y
-  pointat 0 0
+  dist00 = dist(0,0,x,y).abs()
+  if random(1,3) == 1 (
+    pointat player.xvel * dist00 / 10 player.yvel * dist00 / 10
+  ) else (
+    pointat 0 0
+  )
 
   enemy.dir += direction - enemy.dir / 10 + random(-10,10)
   direction enemy.dir
-  dist00 = dist(0,0,x,y).abs()
   if dist00 < (2000 * s) (
     if timer - enemy.last > 3 (
       pointat 0 0
@@ -360,7 +376,7 @@ for i enemies.len (
         player.health -= 0.5
         enemies_del.append(i)
       )
-    )
+    )    
     for i2 arrows.len (
       arrow @= arrows[i2]
       pos = position_entity(arrow.x,arrow.y)
@@ -410,6 +426,10 @@ goto 0 window.bottom + 30
 c #333
 bar 400 0 20 player.health / 10 #fff
 
+goto 0 window.bottom + 55
+c #333
+bar 200 0 15 (timer - last_dash).clamp(0,1) #fff
+
 if player.health == 0 (
   setup
 )
@@ -453,5 +473,5 @@ notif_y += -20 - notif_y / 10
 
 c #fff
 loc 2 -2 10 20
-text bullets.len + enemies.len + particles.len + arrows.len + "Objects" 10
+text bullets.len + enemies.len + particles.len + arrows.len + "Objects / " ++ fps + "Fps" 10
 import "win-buttons"
