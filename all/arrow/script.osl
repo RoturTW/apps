@@ -8,9 +8,43 @@ player_blue = github ++ "assets/Player/Blue.svg"
 arrow_main = github ++ "assets/Arrow/Main.svg"
 arrow_charged = github ++ "assets/Arrow/Charged.svg"
 enemy_body = github ++ "assets/Enemy/Body.svg"
-map_main = github ++ "assets/Map/Main.svg"
+
+map_main = "w 1.7 c #666 cutcircle 0 0 14 0 180 w 1.2 c #777 cutcircle 0 0 14 0 180 w 0.7 c #999 cutcircle 0 0 14 0 180"
+
 
 crosshair = "w 3 line 7 7 10 10 line -7 7 -10 10 line -7 -7 -10 -10 line 7 -7 10 -10"
+
+
+last_timer = timer
+game_timer = timer
+
+
+def generateStars(this.density,this.c) (
+  this.stars = "w 0.1 c " ++ this.c
+
+  this.dist = 10
+  loop this.density (
+    this.dir = random(-180,180)
+    this.dist = random(10,200).round() / 10
+    this.x = this.dir.sin * this.dist
+    this.y = this.dir.cos * this.dist
+    this.stars += " dot" + this.x + this.y
+  )
+  return this.stars
+)
+
+stars = generateStars(100,"#777")
+stars2 = generateStars(100,"#555")
+stars3 = generateStars(100,"#333")
+
+rings = "w 0.1 c #999"
+for i 3 (
+  dist = i * 10
+  for i2 36 (
+    dir = i2 * 10
+    rings += " dot" + x + y
+  )
+)
 
 // the queue to handle loading images
 
@@ -35,24 +69,26 @@ def "setup" (
     "xvel":0,
     "yvel":0,
     "health":10,
-    "speed":1
+    "speed":1,
+    "drawspeed":500,
+    "died":false,
   }
   
   notifs = []
   notif_y = 20
 
   // handle the arrow pullback charge feature
-  mouse_down_start = timer
+  mouse_down_start = game_timer
   
   // wave timer and text notification data
   current_wave = 0
   wave_popup = {
     "y":60
   }
-  wave_popup.time = timer
+  wave_popup.time = game_timer
   
   // a flag variable that controls the white flash when the player gets hit
-  damaged = timer - 2
+  damaged = game_timer - 2
   
   // setup the max number of each thing that can exist
   enemy_cap = 40
@@ -65,6 +101,32 @@ def "setup" (
   enemies = []
   particles = []
   bullets = []
+  upgrade_mode = false
+  
+  abilities = {
+    "Dash":{
+      "name":"Dash",
+      "cooldown":0.5,
+      "last_used":0
+    },
+    "Ghost":{
+      "name":"Ghost",
+      "cooldown":10,
+      "last_used":0
+    },
+    "Gunner":{
+      "name":"Gunner",
+      "cooldown":10,
+      "last_used":0
+    },
+    "Healer":{
+      "name":"Healer",
+      "cooldown":5,
+      "last_used":0
+    }
+  }
+  
+  ability = ""
 )
 
 // run the setup
@@ -96,18 +158,18 @@ def position_entity(this.x, this.y) (
 )
 
 // add an enemy object to the scene
-def "create_enemy" "this.x, this.y" (
+def "create_enemy" "this.x, this.y, this.health, this.reload" (
   // delete enemies if the total number exceeds the cap
   if enemies.len > enemy_cap (
     enemies.delete(1)
   )
 
-  this.obj = {}
-  this.obj.x = this.x
-  this.obj.y = this.y
+  this.obj = this
   this.obj.dir = 0
   this.obj.vel = 3
-  this.obj.last = timer + (random(10,30) / 10)
+  this.obj.size = 1
+  this.obj.last = game_timer + (random(10,30) / 10)
+  
   enemies.append(this.obj)
 )
 
@@ -146,11 +208,15 @@ def "movement" "this.speed" (
   goto 0 0
   pointat player.xvel player.yvel
   player.dir = direction
-  if "space".pressed and timer - last_dash > 1 (
-    if boosted.not (
-      move_player 100
+  if "space".onpress (
+    if boosted.not and (game_timer - ability.last_used > ability.cooldown) (
+      switch ability.name (
+        case "Dash"
+          move_player 200
+          break
+      )
       boosted = true
-      last_dash = timer
+      ability.last_used = game_timer
     )
   ) else (
     boosted = false
@@ -174,14 +240,28 @@ def "move_player" "this.speed" (
   player.yvel += player.dir.cos * this.speed
 )
 
-def "create_random_enemy" (
+def "create_random_enemy" "this.level" (
   goto player.x player.y
   direction random(-180,180)
-  create_enemy direction.sin * random(300,2000) direction.cos * random(300,2000)
+  create_enemy direction.sin * random(300,2000) direction.cos * random(300,2000) this.level this.level
 )
 
 def "go" "this.x, this.y" (
   goto this.x + cam_x this.y + cam_y
+)
+
+def "apply_upgrade" "this.upgrade" (
+  switch this.upgrade (
+    case "Faster Movement"
+      player.speed += 0.5
+      break
+    case "Faster Reload"
+      player.drawspeed *= 1.5
+      break
+    case "Refill Health"
+      player.health = 10
+      break
+  )
 )
 
 for i 11 (
@@ -192,7 +272,6 @@ load enemy_body
 load player_blue
 load player_body
 load player_eye
-load map_main
 load arrow_main
 load arrow_charged
 
@@ -203,20 +282,51 @@ s_target = 0.5
 cam_x = 0
 cam_y = 0
 
+paused = false
+
+cycles = 0
+
 mainloop:
+
+cycles ++
 
 s += s_target - s / 5
 
-if upgrade_mode (
+c #fff
+direction 90
 
+if current_wave == 0 and ability == "" (
+  loc 2 2 20 -20
+  text "Pick your ability\n\n" 10
+  
+  each i ability_ abilities.getKeys() (
+    text "Press " ++ i ++ " To Choose: " ++ ability_ ++ "\n" 10
+    if i.onpress (
+      ability = abilities[ability_]
+      exit
+    )
+  )
+
+  import "win-buttons"
+  exit
 )
 
-if timer > (last_timer + 0.02) (
+if player.died (
+  message = "You Died, press 'space' to continue"
+  goto message.len * -15 0
+  text message 30 : c#fff
+  if "space".onpress (
+    player.died = false
+  )
+  import "win-buttons"
+  exit
+)
+
+if game_timer > (particle_timer + 0.02) and paused.not (
   goto random(-100,100) random(-100,100)
   pointat 0 0
   create_particle player.x + x_position player.y + y_position direction player_blue
-
-  last_timer = timer
+  particle_timer = game_timer
 )
 
 if load_queue.len > 0 (
@@ -228,19 +338,34 @@ if load_queue.len > 0 (
     i --
   )
   loc 2 2 10 -20
-  text load_queue + "Remaining" 10 : c#fff
+  direction 90
+  text load_queue.len + "Remaining" 10 : c#fff
   import "win-buttons"
   exit
 )
 
-movement player.speed
-
-
 w = window
+
+if paused.not (
+  movement player.speed
+  game_timer += timer - last_timer
+)
+last_timer = timer
 
 cam_x += mouse_x / -5 - cam_x / 5
 cam_y += mouse_y / -5 - cam_y / 10
 frame w.left * 2 + cam_x w.top * 2 + cam_y w.right * 2 + cam_x w.bottom * 2 + cam_y
+
+x = player.x
+y = player.y
+direction 90
+goto x * -s y * -s
+icon stars 100
+goto x / 1.5 * -s y / 1.5 * -s
+icon stars2 100
+goto x / 2 * -s y / 2 * -s
+icon stars3 100
+
 
 for i particles.len (
   particle @= particles[i]
@@ -249,12 +374,14 @@ for i particles.len (
   direction particle.dir
   effect "transparency" particle.frames * 5
   image particle.costume 20 * s 20 * s
-  particle.frames ++
-  particle.x += particle.dir.sin * s * -3
-  particle.y += particle.dir.cos * s * -3
-  if particle.frames > 20 (
-    particles.delete(i)
-    i --
+  if paused.not (
+    particle.frames ++
+    particle.x += particle.dir.sin * s * -3
+    particle.y += particle.dir.cos * s * -3
+    if particle.frames > 20 (
+      particles.delete(i)
+      i --
+    )
   )
 )
 effect "clear"
@@ -262,11 +389,27 @@ effect "clear"
 goto 0 0
 pointat player.xvel player.yvel
 s_target = 0.8
-if timer - damaged < 0.3 (
-  if timer - damaged < 0.1 (
+if game_timer - damaged < 0.3 (
+  if game_timer - damaged < 0.1 (
     s_target = 0.6
   )
   effect "brightness" 100
+)
+
+player.damage_multiplier = 1
+if paused.not (
+  if game_timer - ability.last_used < ability.cooldown / 2 (
+    if ability.name == "Ghost" or ability.name == "Dash" (
+      effect "transparency" 50
+      player.damage_multiplier = 0
+    )
+    if ability.name == "Gunner" and cycles % 5 == 0 (
+      per = 1
+    )
+    if ability.name == "Healer" (
+      player.health += 0.01
+    )
+  )
 )
 stretch [100,100]
 image player_blue 50 * s
@@ -279,18 +422,23 @@ image github ++ "assets/Charge/" ++ (per * 10 + 1).floor() ++ ".svg" 25 * s
 move -30 * s
 effect "clear"
 
-if mouse_down (
-  dif = (timer - mouse_down_start * 2000).clamp(0,300)
-  per = dif / 300
-  move 70 - (dif / 10) * s
-  image per == 1 ? arrow_charged arrow_main 90 * s
-  arrow_charging = true
-) else (
-  if per * 11 > 8 (
-    create_arrow player.x player.y direction per * 33
+if paused.not (
+  if mouse_down (
+    draw = game_timer - mouse_down_start * player.drawspeed
+    dif = draw.clamp(0,300)
+    per = dif / 300
+    move 70 - (dif / 10) * s
+    if draw > 2 (
+      image per == 1 ? arrow_charged arrow_main 90 * s
+    )
+    arrow_charging = true
+  ) else (
+    if per * 11 > 8 (
+      create_arrow player.x player.y direction per * 33
+    )
+    per = 0
+    mouse_down_start = game_timer
   )
-  per = 0
-  mouse_down_start = timer
 )
 
 turnleft 180
@@ -300,8 +448,10 @@ player.aim = direction
 arrows_del = []
 for i arrows.len (
   arrow @= arrows[i]
-  arrow.x += arrow.dir.sin * arrow.vel
-  arrow.y += arrow.dir.cos * arrow.vel
+  if paused.not (
+    arrow.x += arrow.dir.sin * arrow.vel
+    arrow.y += arrow.dir.cos * arrow.vel
+  )
   direction arrow.dir
   pos = position_entity(arrow.x,arrow.y)
   goto pos.x pos.y
@@ -320,8 +470,10 @@ each i arrows_del (
 bullets_del = []
 for i bullets.len (
   bullet @= bullets[i]
-  bullet.x += bullet.dir.sin * bullet.vel
-  bullet.y += bullet.dir.cos * bullet.vel
+  if paused.not (
+    bullet.x += bullet.dir.sin * bullet.vel
+    bullet.y += bullet.dir.cos * bullet.vel
+  )
   direction bullet.dir
   pos = position_entity(bullet.x, bullet.y)
   goto pos.x pos.y
@@ -329,10 +481,10 @@ for i bullets.len (
   if dist > (2000 * s) (
     bullets_del.append(i)
   )
-  if dist < (30 * s) (
+  if dist < (30 * s) and player.damage_multiplier != 0 (
     bullets_del.append(i)
-    player.health --
-    damaged = timer
+    player.health -= player.damage_multiplier
+    damaged = game_timer
   )
   image player_body 30 * s
 )
@@ -353,44 +505,43 @@ for i enemies.len (
   goto x y
   dist00 = dist(0,0,x,y).abs()
   if random(1,3) == 1 (
-    pointat player.xvel * dist00 / 10 player.yvel * dist00 / 10
+    pointat player.xvel * dist00 / 15 player.yvel * dist00 / 15
   ) else (
     pointat 0 0
   )
-
-  enemy.dir += direction - enemy.dir / 10 + random(-10,10)
-  direction enemy.dir
+  
   if dist00 < (2000 * s) (
-    if timer - enemy.last > 3 (
-      pointat 0 0
-      create_bullet player.x + (x / s) player.y + (y / s) direction + random(-5,5) 20
-      enemy.last = timer
-    )
-    if dist00 > (300 * s) and dist < (500 * s) (
-      enemy.x += direction.sin * enemy.vel
-      enemy.y += direction.cos * enemy.vel
-    ) else (
-      if dist00 < dist (
-        move_player -100
-        damaged = timer - 0.3
-        player.health -= 0.5
-        enemies_del.append(i)
+    if paused.not (
+      if game_timer - enemy.last > 1 / enemy.reload (
+        create_bullet player.x + (x / s) player.y + (y / s) direction + random(-5,5) 20
+        enemy.last = game_timer
       )
-    )    
-    for i2 arrows.len (
-      arrow @= arrows[i2]
-      pos = position_entity(arrow.x,arrow.y)
-      if dist(pos.x, pos.y, x, y).abs() < dist (
-        enemies_del.append(i)
-        arrows.delete(i2)
-        loop 5 (
-          direction random(-180,180)
-          create_particle player.x + (x / s) player.y + (y / s) direction player_main
+      if dist00 > (300 * s) and dist < (500 * s) (
+        enemy.x += direction.sin * enemy.vel
+        enemy.y += direction.cos * enemy.vel
+      ) else (
+        if dist00 < dist (
+          move_player -100
+          damaged = game_timer - 0.3
+          player.health -= 0.5
+          enemies_del.append(i)
+        )
+      )
+      for i2 arrows.len (
+        arrow @= arrows[i2]
+        pos = position_entity(arrow.x,arrow.y)
+        if dist(pos.x, pos.y, x, y).abs() < dist (
+          enemies_del.append(i)
+          arrows.delete(i2)
+          loop 5 (
+            direction random(-180,180)
+            create_particle player.x + (x / s) player.y + (y / s) direction player_main
+          )
         )
       )
     )
     direction 90
-    image enemy_body 80 * s
+    image enemy_body 80 * s * enemy.size
   )
 )
 
@@ -416,7 +567,7 @@ each i enemies_del (
 
 direction 90
 goto -player.x * s -player.y * s
-image map_main 4050 * s
+icon map_main 135 * s
 frame "clear"
 
 
@@ -428,50 +579,79 @@ bar 400 0 20 player.health / 10 #fff
 
 goto 0 window.bottom + 55
 c #333
-bar 200 0 15 (timer - last_dash).clamp(0,1) #fff
+bar 200 0 15 (game_timer - ability.last_used / ability.cooldown).clamp(0,1) #fff
 
 if player.health == 0 (
   setup
+  player.died = true
 )
 
 if enemies.len == 0 (
+  if current_wave % 5 == 0 (
+    create_random_enemy 2
+  )
+
   current_wave ++
-  loop current_wave * 2 (
-    create_random_enemy
+  loop (current_wave * 1.5).round() (
+    create_random_enemy 1
   )
   wave_popup.time = timer
   player.health ++
-  upgrade_mode = true
+  if current_wave > 1 (
+    upgrade_mode = true
+    paused = true
+  )
 )
 
 if timer - wave_popup.time < 10 (
   wave_text = "Wave" + current_wave
-  goto wave_text.len * -5 window.top + wave_popup.y
+  goto wave_text.len * -15 window.top + wave_popup.y
   if timer - wave_popup.time < 4 (
-    wave_popup.y += -30 - wave_popup.y / 10
+    wave_popup.y += -40 - wave_popup.y / 10
   )
-  text wave_text 10 : c#fff
+  text wave_text 30 : c#fff
 )
 
 c #fff
 
 direction 90
-loc 2 2 10 notif_y
-each i notif notifs (
-  set_x window.left + 10
-  time = timer - notif.time
-  pen "opacity" time > 2 ? 100 - (time - 2 * 100) 100
-  text notif.txt 10
-  if timer - notif.time > 3 (
-    notifs.delete(i)
-    i --
-  )
-  change_y -20
-)
-notif_y += -20 - notif_y / 10
 
+if upgrade_mode (
+  loc 2 2 20 -20
+  text "Pick an upgrade to continue to the next wave\n\n" 10
+    
+  upgrades = [
+    "Faster Movement",
+    "Faster Reload",
+    "Refill Health"
+  ]
+  
+  each i upgrade upgrades (
+    text "Press " ++ i ++ " To Upgrade: " ++ upgrade ++ "\n" 10
+    if i.onpress (
+      apply_upgrade upgrade
+      upgrade_mode = false
+      paused = false
+      exit
+    )
+  )
+) else (
+  loc 2 2 10 notif_y
+  each i notif notifs (
+    set_x window.left + 10
+    time = timer - notif.time
+    pen "opacity" time > 2 ? 100 - (time - 2 * 100) 100
+    text notif.txt 10
+    if timer - notif.time > 3 (
+      notifs.delete(i)
+      i --
+    )
+    change_y -20
+  )
+  notif_y += -20 - notif_y / 10
+)
 
 c #fff
 loc 2 -2 10 20
-text bullets.len + enemies.len + particles.len + arrows.len + "Objects / " ++ fps + "Fps" 10
+text bullets.len + enemies.len + particles.len + arrows.len + "Objects / " ++ fps + "Fps / Game Timer" + game_timer 10
 import "win-buttons"
