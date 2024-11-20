@@ -1,8 +1,7 @@
 save "todo@mistium" "set_directory"
 
-save "tasks.json" "get"
-if save_data.istype("array") (
-  tasks = save_data
+if "tasks.json".saveExists() (
+  tasks = "tasks.json".saveGet()
 ) else (
   tasks = []
 )
@@ -17,22 +16,24 @@ input 270 27 "new" "Task"
 loc 2 2 150 -120
 square 280 30 10 : c#222
 if input_new != "" and clicked and can (
-can = false
-tasks.append(input_new)
-input_new = null
-save "tasks.json" "set" tasks
+  can = false
+  tasks.append(input_new)
+  input_new = null
+  save "tasks.json" "set" tasks
 )
+
 loc 2 2 20 -120
 if input_new != "" "c #fff" else "c #444"
 text "Create New Task" 10
 c #333
-frame window."left" + 300 window."top" - 50 window."right" window."bottom" tasks.len - 0.5 * 50
+frame window.left + 300 window.top - 50 window.right window.bottom tasks.len - 0.5 * 50
 if tasks.len == 0 (
   loc 2 2 20 -20
   text "No Tasks" 10 : c#fff
 )
 
 count = 0
+log tasks
 loop tasks.len (
   count ++
   loc 999 2 0 count - 0.5 * -50 + scroll_y + 5
@@ -46,7 +47,7 @@ loop tasks.len (
     count --
   )
   change_x frame_width * -1 + 40
-  text tasks.[count] 10
+  text tasks[count] 10
 )
 if mouse_down.not "can = true"
 frame "clear"
