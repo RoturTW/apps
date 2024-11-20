@@ -33,7 +33,6 @@ if tasks.len == 0 (
 )
 
 count = 0
-log tasks
 loop tasks.len (
   count ++
   loc 999 2 0 count - 0.5 * -50 + scroll_y + 5
