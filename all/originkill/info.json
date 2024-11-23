@@ -6,5 +6,6 @@
     "genre": "Shooter",
     "game_modes": ["singleplayer"],
     "permissions": [],
-    "supports":["originOS"]
+    "supports":["originOS"],
+    "screenshots":["originkill1.png","originkill2.png","originkill3.png"]
   }
