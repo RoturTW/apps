@@ -2,6 +2,7 @@
 window.framerate = 60
 window.no_desktop = true
 window "responsive" true
+window "fullscreen" true
 if passed_data == "" (
   window "set_dragbox" [[0,0,0,0],[0,0,0,0]]
   window "resizable" false
