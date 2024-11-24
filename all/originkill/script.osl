@@ -1,6 +1,8 @@
+// setup the window
 window.framerate = 60
 window.no_desktop = true
 window "responsive" true
+window "fullscreen" false
 if passed_data == "" (
   window "set_dragbox" [[0,0,0,0],[0,0,0,0]]
   window "resizable" false
@@ -14,6 +16,7 @@ wintype = passed_data.str
 
 urlback = "https://raw.githubusercontent.com/ThePandaDever/AssetStore/refs/heads/main/OriginWindowKill/"
 
+// sounds
 sound urlback ++ "3%20-%20Windowkiller.mp3" "load" "ost1"
 sound "ost1" "volume" 50
 sound urlback ++ "shoot2.ogg" "load" "shoot"
@@ -21,7 +24,6 @@ sound "shoot" "volume" 50
 sound urlback ++ "enemyDie.ogg" "load" "enemyDie"
 sound "enemyDie" "volume" 100
 sound urlback ++ "playerHit.ogg" "load" "playerHit"
-// needs to be added
 sound urlback ++ "hit3.ogg" "load" "enemyHit"
 sound "enemyHit" "volume" 100
 sound urlback ++ "hitWall.ogg" "load" "hitWall"
@@ -29,12 +31,14 @@ sound "hitWall" "volume" 25
 sound urlback ++ "hitWall2.ogg" "load" "hitWall2"
 sound "hitWall2" "volume" 75
 
+// coins
 sound urlback ++ "coin1.ogg" "load" "blob1"
 sound urlback ++ "coin2.ogg" "load" "blob2"
 sound urlback ++ "coin3.ogg" "load" "blob3"
 sound urlback ++ "coin4.ogg" "load" "blob4"
 sound urlback ++ "coin5.ogg" "load" "blob5"
 
+// all the upgrade icns
 up_speed = "w 2 c #fff cutcircle 4.5 0 6.5 0 180 c #444 w 2.5 line -9.5 -5 -4 -5 line -11 0 -6 0 line -9.5 5 -4 5"
 up_firerate = "w 2 c #fff ellipse 2.5 -4 1 2 90 ellipse 2.5 1.5 1 2 90 ellipse -2.5 4 1 2 90 ellipse -2.5 -1.5 1 2 90"
 up_multishot = "w 2 c #fff cutcircle 0 -12 6.5 0 90  w 1.6 c #fff ellipse 0 0.5 .8 2 0 ellipse 0 5 .8 2 0  c #2f2 ellipse 6.5 1.5 .8 2 30 ellipse 6.5 6 .8 2 30 ellipse -6.5 1.5 .8 2 -30 ellipse -6.5 6 .8 2 -30"
@@ -44,6 +48,11 @@ up_piercing = "w 2 c #333 ellipse 1 -4 1 2 55 w 2 c #999 ellipse 1 0 1 2 55 w 2 
 up_heal = "w 2 c #0f0 line 0 -2.5 0 2.5 line -2.5 0 2.5 0  w 2 c #fff cutcircle 7 4.5 2 4.5 45 cutcircle 7 -4.5 2 13.5 45 cutcircle -7 -4.5 2 22.5 45 cutcircle -7 4.5 2 31.5 45 line -7 6.5 7 6.5 line -7 -6.5 7 -6.5 line -9 4.5 -9 -4.5 line 9 4.5 9 -4.5"
 up_maxhealth = "w 2 c #0f0 line 0 -2.5 0 2.5 line -2.5 0 2.5 0  w 1.5 cutcircle 0 0 9 0 6.5 cutcircle 0 0 9 4.5 6.5 cutcircle 0 0 9 9 6.5 cutcircle 0 0 9 13.5 6.5 cutcircle 0 0 9 18 6.5 cutcircle 0 0 9 22.5 6.5 cutcircle 0 0 9 27 6.5 cutcircle 0 0 9 31.5 6.5  w 2  c #fff cutcircle 0 0 6.5 0 180"
 
+// upgrades:
+// [cost,variable,operation,number]
+// OR
+// [cost,[[variable,operation,number]]]
+// the 2nd item being all the operations
 upgrades = {
   "speed":[15,"player_speed","+",0.25],
   "firerate":[42,"bullet_cooldown","-",1],
@@ -57,6 +66,7 @@ upgrades = {
 actions = [
   "heal"
 ]
+// the text displayed for each upgrade
 upgrade_text = {
   "speed":"speed",
   "firerate":"fire rate",
@@ -68,6 +78,7 @@ upgrade_text = {
   "maxhealth":"max health"
 }
 
+// hex array, used for entityC
 hex = [
   "00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "0A", "0B", "0C", "0D", "0E", "0F",
   "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "1A", "1B", "1C", "1D", "1E", "1F",
@@ -88,10 +99,14 @@ hex = [
 ]
 
 if passed_data == "" (
+  // if its the main window, the if isnt really needed
   play_ost = true
 )
 
 def "newEnt" "id,x,y" (
+  // spawns an entity with
+  // id, x, y, health, velocity_x, velocity_y, spawn_smoothing
+  // then adds an extra one which is extras in an obj
   temp = []
   temp.append(id)
   temp.append(x)
@@ -129,6 +144,8 @@ def "newBorderEnt" "id" (
 )
 
 def "newGoop" "gamt,gx,gy" (
+  // spawns the blob with a bit of randomness depending
+  // on how much big the blob is
   if amt > 0 (
     gx += random(-100,100) / (amt * .75) * .5
     gy += random(-100,100) / (amt * .75) * .5
@@ -137,6 +154,7 @@ def "newGoop" "gamt,gx,gy" (
 )
 
 def "newGoopGroup" "amt,x,y" (
+  // splits the goop into multiple spread out blobs
   left = amt
   while left > 0 (
     m = left
@@ -191,9 +209,11 @@ if passed_data == "" (
   player_x = 0
   player_y = 0
   
+  // performance (10 seems good)
   performance_collision = true
   performance_skipamt = 10
   
+  // upgrades
   bullet_cooldown = 0
   bullet_uses = 1
   bullet_spread = 1
@@ -204,11 +224,13 @@ if passed_data == "" (
   currency = 0
   currencymult = 1
   
+  // stats
   stat_coins = 0
   stat_time = 0
   stat_bullets = 0
   stat_enemies = 0
   
+  // window schtuff
   win_l_velocity = 0
   win_r_velocity = 0
   win_b_velocity = 0
@@ -224,6 +246,7 @@ if passed_data == "" (
   framei = 0
   timerstart = timer
   
+  // entity stuff
   entity_width = {
     "tri": 30,
     "circle": 20
@@ -259,6 +282,8 @@ if passed_data == "" (
   bullet_lasthit = {}
 
   shop_open = false
+  pause_open = false
+  opened_shop_before = false
   winrestart = false
   
   each upgrade upgrades.getKeys() (
@@ -273,6 +298,8 @@ if passed_data == "" (
 chars = ["0","1","2","3","4","5","6","7","8","9","a","b","c","d","f"]
 
 def "enemyC" "r,g,b" (
+  // so basically it turns (for each channel)
+  // ff -> 255 -> + attack flash -> capped -> back to hex
   r = hex.index(r)
   g = hex.index(g)
   b = hex.index(b)
@@ -291,6 +318,7 @@ def "enemyC" "r,g,b" (
 def "drawScene" "dentities,dbullets,dgoop,dplayer_x,dplayer_y,t" (
   // entities (enemies)
   each entityi entitykey dentities.getKeys() (
+    // boilerplate
     entity = dentities[entitykey]
     eid = entity[1]
     ex = entity[2]
@@ -323,7 +351,8 @@ def "drawScene" "dentities,dbullets,dgoop,dplayer_x,dplayer_y,t" (
   // player
   game_goto dplayer_x dplayer_y
   icon "w 40 c #fff dot 0 0 w 30 c #" ++ window_colour ++ " dot 0 0" 1
-
+  
+  // yes the goop code is this simple, litterally just a dot
   each blob dgoop (
     game_goto blob[2] blob[3]
     icon "c #a935ff w 8 dot 0 0" blob[1]
@@ -334,9 +363,11 @@ def "drawScene" "dentities,dbullets,dgoop,dplayer_x,dplayer_y,t" (
 
 def "mainloop_main" (
   framei ++
+  // sets stat_time for the death screen
   if player_health != -9999 (
     stat_time = (timer - timerstart).round
   )
+  // player movement
   if player_health != -9999 (
     player_raw_x += ("d".pressed - "a".pressed) * player_speed
     if player_raw_x - 30 < winl (
@@ -357,16 +388,19 @@ def "mainloop_main" (
     player_y += player_raw_y - player_y * player_speed * .05
   )
   
+  // entity spawning
   each entity entity_spawnTime.getKeys() (
     if framei >= entity_spawnAfter[entity] (
       if entity_shouldSpawn[entity].not (
         if entity_spawnTime[entity] <= 0 (
           newBorderEnt entity
+          // make it spawn more over time
           t = entity_spawnWait[entity] - (framei - (entity_spawnAfter[entity] + 0) * .01 * entity_spawnSub[entity])
           if t < entity_spawnMax[entity] (
             t = entity_spawnMax[entity]
           )
           entity_spawnTime[entity] = t
+          // also spawns the entity more over time
           if entity_spawnTop.getKeys().contains(entity) (
             if entity_spawnMax[entity] > entity_spawnTop[entity] (
               entity_spawnMax[entity] -= random(5,12) / 10
@@ -378,8 +412,10 @@ def "mainloop_main" (
     entity_spawnTime[entity] -= random(5,15) / 10
   )
   
+  // the entities (enemies)
   delentities = []
   each entityi entitykey entities.getKeys() (
+    // boilerplate
     entity = entities[entitykey]
     eid = entity[1]
     ex = entity[2]
@@ -391,6 +427,7 @@ def "mainloop_main" (
     )
     game_goto ex ey
     entity[5] += (1 - entity[5]) * .05
+    // behaviour / update
     switch eid (
       case "tri"
         // behaviour
@@ -414,11 +451,13 @@ def "mainloop_main" (
         )
         break
     )
+    // enemy death
     if entity[4] <= 0 (
       delentities.append(entitykey)
       sound "enemyDie" "play"
       entDie eid
     )
+    // collision
     if performance_collision (
       if random(1,performance_skipamt) == 1 (
         each colentitykey entities.getKeys() (
@@ -442,6 +481,7 @@ def "mainloop_main" (
       )
     )
     
+    // bounce and hurt the player
     if entity_touchHurt.contains(eid) and player_health != -9999 (
       colx = player_x
       coly = player_y
@@ -459,7 +499,7 @@ def "mainloop_main" (
       )
     )
 
-    
+    // updating the entity
     ex += vx * .2
     ey += vy * .2
     entity[2] = ex
@@ -471,11 +511,12 @@ def "mainloop_main" (
     entity[8]["attackTime"] -= 10
     entities[entitykey] = entity
   )
+  // delete the entities given
   each reb delentities (
     entities.delete(reb)
   )
 
-  
+  // the bullets
   delbullets = []
   delbulletkeys = []
   each bulleti bullet bullets (
@@ -485,6 +526,7 @@ def "mainloop_main" (
     x = bullets[bulleti][1]
     y = bullets[bulleti][2]
     bulletkey = bullet[4]
+    // if the bullet hit the window borders
     if x < winl (
       delbullets.append(bulleti)
       win_l_velocity += window_force / bullet_spread
@@ -509,6 +551,7 @@ def "mainloop_main" (
       delbulletkeys.append(bulletkey)
       if random(1,2) == 1 (; sound "hitWall" "play"; ) else (; sound "hitWall2" "play"; )
     )
+    // check if any enemies are getting hit
     each enti entkey entities.getKeys() (
       ent = entities[entkey]
       ex = ent[2]
@@ -525,11 +568,13 @@ def "mainloop_main" (
         )
       )
     )
+    // piercing / delete the bullet if it has hit somthing
     if bullet[5] > bullet_uses - 1 (
       delbullets.append(bulleti)
       delbulletkeys.append(bullet[4])
     )
   )
+  // delete the bullets given
   rbi = 0
   each rdbulleti rbb delbullets (
     bullets.delete(rbb - rbi)
@@ -539,6 +584,7 @@ def "mainloop_main" (
   
   bullet_lasthit = bullet_currenthit
   
+  // the goop (otherwise known as coins in windowkill)
   delgoop = []
   each blobi blob goop (
     bx = blob[2]
@@ -552,8 +598,8 @@ def "mainloop_main" (
     )
     if m > 0 (
       dir = lookat(bx,by,player_x,player_y)
-      goop[blobi][2] += dir.sin * m / 18 / (blob[1] / 9 + 1) * (blobi * .247536 % 1 + .5) * (player_speed / 3)
-      goop[blobi][3] += dir.cos * m / 18 / (blob[1] / 9 + 1) * (blobi * .247536 % 1 + .5) * (player_speed / 3)
+      goop[blobi][2] += dir.sin * m / 15 / (blob[1] / 9 + 1) * (blobi * .247536 % 1 + .5) * (player_speed / 3)
+      goop[blobi][3] += dir.cos * m / 15 / (blob[1] / 9 + 1) * (blobi * .247536 % 1 + .5) * (player_speed / 3)
       if d < 25 (
         delgoop.append(blobi)
         currency += blob[1]
@@ -563,13 +609,14 @@ def "mainloop_main" (
       )
     )
   )
+  // delete the goop given
   rgi = 0
   each rg2i rgb delgoop (
     goop.delete(rgb - rgi)
     rgi ++
   )
 
-  
+  // bullet fireing
   if bullet_cooldown <= 0 and mouse_down and player_health != -9999 (
     bullet_cooldown = bullet_cooldown_max
     
@@ -583,6 +630,7 @@ def "mainloop_main" (
       bul_dir = dir
       bul_dir += (spreadi - 1 * 2 * sp) + sp - 1 * 20
       stat_bullets ++
+      // mist hasnt added [player_x,player_y,bul_dir,ouidNew(),0] so :/
       bullets.append([].append(player_x).append(player_y).append(bul_dir).append(ouidNew()).append(0))
     )
     
@@ -596,6 +644,7 @@ def "mainloop_main" (
 )
 
 def "win_update" (
+  // bounce the window off the edges
   if framei > 200 (
     if winl < (screensize_x * -.5) (
       win_l_velocity *= .95
@@ -615,6 +664,7 @@ def "win_update" (
     )
   )
   
+  // framei < 200 is the window shrinking to the resting size
   win_x = winl + winr / 2
   win_y = winb + wint / 2
   win_width = winr - winl
@@ -635,6 +685,7 @@ def "win_update" (
     win_h_velocity *= .95
   )
   
+  // update the window
   window "refresh_bg"
   window.x = win_x
   window.y = win_y
@@ -642,6 +693,7 @@ def "win_update" (
   window.height = win_height
 )
 def "win_setup" (
+  // window logic (the movement)
   winl = window.x + (window.width * -.5)
   winr = window.x + (window.width * .5)
   winb = window.y + (window.height * -.5)
@@ -672,28 +724,35 @@ space_last = "space".pressed
 mainloop:
   window_colour = #040404
   win_setup
+  // basically if the main window is saying its dying, die youself
   if window.parent.file_uuid == window.file.uuid (
     if window.parent.variables.winrestart (
       window "stop"
     )
   ) else (
     if winrestart (
+      // restart the window :P
       window "add" window.file.uuid
       window "stop"
     )
   )
   if wintype == "" (
+    // cap the playe rhealth
     if player_health > player_max_health (
       player_health = player_max_health
     )
-    if shop_open.not (
+    // run the game logic if ur not in a menu
+    if shop_open.not and pause_open.not (
       mainloop_main
     )
+    // quick note: player_health != -9999 or if its -9999 it means the
+    // player is dead and the game is still "playing"
     if player_health != -9999 (
       drawScene entities bullets goop player_x player_y timer
     ) else (
       drawScene entities bullets goop 9999 9999 timer
     )
+    // spawn the menus if u press the buttons
     if dead_open.not (
       if "space".pressed and space_last.not (
         if shop_open.not (
@@ -701,15 +760,23 @@ mainloop:
         )
         shop_open = shop_open.not
       )
-      space_last = space.pressed
+      space_last = "space".pressed
+      if "escape".pressed and pause_last.not (
+        if pause_open.not (
+          window "add" window.file.uuid "pause"
+        )
+        pause_open = pause_open.not
+      )
+      pause_last = "escape".pressed
     )
     
-    // ui
+    // currecny
     loc 2 2 15 -20
     icon "c #a935ff w 10 dot 0 0" 1
     text currency 12 : c#a935ff chx#10
     
     if player_health != -9999 (
+      // health / max text
       loc -2 2 -10 -20
       t = player_health ++ "/" ++ player_max_health
       change_x t.len * -12
@@ -721,7 +788,7 @@ mainloop:
       )
       text t 12
       
-      if shop_open.not (
+      if shop_open.not and pause_open.not (
         win_update
       )
     )
@@ -730,38 +797,44 @@ mainloop:
     win_sy = window.height
     win_px = window.x
     win_py = window.y
+    // spawn the dead menu if the player is dead
     if player_health <= 0 and player_health != -9999 (
       window "add" window.file.uuid "dead"
       dead_open = true
       shop_open = false
       player_health = -9999
     )
+    // music
     if "ost1".soundinfo("playing").not and play_ost (
       sound "ost1" "play"
     )
   )    
   if wintype == "shop" (
+    // window boilerplate
     v @= window.parent.variables
     if v.shop_open.not (
       window "stop"
     )
+    // render the game in this window
     game_goto v.win_px v.win_py
     square v.win_sx v.win_sy 16 : c#151515
     square v.win_sx v.win_sy 10 : c#040404
     
     drawScene v.entities v.bullets v.goop v.player_x v.player_y timer
     
+    // transparent tint
     c #000
     pen "size" 100000
     pen "opacity" 70
     pen "down"
     pen "up"
     
+    // currency
     loc 9999 9999 (v.currency ++ "").len * -10 - 5 150
     icon "c #a935ff w 10 dot 0 0" 1
     text v.currency 20 : c#a935ff chx#10
     
-    
+    // each upgrade, but its called panel for some reason
     for panel_i 3 (
       goto -150 + (panel_i-1 * 150) 0
       
@@ -772,7 +845,7 @@ mainloop:
       itm = v.shopitems[panel_i]
       upgrade = v.upgrades[itm]
       
-      
+      // buying the upgrade
       if onclick (
         if v.currency >= upgrade[1] (
           v.currency -= upgrade[1]
@@ -795,6 +868,7 @@ mainloop:
       
       change_y shopsmooth[panel_i] * 20
       
+      // cost label
       sx = x_position
       change_x (upgrade[1] ++ "").len * -6 - 5
       if v.currency >= upgrade[1] (
@@ -807,6 +881,7 @@ mainloop:
       set_x sx
       change_y 90
       
+      // lv. label
       if actions.contains(itm).not (
         sx = x_position
         txt = "lv." + v.upgrade_levels[itm]
@@ -824,27 +899,28 @@ mainloop:
       square 120 120 15 : c#c
       square 120 120 10 : c#040404
       
+      // icon
       if true "icn = up_" ++ itm
       icon icn 3 : chy#10
       
-      txt = upgrade_text[itm]
-      change_x txt.len * -5
-      text txt 10 : c#fff chy#-60
-
-      
+      // text
       txt = itm
       if upgrade_text.getKeys().contains(txt) (
         txt = upgrade_text[txt]
       )
+      change_x txt.len * -5
+      text txt 10 : c#fff chy#-60
     )
     set_x 0
     set_y -150
     
+    // restock code (but wait theres more)
     c = #fff
     if v.currency < v.restockcost (
       c = #222
     )
     
+    // restock (yes this is all the restock button code)
     square 120 20 15 0 1
     if mouse_touching (
       if onclick and v.currency >= v.restockcost (
@@ -884,17 +960,20 @@ mainloop:
     window "resizable" false
   )
   if wintype == "dead" (
+    // window boilerplate
     v @= window.parent.variables
     if v.dead_open.not (
       window "stop"
     )
     
+    // render the game in this window
     game_goto v.win_px v.win_py
     square v.win_sx v.win_sy 16 : c#151515
     square v.win_sx v.win_sy 10 : c#040404
     
     drawScene v.entities v.bullets v.goop 9999 9999 timer
     
+    // transparent tint
     c #000
     pen "size" 100000
     pen "opacity" 70
@@ -932,4 +1011,26 @@ mainloop:
       v.winrestart = true
     )
   )
+  if wintype == "pause" (
+    // window boilerplate
+    v @= window.parent.variables
+    if v.pause_open.not (
+      window "stop"
+    )
+
+    // render the game in this window
+    game_goto v.win_px v.win_py
+    square v.win_sx v.win_sy 16 : c#151515
+    square v.win_sx v.win_sy 10 : c#040404
+    
+    drawScene v.entities v.bullets v.goop 9999 9999 timer
+    
+    // transparent tint
+    c #000
+    pen "size" 100000
+    pen "opacity" 70
+    pen "down"
+    pen "up"
+  )
+
 window "show"
