@@ -1,5 +1,5 @@
 /@ event start:
-window.icon = url.get("https://raw.githubusercontent.com/RoturTW/apps/refs/heads/main/all/claw/icon.icn")
+window.icon = url.get("https://raw.githubusercontent.com/RoturTW/apps/refs/heads/main/all/claw/crlicon.icn")
 window.name = "Claw for Constellinux"
 window.id = "claw"
 window.author = "theConstellinuxProject"
