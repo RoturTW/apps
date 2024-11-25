@@ -3,8 +3,9 @@ window.icon = url.get("https://raw.githubusercontent.com/RoturTW/apps/refs/heads
 window.name = "Claw for Constellinux"
 window.id = "claw"
 window.author = "theConstellinuxProject"
-print("This is a Beta version of the Claw Client. It only supports CRLv0.11, and is read only. This is not an end product.")
 feed = url.get("https://claw.rotur.dev/feed"; "Application/JSON")
+processedFeed = array.get(["user","content"]; feed)
 
 /@ event frame:
-ui.text(array.get(["user","content"]; feed); 2)
+ui.text("This is a Beta version of the Claw Client. It only supports CRLv0.11, and is read only. This is not an end product."; 1)
+ui.tabs(processedFeed; 2)

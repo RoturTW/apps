@@ -1,1 +1,1 @@
-w 10 c #353b64 square 0 0 5 5 w 8 c #111 square 0 0 5 5 w 5 c #fff line 2 3 0 1 w 4 cont -1 0 w 3 cont -2 -2 w 2 cont -3 -4 w 1 cont -4 -6
+w 10 c #353b64 square 0 0 5 5 w 8 c #111 square 0 0 5 5 dot 0 0 c #fff w 1.5 cutcircle 3 -6.4 9 -3.5 45 w 3 cutcircle 3 -6.4 9 -2 35 w 4 cutcircle 3 -6.4 9 0 15
