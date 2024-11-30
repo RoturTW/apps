@@ -7,6 +7,7 @@ def "setdefaults"
   do_topbar = true
   do_topbar_mouse_pos = true
   do_topbar_fps = true
+  topbar_text = "Mallet - untitled.map"
 endef
 setdefaults
 
@@ -53,10 +54,15 @@ minimised_text = "Mallet"
 save_dir = "mallet@flufi"
 
 permission "request" "file viewer"
+permission "request" "start run"
 
 file "install_type" "map" icon_mallet "Map File" []
 file "use_type" "map"
-file "install_type" "addon" icon_addon "Addon File" []
+file "install_type" "addon" icon_addon "Addon File" ["studio"]
+
+if passed_Data == "SYS.onboot" (
+  window "stop"
+)
 
 def "newTool" "id,name,hotkey,icn_size,icn"
   t = [].append(id).append(name).append(hotkey).append(icn_size).append(icn)
@@ -103,7 +109,7 @@ endef
 
 def "eventaddon" "func"
   each addoni addon addons.getKeys() (
-    if func in addons[addon]["scripts"] (
+    if addons[addon]["scripts"].getKeys().contains(func) (
       runaddon addon func
     )
   )
@@ -167,18 +173,18 @@ def "loadfiles"
       filedata = save_data
       if filetokens[2] == "cfg" (
         if filetokens[1] == "settings" (
-          settings = filedata.JsonClean()
+          settings = filedata
           each expi exp settings.sidebar.expanded (
             sidebarexpanded[exp] = true
           )
         )
         if filetokens[1] == "addons" (
-          addon_settings = filedata.JsonClean()
+          addon_settings = filedata.JsonParse()
         )
       )
       if filetokens[2] == "addon" (
         if disabledaddons.contains(filetokens[1]).not (
-          addons[filetokens[1]] = filedata
+          addons[filetokens[1]] = filedata.JsonParse()
           runaddon filetokens[1] "load"
         )
         addonnames.append(filetokens[1])
@@ -188,7 +194,7 @@ def "loadfiles"
     say "Fatal Error:" + save_data
     window "stop"
   )
-  if current_texture notIn textures.getKeys() or current_texture == "" (
+  if textures.getKeys().contains(current_texture).not or current_texture == "" (
     current_texture = textures.getKeys()[1]
   )
   eventaddon "late_load"
@@ -422,7 +428,7 @@ endef
 
 def "topbar_update"
   // top bar
-  loc infinity 2 0 -15
+  loc 9999 2 0 -15
   square window_width 40 10 : c#primary
   loc 2 2 15 -18
   text topbar_text 11 : c#text
@@ -518,7 +524,7 @@ def "sidebar_update"
 
     sidebarid = sidebartab[1]
     expanded = sidebarexpanded[sidebarid]
-    if (sidebarid in sidebarexpanded).not (
+    if sidebarexpanded.getKeys().contains(sidebarid).not (
       expanded = false
     )
 
