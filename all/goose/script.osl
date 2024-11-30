@@ -17,6 +17,7 @@ last = timer
 tar_speed = 10
 mainloop:
 
+window "refresh_bg"
 if timer - last > rand (
   follow = false
   last = timer
@@ -83,7 +84,6 @@ duck_body[37] = dc * 6 + 6 + ((dir + 90).cos * -2)
 direction 90
 goto 0 0
 c #ffa200
-log duck_feet
 icon duck_feet.join(" ") 3
 c #fff
 icon duck_body.join(" ") 3
