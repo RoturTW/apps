@@ -163,7 +163,7 @@ def "loadfiles"
       save "addons.cfg" "set" {"disabledaddons":[]}
     )
     save "addons.cfg" "get"
-    disabledaddons = save_data["disabledaddons"]
+    disabledaddons = save_data.JsonParse()["disabledaddons"]
 
     save "contents"
     files = save_data
@@ -559,7 +559,7 @@ def "sidebar_update"
     )
   )
   frame "clear"
-  sidebarheight = sidebary - (frame_height / -2 - scroll_ysidebarscroll + 30) - 40
+  sidebarheight = sidebary - (frame_height / -2 - scroll_ysidebarscroll + 30) - 31
   eventaddon "gui_edt_update"
 endef
 
