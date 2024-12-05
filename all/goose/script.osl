@@ -21,10 +21,10 @@ window "refresh_bg"
 if timer - last > rand (
   follow = false
   last = timer
-  tar_speed = [0,5].random * 50
-  rand = [3,10].random
+  tar_speed = random(0,5) * 50
+  rand = random(3,10)
 )
-speed += tar_speed - speed / ( 2000 * delta_time )
+speed += tar_speed - speed / (2000 * delta_time)
 window "x" duck_x
 window "y" duck_y
 goto 0 0
@@ -40,7 +40,7 @@ if held (
   duck_x += mouse_x / 2
   duck_y += mouse_y / 2
 )
-target_dir += [-20,20].random * speed / 250
+target_dir += random(-20,20) * speed / 250
 dir += target_dir - dir / 10
 duck_x += dir.sin * speed * delta_time
 duck_y += dir.cos * speed * delta_time
