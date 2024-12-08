@@ -11,11 +11,19 @@ Create `icon.icn` in the same folder, and add your applications .icn file in the
 
 Create `info.json` and fill out this json
 
+## Screenshots
 Put Screenshots into `all/YourAppName/screenshots`
 
 Screenshots need to be 16:9
 
 You can have a maximum of 5 screenshots
+
+## Changelogs
+Put Changlogs into `all/YourAppName/changelogs`
+
+Changelogs should be .md
+
+Find an example of changelogs in the [claw](https://github.com/RoturTW/apps/tree/main/all/claw) app
 
 ```json
 {
@@ -27,7 +35,8 @@ You can have a maximum of 5 screenshots
   "game_modes": ["Single-player","Multiplayer"],
   "permissions": ["i'll fill these out for you based on your application code"],
   "supports": ["systems that your app supports"],
-  "screenshots": ["the name of a screenshot file"]
+  "screenshots": ["the name of a screenshot file"],
+  "changelogs": ["the name of a changelog file"]
 }
 ```
 
