@@ -29,7 +29,7 @@ window "dimensions" 1200 700
 window "min_size" 800 700
 
 def "send_post" "this.content,this.attachment" (
-  this.url = "https://claw.rotur.dev/post?auth=" ++ token
+  this.url = "https://claw.rotur.dev/post?os=originOS&auth=" ++ token
   this.url += "&content=" ++ encodeURIComponent(this.content)
   if this.attachment != "" (
     this.url += "&attachment=" ++ encodeURIComponent(this.attachment)
@@ -55,7 +55,7 @@ def "load_profile" "this.username" (
 )
 
 def "render_main" "feed" (
-  this.ih = 150
+  this.ih = 180
     
   len = feed.len
   count = (scroll_yfeed // this.ih).clamp(0,100)
@@ -71,19 +71,20 @@ def "render_main" "feed" (
     this.post = feed[count]
     this.user = this.post.user
 
+    this.h = this.ih - 20
+    this.offset_y = (this.h / 2 - 20)
+    
     
     loc 9999 2 0 y
-    square this.w 130 10 : c#window_colour
+    square this.w this.h 10 : c#window_colour
       if mouse_touching (
-        square this.w 130 15 : c#seco
-        square this.w 130 10 : c#prim
+        square this.w this.h 15 : c#seco
+        square this.w this.h 10 : c#prim
         if onclick (
           hovered_post = this.post
         )
       )
-      loc 9999 2 0 y + 45
-      square this.w 40 10 : c#prim
-      loc 2 2 33 y + 45
+      loc 2 2 33 y + this.offset_y
       image this.post.pfp 40 40
       text this.user 10 : c#txtc chx#30
       if onclick (
@@ -91,15 +92,19 @@ def "render_main" "feed" (
       )
     
       this.time = this.post.timestamp
-      if timestamp - this.time > 6400000 (
+      if timestamp - this.time > 12800000 (
         this.time = this.time.timestamp("convert-date")
       ) else (
-        this.time = this.time.timestamp("convert-relative").trim(1,-5)
+        this.time = this.time.timestamp("convert-relative")
       )
       this.tw = this.time.len * 8
-      loc -2 2 -20 - this.tw y + 45
+      loc -2 2 -20 - this.tw y + this.offset_y
       text this.time 8
-      loc -2 2 -30 y - 40
+      
+      loc 2 2 20 y - this.offset_y
+      text "Posted From " ++ (this.post.os ?? "Unknown") 8
+      
+      loc -2 2 -30 y - this.offset_y
       this.likes = this.post.likes
       if this.likes == "" (
         this.total_likes = 0
@@ -121,6 +126,7 @@ def "render_main" "feed" (
         set_rating this.post.id this.rating
         posts.feed = feed
       )
+
       change_x this.total_likes.len * -8 - 20
       text this.total_likes 8
 
@@ -131,8 +137,8 @@ def "render_main" "feed" (
         loc -2 2 -30 y
         icon "image" 0.8
       )
-      loc 2 2 20 y
-      text this.post.content.wrapText(this.w / 9 - 7 - this.offset) 9
+      loc 2 2 20 y + 20
+      text this.post.content.replace("\n"," ").wrapText(this.w / 9 - 1 - this.offset) 9
       y -= this.ih
     )
 )
@@ -237,7 +243,7 @@ if posts.got (
     change this.w / -2 + 10 -50
     text input_claw.len ++ "/100" 8 : c#txtc
   
-    loc 2 2 20 y - 20
+    change_x 40
     text "Click Here To Paste An Image URL" 8
     if onclick (
       attachment = clipboard
