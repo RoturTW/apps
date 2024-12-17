@@ -1,29 +1,75 @@
-base = {"op":2,"d":"","s":null,"t":null}
+base = {
+  "op":2,
+  "d": {
+    "token": "",
+    "intents": 4194303,
+    "properties": {
+      "$os": "originOS",
+      "$browser": system_browser.destr,
+      "$device": system_os.destr
+    }
+  },
+  "s":null,
+  "t":null
+}
 // base packet
 window "dimensions" 1000 600
-properties = {"$os":"originOS","$browser":"originOS","$device":"originOS"}
-properties."$browser" = system_browser.destr
-properties."$device" = system_os.destr
+
 // get system properties
 loaded = []
-d = {"token":"","intents":4194303}
-d.properties = properties
 
 proxy = "https://apps.mistium.com/cors?url="
 
-message_rightclick = {}
+status_colours = {
+  "online":"#23a55a",
+  "idle":"f0b232",
+  "dnd":"#f23f43",
+  "offline":"#80848e"
+}
+
+// Channels
+def "channel_copy_id" "this.chnl" (; clipboard "set" this.chnl.id ;)
+
+channel_menu = [
+  {"Copy Channel Id":"channel_copy_id"},
+]
+
+// Messages
+def "message_copy" "this.msg" (; clipboard "set" this.msg.content;)
+def "message_reply" "this.msg" (; current_reply = this.msg;)
+
+def "message_delete" "this.msg" (
+  this.out = ("https://apps.mistium.com/discord-delete-message?channelid=" ++ current_channel ++ "&messageid=" ++ this.msg.id ++ "&token=" ++ token).getAsync()
+)
+
+message_menu = [
+  {"Copy Message Text": "message_copy"},
+  {"Reply To Message": "message_reply"},
+  {"Delete Message": "message_delete"}
+]
+
+def "user_dm" "this.user" (
+  current_channel = ("https://proxy.milosantos.com/turbowarpbot/createdm.php?recipient_id=" ++ this.user ++ "&token=" ++ token).get()
+)
+
+user_menu = [
+  {"Message User": "user_dm"}
+]
 
 def "connect" (
   discord = "gateway.discord.gg/?v=9&encoding=json:443".newWebsocket()
 )
 
+def doProxy(this.url) (
+  return proxy ++ encodeURIComponent(this.url)
+)
+
 def "login" "token" (
-  temp = base
   status = "online"
-  dat = d
-  dat.token = token.destr
-  temp.d = dat
-  discord.wsSend(temp)
+  
+  base.d.token = token.destr
+  
+  discord.wsSend(base)
   heartbeat_msg = {"op":1,"d":null}
   last_heartbeat = timer + 41.25
 )
@@ -58,19 +104,15 @@ def "heartbeat" (
 )
 
 def "send_file" "this.content, this.channel, this.file_name, this.file_content" (
-  obj = {}
-  obj.channelid = this.channel
-  obj.content = this.content
-  obj.filename = this.file_name
-  obj.token = token
-  obj.dataURI = this.file_content.makeUrl("text/plain")
-  this.url = "https://apps.mistium.com/upload-discord-file"
-  this.out = this.url.http("POST",obj,{"Content-Type":"application/json"})
-)
-
-def "dm_user" "content, user_id" (
-  channel = ("https://apps.mistium.com/create-dm-channel?userid=" ++ user_id ++ "&token=" ++ token).get()
-  send_message content channel
+  this.obj = {
+    "channelid": this.channel,
+    "content": this.content,
+    "filename": this.file_name,
+    "token": token
+  }
+  this.obj.dataURI = this.file_content.startsWith("data:") ? this.file_content this.file_content.makeUrl("text/plain")
+  
+  this.out = "https://apps.mistium.com/upload-discord-file".http("POST",this.obj,{"Content-Type":"application/json"})
 )
 
 import as "window_tools"
@@ -87,23 +129,6 @@ permission "request" "file admin"
 
 save "originCord@mistium" "set_directory"
 
-contents = saveContents()
-
-if contents.len > 1 (
-  cur_file = "What Token File To Use?".ask() ++ ".txt"
-  token_in = cur_file.saveGet()
-) else (
-  if "token.txt".saveExists() (
-    token_in = "token.txt".saveGet()
-  ) else (
-    token_in = "Enter A Discord Bot Token".ask()
-    if token_in != "" (
-      save "token.txt" "set" token_in.toStr()
-    ) else (
-      window "stop"
-    )
-  )
-)
 def "disc_connect" (
   connect
   wait 1
@@ -121,32 +146,38 @@ def "async_msg" "content, channel" (
 )
 
 def addAttachment(attachment,height) (
-  this.app = height.newArray() ++ [["","","","",""]] ++ height.newArray()
+  this.app = height.newArray() ++ [["","","","","","",""]] ++ height.newArray()
   attachment.content_height = height
-  attachment.url = proxy ++ encodeURIComponent(attachment.url)
+  attachment.url = doProxy(attachment.url)
   this.app[height+1][5] = attachment
   return this.app
 )
 
 def makepfp(this.aut) (
-  pfp = proxy
   this.av = this.aut.avatar
   if this.av == "" (
-    pfp = "https://raw.githubusercontent.com/Mistium/apps/main/all/origincord/assets/no-pfp.jpg"
+    return "https://raw.githubusercontent.com/Mistium/apps/main/all/origincord/assets/no-pfp.jpg"
   ) else (
-    pfp += encodeURIComponent("https://cdn.discordapp.com/avatars/" ++ this.aut.id ++ "/" ++ this.av ++ ".png?size=64")
+    return doProxy("https://cdn.discordapp.com/avatars/" ++ this.aut.id ++ "/" ++ this.av ++ ".png?size=32")
   )
-  return pfp
+)
+
+def "focusChannel" "this.id" (
+  current_channel = this.id
 )
 
 def makeSticker(this.id) (
   return "https://media.discordapp.net/stickers/" ++ this.id ++ ".png?size=240&quality=lossless"
 )
 
+def memFromId(this.id) (
+  return current_members[current_member_ids.index(this.id)]
+)
+
 def "handle_message" "msg, ping" (
   if msg.istype("object") (
     author = msg.author
-    member = current_members[author.id]
+    member = memFromId(author.id)
     type = msg["type"]
   
     msg_cha = messages[channel]
@@ -156,30 +187,27 @@ def "handle_message" "msg, ping" (
       msg_cha = []
     )
   
-    name = member.nick
-    name ??= author.global_name
-    name ??= author.username
+    name = member.user.name
  
     content = msg.content
     attachments = msg.attachments
-    each mention msg.mentions (
-      content.replace("<@" ++ mention.id ++ ">","@" ++ mention.username)
-    )
-    pfp = proxy
     if member.avatar != "" (
-      pfp += "https://cdn.discordapp.com/guilds/" ++ current_guild[4] ++ "/users/" ++ author.id ++ "/avatars/" ++ member.avatar ++ ".png?size=64"
+      pfp = doProxy("https://cdn.discordapp.com/guilds/" ++ current_guild[4] ++ "/users/" ++ author.id ++ "/avatars/" ++ member.avatar ++ ".png?size=32")
     ) else (
       pfp = makepfp(author)
     )
-    authid = author.id
+    authid = author.id ++ "/" ++ author.username
     isreply = type == 19
     
     if isreply (
       referenced = msg.referenced_message
+      
       message = [""]
-      message.append(referenced.author.username + referenced.content)
+      message.append(memFromId(referenced.author.id).user.name + referenced.content.replace("\n"," "))
       message.append("reply")
       message.append(false)
+      message.append("")
+      message.append(msg)
       msg_cha.append(message)
       authid = ""
     )
@@ -195,43 +223,42 @@ def "handle_message" "msg, ping" (
       message.append("")
       message.append(pfp)
       message.append(false)
-      message.append("")
+      message.append(member.user.colour ?? txtc)
+      message.append(msg)
       msg_cha.append(message)
     )
     if content.len > 0 (
       content.split(newline)
       each item content (
-        item.strip()
-        emoji_match = item.regex("/^<a?:[^:]+:(\d+)>$/")
+        emoji_match = item.strip().match("/^<a?:[^:]+:(\d+)>$/")
         if emoji_match.len > 0 (
           att = {}
-          att.url = "https://media.discordapp.net/emojis/" ++ emoji_match[1].regex("/\d+(?=>)/")[1] ++ ".png?size=64&quality=lossless"
+          att.url = "https://media.discordapp.net/emojis/" ++ emoji_match[2] ++ ".png?size=64&quality=lossless"
           att.filetype = "image"
           msg_cha = msg_cha ++ addAttachment(att,1)
         ) else (
           message = [""]
-          message.append(item)
+          content = item.match("/<[^ >]+>|[^<>\[\]()]+|./gm")
+          if content.len == 1 (; content = content[1]; )
+          message.append(content)
           message.append("")
           message.append(ping)
           message.append("")
+          message.append(msg)
           msg_cha.append(message)
         )
       )
     )
     each att attachments (
-      type = att.filename.split(".").last()
-      if ["png","jpg","jpeg","webp"].contains(type) (
-        att.filetype = "image"
-      ) else (
-        att.filetype = "unknown"
-      )
+      att.filetype = att.content_type.split("/").first()
       msg_cha = msg_cha ++ addAttachment(att,5)
     )
     this.stickers = msg.sticker_items
     if this.stickers.len > 0 (
-      att = {}
-      att.url = makeSticker(this.stickers[1].id)
-      att.filetype = "image"
+      att = {
+        "url": makeSticker(this.stickers[1].id),
+        "filetype": "image"
+      }
       msg_cha = msg_cha ++ addAttachment(att,3)
     )
     messages[channel] = msg_cha
@@ -243,28 +270,30 @@ def "draw_guilds" (
   len = guilds.len
   frame window.left window.top - 40 window.left + 47 window.bottom len - 0.5 * 50 "guild"
   count = scroll_yguild // 50
-  loop (window_height // 50).clamp(0,len) (
+  log window.height // 50
+  loop (window.height // 50).clamp(0,len + 1) (
     count ++
     y = count - 0.5 * -50 + scroll_yguild
     guild @= guilds[count]
+    guild_id = guild[4]
     loc 999 2 0 y
-    if guild == current_guild (
+    if guild_id == current_guild[4] (
       square 30 30 15 : c#seco
-      new_messages[guild[4]] = false
+      new_messages[guild_id] = false
     ) else (
       square 40 40 10 0 1
-      if clicked (
+      if onclick (
         current_guild = guild
-        current_roles = roles[guild[4]].getKeys("id")
-        current_members = guild[7]
+        current_roles = roles[guild_id].getKeys("id")
+        current_members = all_members[guild[4]]
+        current_member_ids = all_member_ids[guild[4]]
       )
     )
     image guild[2] 40 40
     icon circle_pfp 1.3 : c#window_colour
-    if guild == current_guild (
+    if guild_id == current_guild[4] (
       icon "w 1.5 cutcircle 0 0 17 0 180" 1.3 : c#seco
-    )
-    if new_messages[guild[4]] == true (
+    ) else if new_messages[guild_id] == true (
       icon "w 1.5 cutcircle 0 0 17 0 180" 1.3 : c#txtc
     )
     c window_colour
@@ -290,45 +319,27 @@ def "draw_channels" "cur" (
       )
       y -= this.ih
       loc 999 2 0 y
-    
+   
       id = chnl.id
+      this.current_channel = current_channel == id
       if id != "" (
         if chnl["type"] !== 4 (
-          if current_channel == id (
+          if this.current_channel (
             square w 25 15 : c#seco
-           square w 25 10 : c#window_colour
+            square w 25 10 : c#window_colour
           ) else if new_messages[id] == true (
             square w 25 15 : c#txtc
             square w 25 10 : c#window_colour
           ) else (
             square w 25 15 : c#window_colour
           )
-          if clicked or current_channel == id (
-            current_channel = id
-            new_messages[id] = false
-            if loaded.contains(id).not (
-              link = "https://apps.mistium.com/get-discord-messages?channelid=" ++ id ++ "&token=" ++ token
-              data = link.getAsync()
-              c txtc
-              set_x frame.right - 30
-              direction timer * 200
-              icon "w 3 cutcircle 0 0 10 0 50" 1
-              direction 90
-              if data != "Loading" (
-                data = data.JsonClean().reverse()
-                channel = id
-                typing = {}
-                each load_msg data (
-                  handle_message load_msg false
-                )
-                loaded.append(id)
-              )
-            )
-            ping_channels.delete(id)
+          rightclick channel_menu chnl
+          if clicked or this.current_channel (
+            focusChannel id
           )
           if typing[id].len > 0 (
             this.pos = def(this.x) -> (
-              return ((timer + this.x * 300).sin * 10)
+              return (timer + this.x * 300).sin() * 10
             )
             loc -2 2 -20 y + this.pos(0)
             icon "w 4 dot 0 0" 1 : c#txtc
@@ -367,6 +378,7 @@ def "draw_chat" "cur_msgs" (
   input_offset = 40
   this.ih = 25
   frame window.left + 360 window.top - 40 window.right - 300 window.bottom + attachment_offset len * this.ih "chat"
+  chat_frame = frame
   count = scroll_ychat // this.ih
   y = scroll_ychat % this.ih
   
@@ -380,32 +392,94 @@ def "draw_chat" "cur_msgs" (
     ) else (
       square w 20 0 0 1
     )
+    msg_data = msg[6]
     hover = mouse_touching
-    if hover and msg != "" (
-      square w 20 0 0 : c#prim
+    if hover and msg_data.content != "" (
+      rightclick message_menu msg_data
     )
-    loc 2 2 20 y
+    msg_c = txtc
+    if deleted_messages.contains(msg_data.id) (
+      msg_c = #f23f43
+    )
+    
+    loc 2 2 40 y
     this.txt = msg[2].trimText(w / 10 - 2)
-    c txtc
+    c msg_c
     if msg[3] == "reply" (
-      change 5 -25
+      change -5 -25
       icon "w 2 line -5 -10 -5 -5 cutcircle -1 -4 4 -4.5 45 cont 10 0" 1
       text this.txt == " " ? "Message Not Found" "reply -> " ++ this.txt 9 : chx#20
     ) else if msg[1] != "" (
-      image msg[3] 29 29
-      text msg[1] 10 : chx#20 c#txtc
+      change -10 -10
+      image msg[3] 40 40
+      change 30 10
+      text msg[1] 10 : c#msg[5]
+      rightclick user_menu msg_data.author.id
     ) else (
       change_x 20
-      text this.txt 9
+      if msg[2].isType("Array") (
+        this.txt = msg[2]
+        each i this.txt (
+          if i[1] == "<" (
+            switch i[2] (
+              case "@"
+                member = memFromId(i.trim(3,-2)).user
+                i = "@" ++ member.name
+                change_x i.len * 5
+                square i.len * 10 20 10 : c#prim
+                change_x i.len * -5
+                c member.colour ?? txtc
+                text i 10
+                c msg_c
+                break
+              case ":"
+                change_x 10
+                i = i.trim(3,-2)
+                
+                image doProxy("https://media.discordapp.net/emojis/" ++ i.trim(i.index(":") + 1,-1) ++ ".png?size=64&quality=lossless") 20 20
+                change_x 10
+                break
+            )
+          ) else (
+            text i 10
+          )
+        )
+      ) else (
+        text this.txt 10
+      )
       if msg[5].isType("object") (
         att @= msg[5]
         file_type = att.filetype
         this.h = this.ih * att.content_height * 2 + 10
         url = att.url
-        aspect_ratio = url.imageinfo("width") / url.imageinfo("height")
-        loc 2 2 40 + (aspect_ratio * this.h / 2) y
-        if file_type == "image" (
-          image url this.h * aspect_ratio this.h
+        switch file_type (
+          case "image"
+            aspect_ratio = url.imageinfo("width") / url.imageinfo("height")
+            loc 2 2 60 + (aspect_ratio * this.h / 2) y
+            image url this.h * aspect_ratio this.h
+            break
+          case "video"
+            aspect_ratio = url.videoinfo("width") / url.videoinfo("height")
+            this.h -= 20
+            this.w = this.h * aspect_ratio
+            loc 2 2 60 + (this.w / 2) y + 10
+            video url this.w this.h
+            change_y this.h / -2 - 20
+            square this.w - 10 20 10 : c#prim
+            change_x this.w / -2 + 20
+            c txtc
+            if url.videoinfo("playing") (
+              icon "pause" 0.7
+              if onclick (
+                video url "pause"
+              )
+            ) else (
+              icon "play" 0.7
+              if onclick (
+                video url "play"
+              )
+            )
+            break
         )
       )
     )
@@ -417,8 +491,9 @@ def "draw_chat" "cur_msgs" (
 def "draw_members" "cur_mem" (
   this.ih = 35
   sidebar_ih = 35
-  len = cur_mem.len
+  len = current_member_ids.len
   sidebar_len = len
+
   count = scroll_ymembers // this.ih
   y = scroll_ymembers % this.ih - (this.ih / 2)
   
@@ -428,9 +503,16 @@ def "draw_members" "cur_mem" (
     mem @= cur_mem[count].user
     loc 999 2 0 y
     square w 20 10 : c#window_colour
+    rightclick user_menu mem.id
+    
     loc 2 2 30 y
-    image makepfp(mem) 30
-    text mem.global_name ?? mem.username 10 : c#txtc chx#20
+    c status_colours[presences[mem.id]]
+    image makepfp(mem) 30 30
+    change 10 -10
+    square 5 5 5
+    change -10 10
+    c mem.colour ?? txtc
+    text mem.name 10 : chx#20
     y -= this.ih
   )
 )
@@ -481,10 +563,10 @@ def "draw_sidebar" (
   frame "clear"
   
   c seco
-  frame w.right - 300 w.top - 80 w.right w.bottom + attachment_offset sidebar_len * sidebar_ih sidebar_mode
+  frame w.right - 300 w.top - 80 w.right w.bottom sidebar_len - 0.5 * sidebar_ih sidebar_mode
   switch sidebar_mode (
     case "members"
-      draw_members current_guild[7]
+      draw_members current_members
       break
     case "stickers"
       draw_stickers stickers
@@ -496,34 +578,130 @@ def "draw_sidebar" (
   frame "clear"
 )
 
-guilds = []
-new_messages = {}
-all_messages = {}
-typing = {}
-stickers = {}
+loaded_cord = false
 
-current_channel = ""
-current_attachment = ""
-attachment_offset = 40
+def "setup" (
+  guilds = []
+  new_messages = {}
+  all_messages = {}
+  typing = {}
+  stickers = {}
 
-disc_connect
-setStatus "online" "originCord"
+  current_channel = ""
+  current_attachment = ""
+  current_reply = ""
+  attachment_offset = 40
+  current_guild = ""
 
-guild_info_shift = 0
+  disc_connect
+  setStatus "online" "originCord"
 
-roles = {}
+  guild_info_shift = 0
+
+  roles = {}
+  member_search = {}
+  all_members = {}
+  all_member_ids = {}
+  current_members = []
+  mention_picker = {}
+
+  presences = {}
+  deleted_messages = []
+  
+  loaded_cord = true
+)
 
 mainloop:
 
 window_tools:load_theme
 
+c window_colour
+pen "size" window.width + window.height
+pen "opacity" 60
+
+glass:frame window.left + 50 window.top window.right window.bottom
+goto 0 0
+pen "down"
+pen "up"
+frame "clear"
+
+frame window.left + 360 window.top window.right window.bottom
+goto 0 0
+pen "down"
+pen "up"
+frame "clear"
+
+if loaded_cord.not (
+  
+  contents = saveContents().JsonParse()
+  
+  goto 0 window.top - 20
+  square window.width 40 10 : c#prim
+  loc 2 2 20 -20
+  text "OriginCord - Pick A Token" 10 : c#txtc
+  frame window.left + 360 window.top - 50 window.right window.bottom contents.len * 50
+    y = 25
+    each token_file contents (
+      goto 0 frame.top - y
+      square frame.width - 25 30 10 : c#prim
+      if mouse_touching (
+        square frame.width - 25 30 10 : c#seco
+        square frame.width - 25 30 5 : c#prim
+        if onclick (
+          token_in = token_file.saveGet()
+          setup
+        )
+      )
+      change_x frame.width / -2 + 15
+      text token_file.split(".").first() 10 : c#txtc
+      goto frame.width / 2 - 30 frame.top - y
+      icon "bin" 0.8
+      if onclick (
+        save token_file "delete"
+      )
+      y += 50
+    )
+  frame "clear"
+  
+  frame window.left + 50 window.top - 50 window.left + 360 window.bottom
+    loc 2 2 10 -20
+    text "Add Token (Only works with bots)" 9 : c#txtc
+    
+    goto 0 window.top - 80
+    square frame.width - 30 25 10 : c#prim
+    input frame.width - 35 25 "token_name" "Token Name..."
+    
+    goto 0 window.top - 120
+    square frame.width - 30 25 10 : c#prim
+    input frame.width - 35 25 "token_data" "Bot Token..."
+    
+    goto 0 window.top - 160
+    if input_token_data != "" and input_token_name != "" (
+      c seco
+    ) else (
+      c prim
+    )
+    square frame.width - 30 25 10
+    if onclick (
+      save input_token_name ++ ".txt" "set" input_token_data
+      input_token_data = ""
+      input_token_name = ""
+    )
+    change_x frame.left + 30
+    icon "add" 0.5 : c#txtc
+    text "Add Token" 9 : chx#15
+    
+
+  frame "clear"
+  
+  import "win-buttons"
+  exit
+)
+
 heartbeat
 if discord.wsOpen().not (
-  guilds = []
-  new_messages = []
-  loaded = []
-  all_messages = {}
-  disc_connect
+  loaded_cord = false
+  say "Failed/Lost Websocket Connection, Check Your Token Is Correct"
 )
 
 if discord.wsHasnew() (
@@ -538,16 +716,10 @@ if discord.wsHasnew() (
       discord_username = discord_user.username
       break
     case "GUILD_CREATE"
-      categories = {}
       roles[dat.id] = dat.roles.sortBy("position").reverse()
       ping_channels = []
       guild_icon = proxy ++ encodeURIComponent("https://cdn.discordapp.com/icons/" ++ dat.id ++ "/" ++ dat.icon ++ ".png?size=64")
-      
-      members = {}
-      each i member dat.members (
-        members[member.user.id] = member
-      )
-      
+
       channels = dat.channels.sortBy("position")
       categories = {"null":[]}
       each channel channels (
@@ -557,35 +729,83 @@ if discord.wsHasnew() (
         )
         categories[parent] = (categories[parent] ?? []).append(channel)
       )
-      
+
       channels = []
       each cat categories.getValues() (
         channels = channels ++ cat
       )
-      temp = []
-      temp.append(dat.name)
-      temp.append(guild_icon)
-      temp.append(channels)
-      temp.append(dat.id)
-      temp.append(dat.banner)
-      temp.append(dat.member_count)
-      temp.append(members.getValues())
-      guilds.append(temp)
       
+      members = dat.members
+      
+      r2 = roles[dat.id]
+      r3 = r2.getKeys("id")
+
+      for i members.len (
+        _dat = members[i]
+        _name = _dat.nick
+        _name ??= _dat.user.global_name
+        _name ??= _dat.user.username
+        
+        members[i].user.name = _name
+        
+        r = _dat.roles
+        out = r3.len + 1
+        i2 = 0
+        loop r.len (
+          i2 ++
+          role_id = r[i2]
+          role_current = r3.index(role_id)
+          if r2[role_current].color != 0 and out > role_current (
+            out = role_current
+          )
+        )
+        if out == r3.len + 1 (
+          members[i].user.colour = ""
+          members[i].order = 0
+        ) else (
+          members[i].user.colour = r2[out].color
+          members[i].order = r2[out].position
+        )
+      )
+      members = members.sortBy("order").reverse()
+      
+      each presence dat.presences (
+        presences[presence.user.id] = presence.status
+      )
+      
+      this.arr = [
+        dat.name,
+        guild_icon,
+        channels,
+        dat.id,
+        dat.banner,
+        dat.member_count
+      ]
+      guilds.append(this.arr)
+
+      all_members[dat.id] = members
+      all_member_ids[dat.id] = members.getKeys("user").getKeys("id")
       stickers[dat.id] = dat.stickers
       break
     case "TYPING_START"
       channel = dat.channel_id
       if current_guild[4] == dat.guild_id (
         temp = dat.member.user
-        obj = {}
-        obj.name = temp.username
+        obj = {
+          "name": dat.member.nick,
+          "user": temp.id
+        }
+        
         obj.timestamp = dat.timestamp * 1000
-        obj.user = temp.id
+        
+        obj.name ??= temp.global_name
+        obj.name ??= temp.username
+
         
         typing[channel] ??= []
         
         typing[channel] = typing[channel].append(obj)
+        
       )
       break
     case "MESSAGE_CREATE"
@@ -620,45 +840,131 @@ if discord.wsHasnew() (
       new_messages[channel] = true
       new_messages[dat.guild_id] = true
       break
+    case "MESSAGE_DELETE"
+      deleted_messages.append(dat.id)
+      break
+    case "PRESENCE_UPDATE"
+      if dat.status == "offline" (; dat.status = ""; )
+      presences[id].status = dat.status
+      break
   )
   dat = null
   msg = null
 )
 if file_dropped != 0 (
-  file "open" file_dropped
-  temp = []
-  temp.append(file[14])
-  temp.append(file[4])
-  temp.append(file[2] ++ file[1])
-  current_attachment = temp
+  file "open" file_dropped "onlyaccess"
+  current_attachment = [
+    fileGet(14),
+    fileGet(4)
+  ]
+  current_attachment.append(fileGet(2) ++ fileGet(1))
   
   file_dropped = 0
 )
 
-c window_colour
-pen "size" window.width + window.height
-pen "opacity" 60
 
-glass:frame window.left + 50 window.top window.right window.bottom
-goto 0 0
-pen "down"
-pen "up"
-frame "clear"
-
-frame window.left + 360 window.top window.right window.bottom
-goto 0 0
-pen "down"
-pen "up"
-frame "clear"
-
-if current_attachment == "" (
-  attachment_offset = 40
+if current_channel != "" (
+  new_messages[current_channel] = false
+  if loaded.contains(current_channel).not (
+    data = ("https://apps.mistium.com/get-discord-messages?channelid=" ++ current_channel ++ "&token=" ++ token).getAsync()
+    
+    goto 0 0
+    direction timer * 200
+    icon "w 3 cutcircle 0 0 10 0 50" 1 : c#txtc
+    direction 90
+    if data != "Loading" (
+      data = data.JsonClean().reverse()
+      channel = current_channel
+      typing = {}
+      each load_msg data (
+        handle_message load_msg false
+      )
+      loaded.append(current_channel)
+    )
+  )
+  clicked = false
+  ping_channels.delete(current_channel)
+  
+  current_typing = typing[current_channel]
+  draw_chat messages[current_channel]
 ) else (
-  attachment_offset = 200
-  frame window.left + 360 window.bottom + 200 window.right window.bottom + 50
+  current_typing = []
+)
+if current_members.len > 0 (
+  draw_sidebar
+)
+
+f = chat_frame
+x = f.x - window.x
+y = f.y - window.y
+
+mention_picker.match = input_message.match("/(?:[^<]|^)@([^ ]+)/")
+if mention_picker.match.len > 0 (
+  attachment_offset = 400
+  frame f.left + x window.bottom + 400 f.right + x window.bottom + 55
   goto 0 0
-  c prim
-  square frame.width - 25 frame.height - 25 15
+  square frame.width - 25 frame.height - 25 15 : c#prim
+  
+  if mention_picker.temp != mention_picker.match[2] (
+    mention_picker.temp = mention_picker.match[2]
+    mention_list = []
+    mention_users = current_members.getKeys("user")
+    
+    i = 0
+    while i < mention_users.len and mention_list.len < 7 (
+      i ++
+      _name = mention_users[i].name
+      if _name.contains(mention_picker.temp) (
+        arr = [
+          _name,
+          makepfp(mention_users[i]),
+          mention_users[i].id,
+        ]
+        arr.append(mention_users[i].colour ?? txtc)
+        mention_list.append(arr)
+      )
+    )
+  )
+  
+  loc 2 2 30 -30
+  c txtc
+  each i mention_list (
+    set_x 0
+    square frame.width - 30 30 10 : c#window_colour
+    if mouse_touching (
+      square frame.width - 30 30 5 : c#prim
+      if onclick (
+        input_message.replace("/(?:[^<]|^)@([^ ]+)/","<@" ++ i[3] ++ ">")
+      )
+    )
+    set_x frame.left + 30
+    image i[2] 20 20
+    text i[1] 10 : chx#20 c#i[4]
+    change_y -47.5
+  )
+
+  frame "clear"
+) else if current_reply != "" (
+  attachment_offset = 70
+  frame f.left + x window.bottom + 90 f.right + x window.bottom + 45
+  member = memFromId(current_reply.author.id)
+  goto 0 0
+  square frame.width - 25 frame.height - 25 15 : c#prim
+  set_x frame.left + 20
+  text "Replying to " 9 : c#txtc
+  c member.user.colour ?? txtc
+  text member.user.name 9
+  set_x frame.right - 20
+  icon "close" 0.7 : c#txtc
+  if onclick (
+    current_reply = ""
+  )
+  frame "clear"
+) else if current_attachment != "" (
+  attachment_offset = 200
+  frame f.left + x window.bottom + 200 f.right + x window.bottom + 55
+  goto 0 0
+  square frame.width - 25 frame.height - 25 15 : c#prim
   file "open" current_attachment[1] "onlyaccess"
   loc 2 2 30 -30
   file "render" 1.5 : c#txtc
@@ -670,6 +976,8 @@ if current_attachment == "" (
     current_attachment = ""
   )
   frame "clear"
+) else (
+  attachment_offset = 40
 )
 loc 999 2 0 -20
 square window_width 30 10 : c#prim
@@ -686,25 +994,23 @@ draw_channels current_guild[3]
 guild_info_shift = window.top - (current_guild[5].len == 32 ? 260 110)
 
 frame window.left + 50 window.top - 40 window.left + 360 guild_info_shift (
-  goto 0 30
+  if current_guild != "" (
+    goto 0 30
 
-  if current_guild[5].len == 32 (
-    image proxy ++ "https://cdn.discordapp.com/banners/" ++ current_guild_id ++ "/" ++ current_guild[5] ++ ".png?size=512" frame.width frame.height - 60
+    if current_guild[5].len == 32 (
+      image proxy ++ "https://cdn.discordapp.com/banners/" ++ current_guild_id ++ "/" ++ current_guild[5] ++ ".png?size=512" frame.width frame.height - 60
+    )
+    loc 2 -2 10 44
+    text current_guild[1] 10 : c#txtc
+
+    loc 2 -2 10 22
+    text current_guild[6] + "members" 10
+  ) else (
+    loc 2 2 10 -20
+    text "Select A Guild To View Channels" 9 : c#txtc
   )
-  loc 2 -2 10 44
-  text current_guild[1] 10 : c#txtc
-
-  loc 2 -2 10 22
-  text current_guild[6] + "members" 10
 )
 
-if current_channel != "" (
-  current_typing = typing[current_channel]
-  draw_chat messages[current_channel]
-  draw_sidebar
-) else (
-  current_typing = []
-)
 loc 2 -2 205 25
 square 300 30 10 : c#prim
 change_x -135
@@ -713,14 +1019,20 @@ if discord_pfp.startsWith("https://") (
 )
 change_x 30
 text discord_username 9 : c#txtc
+loc 2 -2 340 25
+icon "close" 0.7
+if onclick (
+  loaded_cord = false
+  discord.wsClose()
+)
 
-w = window_width - 380
+w = chat_frame.width - 25
 
 total_typing = current_typing.len
 if total_typing > 0 (
-  loc 999 -2 180 55
+  goto x window.bottom + 55
   square w 20 10 : c#prim
-  loc 2 -2 380 55
+  change_x w / -2 + 20
   c txtc
   if total_typing < 4 (
     each i cur current_typing (
@@ -737,7 +1049,7 @@ if total_typing > 0 (
   text total_typing == 1 ? " Is Typing" " Are Typing" 8
 )
 
-loc 999 -2 180 25
+goto x window.bottom + 25
 c prim
 square w 30 10
 input w 30 "message"
@@ -756,22 +1068,18 @@ if "enter".isKeyDown() and input_message != "" (
     exit
   )
   if send.startsWith(".version") (
-    async_msg "originCord v4.3" current_channel
+    async_msg "originCord v4.8" current_channel
     input_message = ""
     exit
   )
-  if send.contains("@") (
-    pings = send.regex("/@[^ ]+/g")
-    ping_users = current_members.getValues().getKeys("user")
-    ping_usernames = ping_users.getKeys("username")
-    each ping pings (
-      send.replace(ping,"<@" ++ ping_users[ping_usernames.index(ping.trim(2,-1))].id ++ ">")
-    )
-    ping_users = []
-    ping_usernames = []
-  )
   if current_attachment == "" (
-    async_msg send current_channel
+    if current_reply == "" (
+      async_msg send current_channel
+    ) else (
+      link = "https://apps.mistium.com/discord-send-reply?token=" ++ token ++ "&channelid=" ++ current_channel ++ "&content=" ++ encodeURIComponent(send.toStr()) ++ "&messageid=" ++ current_reply.id
+      this.result = link.getAsync()
+      current_reply = ""
+    )
   ) else (
     send_file send current_channel current_attachment[3] current_attachment[2]
     current_attachment = ""
