@@ -1,0 +1,46 @@
+browser = "https://constellinux.github.io/Ceslum/App.html".iframeNew()
+icon = "w 1.5625 c #3eba00 line -9.375 -9.375 9.375 -4.6875 line -9.375 -4.6875 9.375 0 line -9.375 0 9.375 4.6875 4.6875 line -9.375 4.6875 9.375 9.375 c #fff w 3.125 cutcircle 0 0 7.1875 0 100 w 1.5625 cutcircle 0 0 7.1875 18 100 square 0 0 10 10"
+minimised_text = "Ceslum"
+cooldown = 5
+mainloop:
+cooldown += 1
+goto window.left + 5 window.top - 15
+text "Ceslum for originOS" 10
+browser.iframeResize(window.width, window.height - 40)
+browser.iframeGoto(0,-20)
+if oldX !== window.x or oldY !== window.y (
+cooldown = 0
+)
+if cooldown < 5 (
+browser.iframeHide()
+) else (
+browser.iframeShow()
+)
+oldX = window.x
+oldY = window.y
+
+window "show"
+direction 90
+loc -2 2 -60 -20
+c user.theme.primary
+square 100 17 10
+change_x 37.5
+c user.theme.text
+icon "close" 0.6 : hover_size#1.1
+if clicked (
+  window "stop"
+)
+icon "down" 0.6 : chx#-25 hover_size#1.1
+if clicked (
+   browser.iframeHide()
+  window "minimise"
+)
+icon "maximise" 0.6 : chx#-25 hover_size#1.1
+if clicked (
+  window "maximise"
+)
+icon "reload" 0.6 : chx#-25 hover_size#1.1
+if clicked (
+   browser.iframeClose()
+   browser = "https://constellinux.github.io/Ceslum/App.html".iframeNew()
+)
