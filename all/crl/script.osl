@@ -1,0 +1,30 @@
+import "window_tools"
+icon = "c #d98b0d w 6 square 0 -2 5 6 square -2 3 3 5 dot 0 -3 w 3 c #966412 line 2 9.5 6.5 5 cont 2 5 cont 2 9.5  c #fff w 1.5 cutcircle 2 -2 3 0 180 cutcircle -2 -5 3 0 180"
+seticon icon
+minimised_text = "CRL"
+if passed_data != "" (
+  file "open" passed_data
+  browser = "https://constellinux.github.io/Constello/Constello/v0.0.4.html?code=" ++ encodeURIComponent(data)
+) else (
+  browser = "https://constellinux.github.io/Constello"
+)
+file "install_type" "crl" icon "Constellinux Program" []
+file "use_type" "crl"
+browser = browser.iframeNew()
+mainloop:
+cooldown += 1
+goto window.left + 5 window.top - 15
+text "CRL" 10
+browser.iframeResize(window.width, window.height - 50)
+browser.iframeGoto(0,-140)
+if oldX !== window.x or oldY !== window.y (
+cooldown = 0
+)
+if cooldown < 5 (
+browser.iframeHide()
+) else (
+browser.iframeShow()
+)
+oldX = window.x
+oldY = window.y
+import "win-buttons"
