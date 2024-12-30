@@ -18,7 +18,7 @@ urlback = "https://raw.githubusercontent.com/ThePandaDever/AssetStore/refs/heads
 
 // sounds
 sound urlback ++ "3%20-%20Windowkiller.mp3" "load" "ost1"
-sound "ost1" "volume" 50
+sound "ost1" "volume" 25
 sound urlback ++ "shoot2.ogg" "load" "shoot"
 sound "shoot" "volume" 50
 sound urlback ++ "enemyDie.ogg" "load" "enemyDie"
@@ -56,7 +56,7 @@ up_maxhealth = "w 2 c #0f0 line 0 -2.5 0 2.5 line -2.5 0 2.5 0  w 1.5 cutcircle 
 upgrades = {
   "speed":[15,"player_speed","+",0.25],
   "firerate":[42,"bullet_cooldown","-",1],
-  "multishot":[50,"bullet_spread","+",1],
+  "multishot":[152,"bullet_spread","+",1],
   "wealth":[52,"currencymult","+",.25],
   "wallpunch":[38,"window_force","+",1],
   "piercing":[62,"bullet_uses","+",1],
@@ -103,7 +103,7 @@ if passed_data == "" (
   play_ost = true
 )
 
-def "newEnt" "id,x,y" (
+def "newEntRaw" "id,x,y" (
   // spawns an entity with
   // id, x, y, health, velocity_x, velocity_y, spawn_smoothing
   // then adds an extra one which is extras in an obj
@@ -111,20 +111,20 @@ def "newEnt" "id,x,y" (
   temp.append(id)
   temp.append(x)
   temp.append(y)
-  switch id (
-    case "tri"
-      temp.append(100)
-      break
-    case "circle"
-      temp.append(20)
-      break
-  )
+  temp.append(entity_health[id])
   temp.append(0)
   temp.append(0)
   temp.append(0)
-  entities[ouidNew()] = temp
+  enid = ouidNew()
+  entities[enid] = temp
 )
-
+def "newEnt" "id,x,y" (
+  if entity_boss.contains(id) (
+    newBossEnt id x y
+  ) else (
+    newEntRaw id x y
+  )
+)
 def "newBorderEnt" "id" (
   side = random(1,4)
   switch side (
@@ -143,13 +143,18 @@ def "newBorderEnt" "id" (
   )
 )
 
+def "newBossEnt" "id,x,y" (
+  newEntRaw id x y
+  window "add" window.file.uuid "ent" ++ ":" ++ enid
+)
+
 def "newGoop" "gamt,gx,gy" (
   // spawns the blob with a bit of randomness depending
   // on how much big the blob is
-  if amt > 0 (
+  if amt >= 1 (
     gx += random(-100,100) / (amt * .75) * .5
     gy += random(-100,100) / (amt * .75) * .5
-    goop.append([].append(gamt).append(gx).append(gy))
+    goop.append([gamt,gx,gy])
   )
 )
 
@@ -171,12 +176,30 @@ def "newGoopGroup" "amt,x,y" (
   )
 )
 
+def "newEntBullet" "bx,by,bdir,bc,ben" (
+  enbullets.append([bx,by,bdir,ouidNew(),bc,4,ben])
+)
+
+def "newParticle" "par,px,py,pdir" (
+  particles.append([par,px,py,pdir,0])
+)
+
 def "entTouch" "id" (
   player_health --
 )
 def "entDie" "id" (
   stat_enemies ++
-  newGoopGroup random(4,10).round * currencymult ex ey
+  switch id (
+    case "tri"
+      newGoopGroup random(4,10).round * currencymult ex ey
+      break
+    case "circle"
+      newGoopGroup random(8,16).round * currencymult ex ey
+      break
+    case "spiker"
+      newGoopGroup random(20,30).round * currencymult ex ey
+      break
+  )
 )
 
 def "ouidtonum(ouid)" (
@@ -206,6 +229,8 @@ if passed_data == "" (
   //newEnt "tri" 10 0
   
   bullets = []
+  enbullets = []
+  particles = []
   player_x = 0
   player_y = 0
   
@@ -249,30 +274,50 @@ if passed_data == "" (
   // entity stuff
   entity_width = {
     "tri": 30,
-    "circle": 20
+    "circle": 20,
+    "spiker": 50
+  }
+  entity_health = {
+    "tri": 100,
+    "circle": 20,
+    "spiker": 200
   }
   entity_touchHurt = [
     "tri",
-    "circle"
+    "circle",
+    "spiker"
   ]
+  entity_boss = [
+    "spiker"
+  ]
+  
   // how many frames per spawn
   entity_spawnMax = {
-    "tri":250,
-    "circle": 300
+    "tri":300,
+    "circle": 350,
+    "spiker": 2000
   }
   // limit for how fast they can spawn
   entity_spawnTop = {
     "tri":100,
-    "circle":120
+    "circle":120,
+    "spiker": 1000
   }
-  // if the entity shouldnt spawn
-  entity_shouldntSpawn = {
+  // if the entity should spawn
+  entity_shouldSpawn = {
+    "tri": true, "circle": true, "spiker": true
   }
+  each key entity_shouldSpawn.getKeys() (
+    //entity_shouldSpawn[key] = false
+  )
   // spawn after this frame
   entity_spawnAfter = {
     "tri":100,
-    "circle": 1000
+    "circle": 1000,
+    "spiker": 4000
   }
+  
+  bulletTimerA = 0
   
   restockcost = 10
   entity_spawnTime = {}
@@ -285,6 +330,8 @@ if passed_data == "" (
   pause_open = false
   opened_shop_before = false
   winrestart = false
+  realrestart = false
+  timeshop = 0
   
   each upgrade upgrades.getKeys() (
     upgrade_levels[upgrade] = 1
@@ -293,6 +340,10 @@ if passed_data == "" (
   each entity entity_spawnMax.getKeys() (
     entity_spawnTime[entity] = 0
   )
+  
+  //newBossEnt "spiker" 100 100
+  //newBossEnt "spiker" 100 -100
+  //newEnt "spiker" 100 100
 )
 
 chars = ["0","1","2","3","4","5","6","7","8","9","a","b","c","d","f"]
@@ -315,7 +366,18 @@ def "enemyC" "r,g,b" (
   c col.destr
 )
 
-def "drawScene" "dentities,dbullets,dgoop,dplayer_x,dplayer_y,t" (
+def "drawScene" "dentities,dbullets,denbullets,dgoop,dplayer_x,dplayer_y,d_particles,t" (
+  // particles
+  each particlei particle d_particles (
+    switch particle[1] (
+      case "hit"
+        game_goto particle[2] particle[3]
+        direction particle[4]
+        icon "ellipse 0 0 2 2.9 90" 1.5 * (1 - (particle[5] / 15))
+        break
+    )
+  )
+  direction 90
   // entities (enemies)
   each entityi entitykey dentities.getKeys() (
     // boilerplate
@@ -328,6 +390,7 @@ def "drawScene" "dentities,dbullets,dgoop,dplayer_x,dplayer_y,t" (
     ext = entity[8]
     attackTime = ext["attackTime"]
     game_goto ex ey
+    direction 90
     switch eid (
       case "tri"
         direction t * 30 + ouidtonum(entitykey)
@@ -338,6 +401,11 @@ def "drawScene" "dentities,dbullets,dgoop,dplayer_x,dplayer_y,t" (
         enemyC "00" "EE" "EE"
         icon "w 2.5 cutcircle 0 0 7 0 180" 1.7 * entity[5]
         break
+      case "spiker"
+        enemyC "FF" "47" "65"
+        icn = "w 1.3 line -5 10 0 14 cont 5 10 cont 12 12 cont 10 5 cont 14 0 cont 10 -5 cont 12 -12 cont 5 -10 cont 0 -14 cont -5 -10 cont -12 -12 cont -10 -5 cont -14 0 cont -10 5 cont -12 12 cont -5 10"
+        icon icn 3.5 * entity[5]
+        break
     )
   )
   
@@ -347,6 +415,15 @@ def "drawScene" "dentities,dbullets,dgoop,dplayer_x,dplayer_y,t" (
     direction b[3]
     icon "w 5 ellipse 0 0 10 1.8 90 w 10 ellipse 0 0 4 2.8 90" .5 : c#fff
   )
+  
+  // entity bullets
+  each eb denbullets (
+    game_goto eb[1] eb[2]
+    direction eb[3]
+    c eb[5]
+    icon "w 4 cutcircle 0 0 8 0 180" .8
+  )
+
   
   // player
   game_goto dplayer_x dplayer_y
@@ -387,11 +464,11 @@ def "mainloop_main" (
     )
     player_y += player_raw_y - player_y * player_speed * .05
   )
-  
+  bulletTimerA ++
   // entity spawning
   each entity entity_spawnTime.getKeys() (
     if framei >= entity_spawnAfter[entity] (
-      if entity_shouldSpawn[entity].not (
+      if entity_shouldSpawn[entity] (
         if entity_spawnTime[entity] <= 0 (
           newBorderEnt entity
           // make it spawn more over time
@@ -430,7 +507,6 @@ def "mainloop_main" (
     // behaviour / update
     switch eid (
       case "tri"
-        // behaviour
         edir = lookat(ex,ey,player_x,player_y)
         
         ex += edir.sin * 1.5
@@ -440,7 +516,7 @@ def "mainloop_main" (
         entity[8]["time"] --
         if entity[8]["time"] < 0 (
           edir = lookat(ex,ey,player_x,player_y)
-          entity[8]["time"] = 100
+          entity[8]["time"] = 50
           entity[8]["tarx"] = ex + (edir.sin * 300)
           entity[8]["tary"] = ey + (edir.cos * 300)
           entity[8]["varx"] = edir.sin * 20
@@ -449,6 +525,18 @@ def "mainloop_main" (
           vx += entity[8]["varx"] - vx * .05
           vy += entity[8]["vary"] - vy * .05
         )
+        break
+      case "spiker"
+        if entity[8].getKeys().contains("timer").not (
+          entity[8]["timer"] = 0
+        )
+        if entity[8]["timer"] == 0 (
+          entity[8]["timer"] = 100
+          for r 9 (
+            newEntBullet ex ey r * 40 #ff4765 entitykey
+          )
+        )
+        entity[8]["timer"] --
         break
     )
     // enemy death
@@ -459,7 +547,7 @@ def "mainloop_main" (
     )
     // collision
     if performance_collision (
-      if random(1,performance_skipamt) == 1 (
+      if random(1,performance_skipamt) == 1 or true (
         each colentitykey entities.getKeys() (
           if entitykey != colentitykey (
             colentity = entities[colentitykey]
@@ -485,7 +573,7 @@ def "mainloop_main" (
     if entity_touchHurt.contains(eid) and player_health != -9999 (
       colx = player_x
       coly = player_y
-      d = dist(ex,ey,colx,coly)
+      d = dist(ex,ey,colx,coly) - 15
       rads = (entity_width[eid] * .5) + (25) + 10
       d -= rads
       if d < 0 (
@@ -493,9 +581,13 @@ def "mainloop_main" (
         pointat ex ey
         dir = direction
         
-        vx = dir.sin * 40
-        vy = dir.cos * 40
+        player_raw_x = dir.sin * -80 + player_x
+        player_raw_y = dir.cos * -80 + player_y
+        
+        vx = dir.sin * 30
+        vy = dir.cos * 30
         entTouch eid
+        sound "enemyHit" "play"
       )
     )
 
@@ -532,24 +624,28 @@ def "mainloop_main" (
       win_l_velocity += window_force / bullet_spread
       delbulletkeys.append(bulletkey)
       if random(1,2) == 1 (; sound "hitWall" "play"; ) else (; sound "hitWall2" "play"; )
+      loop 2 (; newParticle "hit" x y random(-40,40) + 90; )
     )
     if x > winr (
       delbullets.append(bulleti)
       win_r_velocity += window_force / bullet_spread
       delbulletkeys.append(bulletkey)
       if random(1,2) == 1 (; sound "hitWall" "play"; ) else (; sound "hitWall2" "play"; )
+      loop 2 (; newParticle "hit" x y random(-40,40) - 90; )
     )
     if y < winb (
       delbullets.append(bulleti)
       win_b_velocity += window_force / bullet_spread
       delbulletkeys.append(bulletkey)
       if random(1,2) == 1 (; sound "hitWall" "play"; ) else (; sound "hitWall2" "play"; )
+      loop 2 (; newParticle "hit" x y random(-40,40) + 0; )
     )
     if y > wint (
       delbullets.append(bulleti)
       win_t_velocity += window_force / bullet_spread
       delbulletkeys.append(bulletkey)
       if random(1,2) == 1 (; sound "hitWall" "play"; ) else (; sound "hitWall2" "play"; )
+      loop 2 (; newParticle "hit" x y random(-40,40) + 180; )
     )
     // check if any enemies are getting hit
     each enti entkey entities.getKeys() (
@@ -562,6 +658,14 @@ def "mainloop_main" (
           bullets[bulleti][5] += 1
           entities[entkey][4] -= random(25,50)
           entities[entkey][8]["attackTime"] = 100
+          if bullet[5] >= bullet_uses - 1 (
+            goto x y
+            pointat ex ey
+            dir = direction + 180
+            loop 2 (
+              newParticle "hit" x y random(-40,40) + dir
+            )
+          )
           if entities[entkey][4] > 0 (
             sound "enemyHit" "play"
           )
@@ -581,8 +685,48 @@ def "mainloop_main" (
     bullet_currenthit.delete(delbulletkeys[rbb - rbi])
     rbi ++
   )
+  //log bullets.len
   
   bullet_lasthit = bullet_currenthit
+  
+  // the bullets
+  endelbullets = []
+  each enbulleti enbullet enbullets (
+    enbullets[enbulleti][1] += enbullet[3].sin * enbullet[6]
+    enbullets[enbulleti][2] += enbullet[3].cos * enbullet[6]
+    
+    x = enbullets[enbulleti][1]
+    y = enbullets[enbulleti][2]
+    enbulletkey = enbullet[4]
+    parent = entities[enbullet[7]]
+    parent_size = entity_width[parent[1]] + 25
+    parent_x = parent[2]
+    parent_y = parent[3]
+    // if the bullet hit the window borders
+    if ((x > winl and x < winr) or (x > parent_x - parent_size and x < parent_x + parent_size)).not (
+      endelbullets.append(enbulleti)
+      if random(1,2) == 1 (; sound "hitWall" "play"; ) else (; sound "hitWall2" "play"; )
+    )
+    if ((y > winb and y < wint) or (y > parent_y - parent_size and y < parent_y + parent_size)).not (
+      endelbullets.append(enbulleti)
+      if random(1,2) == 1 (; sound "hitWall" "play"; ) else (; sound "hitWall2" "play"; )
+    )
+    
+    if dist(player_x,player_y,x,y) < 18 (
+      endelbullets.append(enbulleti)
+      player_health -- 
+    )
+  )
+  // delete the bullets given
+  rbi = 0
+  each rdenbulleti rbb endelbullets (
+    enbullets.delete(rbb - rbi)
+    rbi ++
+    sound "enemyHit" "play"
+  )
+  
+  bullet_lasthit = bullet_currenthit
+
   
   // the goop (otherwise known as coins in windowkill)
   delgoop = []
@@ -615,6 +759,31 @@ def "mainloop_main" (
     goop.delete(rgb - rgi)
     rgi ++
   )
+  
+  // particles
+  delpar = []
+  each particlei particle particles (
+    particle[2] += particle[4].sin() * 5
+    particle[3] += particle[4].cos() * 5
+    particle[5] += 1
+    deathTime = 10
+    switch particle[1] (
+      case "hit"
+        deathTime = 15
+        break
+    )
+    if particle[5] > deathTime (
+      delpar.append(particlei)
+    )
+    particles[particlei] = particle
+  )
+  // delete the goop given
+  rgi = 0
+  each rg2i rgb delpar (
+    particles.delete(rgb - rgi)
+    rgi ++
+  )
+
 
   // bullet fireing
   if bullet_cooldown <= 0 and mouse_down and player_health != -9999 (
@@ -721,6 +890,7 @@ if wintype == "" (
 )
 
 space_last = "space".pressed
+window "show"
 mainloop:
   window_colour = #040404
   win_setup
@@ -730,10 +900,14 @@ mainloop:
       window "stop"
     )
   ) else (
-    if winrestart (
+    if realrestart (
       // restart the window :P
       window "add" window.file.uuid
       window "stop"
+    ) else (
+      if winrestart (
+        window "stop"
+      )
     )
   )
   if wintype == "" (
@@ -748,15 +922,16 @@ mainloop:
     // quick note: player_health != -9999 or if its -9999 it means the
     // player is dead and the game is still "playing"
     if player_health != -9999 (
-      drawScene entities bullets goop player_x player_y timer
+      drawScene entities bullets enbullets goop player_x player_y particles timer
     ) else (
-      drawScene entities bullets goop 9999 9999 timer
+      drawScene entities bullets enbullets goop 9999 9999 particles timer
     )
     // spawn the menus if u press the buttons
     if dead_open.not (
       if "space".pressed and space_last.not (
         if shop_open.not (
           window "add" window.file.uuid "shop"
+          opened_shop_before = true
         )
         shop_open = shop_open.not
       )
@@ -793,6 +968,18 @@ mainloop:
       )
     )
     
+    if opened_shop_before.not (
+      if timer - timerstart > 15 and currency > 0 (
+        presstoopenshopT ??= 0
+        presstoopenshopT += 1 - presstoopenshopT * .05
+        if presstoopenshopT > 1 (
+          presstoopenshopT = 1
+        )
+        loc 9999 -2 "press [space] to open shop".len * -5 -15 + (presstoopenshopT * 30)
+        text "press [space] to open shop" 10 : c#454545
+      )
+    )
+    
     win_sx = window.width
     win_sy = window.height
     win_px = window.x
@@ -820,7 +1007,7 @@ mainloop:
     square v.win_sx v.win_sy 16 : c#151515
     square v.win_sx v.win_sy 10 : c#040404
     
-    drawScene v.entities v.bullets v.goop v.player_x v.player_y timer
+    drawScene v.entities v.bullets v.enbullets v.goop v.player_x v.player_y v.particles timer
     
     // transparent tint
     c #000
@@ -852,7 +1039,7 @@ mainloop:
           v.upgrade_levels[itm] ++
           shopsmooth[panel_i] = 0
           v.shopitems[panel_i] = upgrades.getKeys()[random(1,upgrades.len)]
-          v.upgrades[itm][1] *= random(15,25) / 10
+          v.upgrades[itm][1] *= random(18,35) / 10
           v.upgrades[itm][1] = v.upgrades[itm][1].round
           arr = []
           if upgrade[2].type == "array" (
@@ -971,7 +1158,7 @@ mainloop:
     square v.win_sx v.win_sy 16 : c#151515
     square v.win_sx v.win_sy 10 : c#040404
     
-    drawScene v.entities v.bullets v.goop 9999 9999 timer
+    drawScene v.entities v.bullets v.enbullets v.goop 9999 9999 v.particles timer
     
     // transparent tint
     c #000
@@ -1009,6 +1196,7 @@ mainloop:
     
     if "space".pressed (
       v.winrestart = true
+      v.realrestart = true
     )
   )
   if wintype == "pause" (
@@ -1023,7 +1211,7 @@ mainloop:
     square v.win_sx v.win_sy 16 : c#151515
     square v.win_sx v.win_sy 10 : c#040404
     
-    drawScene v.entities v.bullets v.goop 9999 9999 timer
+    drawScene v.entities v.bullets v.enbullets v.goop v.player_x v.player_y v.particles timer
     
     // transparent tint
     c #000
@@ -1031,6 +1219,52 @@ mainloop:
     pen "opacity" 70
     pen "down"
     pen "up"
+    
+    goto "ORIGINKILL".len * -15 100
+    text "ORIGINKILL" 30 : c#fff
+    
+    goto "ORIGINKILL".len * -15 - 10 70
+    icon "line 0 10 0 0 cont 10 0" 1
+    goto "ORIGINKILL".len * 15 + 10 70
+    icon "line 0 10 0 0 cont -10 0" 1
+    goto "ORIGINKILL".len * -15 - 10 130
+    icon "line 0 -10 0 0 cont 10 0" 1
+    goto "ORIGINKILL".len * 15 + 10 130
+    icon "line 0 -10 0 0 cont -10 0" 1
+    
+    quitsmooth ??= 0
+    goto 0 -100
+    square 120 20 15 0 1
+    if mouse_touching (
+      if onclick (
+        v.winrestart = true
+      )
+    )
+    quitsmooth += (mouse_touching ? 1 0) - quitsmooth * .3
+    change_y quitsmooth * 20
+    square 120 20 15 : c#fff
+    square 120 20 10 : c#040404
+    change_x "quit".len * -5
+    text "quit" 10 : c#fff
+    
+    window "resizable" false
   )
-
+  if wintype.split(":")[1] == "ent" (
+    // window boilerplate
+    v @= window.parent.variables
+    
+    // code
+    followEnt = v.entities[wintype.split(":")[2]]
+    if followEnt == "" (
+      window "stop"
+    )
+    //log followEnt
+    drawScene v.entities v.bullets v.enbullets v.goop v.player_x v.player_y v.particles timer
+    s = v.entity_width[followEnt[1]] * 2 + 50 * followEnt[5]
+    window "dimensions" s s
+    window.x = followEnt[2]
+    window.y = followEnt[3]
+    window "set_dragbox" [[0,0,0,0],[0,0,0,0]]
+    window "resizable" false
+  )
 window "show"
