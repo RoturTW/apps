@@ -158,7 +158,7 @@ def makepfp(this.aut) (
   if this.av == "" (
     return "https://raw.githubusercontent.com/Mistium/apps/main/all/origincord/assets/no-pfp.jpg"
   ) else (
-    return doProxy("https://cdn.discordapp.com/avatars/" ++ this.aut.id ++ "/" ++ this.av ++ ".png?size=32")
+    return doProxy("https://cdn.discordapp.com/avatars/" ++ this.aut.id ++ "/" ++ this.av ++ ".png?size=128")
   )
 )
 
@@ -192,7 +192,7 @@ def "handle_message" "msg, ping" (
     content = msg.content
     attachments = msg.attachments
     if member.avatar != "" (
-      pfp = doProxy("https://cdn.discordapp.com/guilds/" ++ current_guild[4] ++ "/users/" ++ author.id ++ "/avatars/" ++ member.avatar ++ ".png?size=32")
+      pfp = doProxy("https://cdn.discordapp.com/guilds/" ++ current_guild[4] ++ "/users/" ++ author.id ++ "/avatars/" ++ member.avatar ++ ".png?size=128")
     ) else (
       pfp = makepfp(author)
     )
@@ -233,7 +233,7 @@ def "handle_message" "msg, ping" (
         emoji_match = item.strip().match("/^<a?:[^:]+:(\d+)>$/")
         if emoji_match.len > 0 (
           att = {}
-          att.url = "https://media.discordapp.net/emojis/" ++ emoji_match[2] ++ ".png?size=64&quality=lossless"
+          att.url = "https://media.discordapp.net/emojis/" ++ emoji_match[2] ++ ".png?size=128&quality=lossless"
           att.filetype = "image"
           msg_cha = msg_cha ++ addAttachment(att,1)
         ) else (
@@ -270,7 +270,6 @@ def "draw_guilds" (
   len = guilds.len
   frame window.left window.top - 40 window.left + 47 window.bottom len - 0.5 * 50 "guild"
   count = scroll_yguild // 50
-  log window.height // 50
   loop (window.height // 50).clamp(0,len + 1) (
     count ++
     y = count - 0.5 * -50 + scroll_yguild
@@ -497,10 +496,19 @@ def "draw_members" "cur_mem" (
   count = scroll_ymembers // this.ih
   y = scroll_ymembers % this.ih - (this.ih / 2)
   
+  last_rolename = ""
   w = frame.width
   loop (window_height // this.ih).clamp(0,len) (
     count ++
     mem @= cur_mem[count].user
+    if mem.role_name != last_rolename (
+      c mem.colour ?? txtc
+      last_rolename = mem.role_name
+      loc 2 2 20 y
+      text last_rolename 10
+      y -= this.ih
+    )
+
     loc 999 2 0 y
     square w 20 10 : c#window_colour
     rightclick user_menu mem.id
@@ -513,6 +521,7 @@ def "draw_members" "cur_mem" (
     change -10 10
     c mem.colour ?? txtc
     text mem.name 10 : chx#20
+    
     y -= this.ih
   )
 )
@@ -761,9 +770,11 @@ if discord.wsHasnew() (
         )
         if out == r3.len + 1 (
           members[i].user.colour = ""
+          members[i].user.role_name = ""
           members[i].order = 0
         ) else (
           members[i].user.colour = r2[out].color
+          members[i].user.role_name = r2[out].name
           members[i].order = r2[out].position
         )
       )
