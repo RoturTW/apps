@@ -49,7 +49,8 @@ message_menu = [
 ]
 
 def "user_dm" "this.user" (
-  current_channel = ("https://proxy.milosantos.com/turbowarpbot/createdm.php?recipient_id=" ++ this.user ++ "&token=" ++ token).get()
+  this.url = "https://apps.mistium.com/get-dm-channel?userid=" ++ this.user ++ "&token=" ++ token
+  current_channel = this.url.http("GET",{},{})
 )
 
 user_menu = [
@@ -228,7 +229,7 @@ def "handle_message" "msg, ping" (
       msg_cha.append(message)
     )
     if content.len > 0 (
-      content.split(newline)
+      content.split("\n")
       each item content (
         emoji_match = item.strip().match("/^<a?:[^:]+:(\d+)>$/")
         if emoji_match.len > 0 (
@@ -238,9 +239,9 @@ def "handle_message" "msg, ping" (
           msg_cha = msg_cha ++ addAttachment(att,1)
         ) else (
           message = [""]
-          content = item.match("/<[^ >]+>|[^<>\[\]()]+|./gm")
-          if content.len == 1 (; content = content[1]; )
-          message.append(content)
+          cur_content = item.match("/<[^ >]+>|[^<>\[\]()]+|./gm")
+          if cur_content.len == 1 (; cur_content = cur_content[1]; )
+          message.append(cur_content)
           message.append("")
           message.append(ping)
           message.append("")
@@ -858,6 +859,8 @@ if discord.wsHasnew() (
       if dat.status == "offline" (; dat.status = ""; )
       presences[id].status = dat.status
       break
+    case "MESSAGE_REACTION_ADD"
+      break
   )
   dat = null
   msg = null
@@ -873,10 +876,10 @@ if file_dropped != 0 (
   file_dropped = 0
 )
 
-
 if current_channel != "" (
   new_messages[current_channel] = false
   if loaded.contains(current_channel).not (
+    log current_channel
     data = ("https://apps.mistium.com/get-discord-messages?channelid=" ++ current_channel ++ "&token=" ++ token).getAsync()
     
     goto 0 0
