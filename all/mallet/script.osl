@@ -104,7 +104,7 @@ def "newTexture" "id,url"
 endef
 
 def "runaddon" "addon,func"
-  run addons[addon]["scripts"][func]
+  run "" + addons[addon]["scripts"][func]
 endef
 
 def "eventaddon" "func"
@@ -210,22 +210,22 @@ endef
 def "gety" "y"
   out = y - camera_y * scale
 endef
-def "x.getx()"
+def "getx(x)"
   getx x
   return out
 endef
-def "y.gety()"
+def "gety(y)"
   gety y
   return out
 endef
-def "x.ungetx()"
+def "ungetx(x)"
   return x / scale + camera_x
 endef
-def "y.ungety()"
+def "ungety(y)"
   return y / scale + camera_y
 endef
 
-def "x.sinsmooth()"
+def "sinsmooth(x)"
   x = x * 360
   if x + 90 < -90 (; return 0; )
   if x + 90 > 270 (; return 0; )
@@ -243,15 +243,15 @@ def "checkxy" "x,y,bx,by,bw,bh"
   checkbx x y bx - bw by - bh bx + bw by + bh
 endef
 
-def "a.mid(b)"
+def "mid(a,b)"
   return a + ((b - a) / 2)
 endef
 
 draw_guides = false
 
 def "draw_brush" "b"
-  x = b[1].getx()
-  y = b[2].gety()
+  x = getx(b[1])
+  y = gety(b[2])
   w = b[3] * scale
   h = b[4] * scale
   icn = "w" + (.25 * scale) + "square" + x + y + w + h
@@ -270,7 +270,7 @@ def "draw_brush" "b"
 endef
 
 def "debug_dot" "x,y"
-  goto x.getx() y.gety()
+  goto getx(x) gety(y)
   pen "size" 10
   pen "down"
   pen "up"
@@ -291,8 +291,8 @@ def "arr.brush_create()"
   ay = arr[2]
   bx = arr[3]
   by = arr[4]
-  x = ax.mid(bx)
-  y = ay.mid(by)
+  x = mid(ax,bx)
+  y = mid(ay,by)
   w = (bx - ax * .5).abs
   h = (by - ay * .5).abs
   return [].append(x).append(y).append(w).append(h).append(current_texture)
@@ -387,14 +387,14 @@ def "input_update"
   if "`".pressed "loadfiles"
 
   if right_click (
-    camera_drag_x = mouse_x.ungetx()
-    camera_drag_y = mouse_y.ungety()
+    camera_drag_x = ungetx(mouse_x)
+    camera_drag_y = ungety(mouse_y)
     camera_org_x = camera_x
     camera_org_y = camera_y
   )
   if mouse_right and false (
-    x = mouse_x.ungetx()
-    y = mouse_y.ungety()
+    x = ungetx(mouse_x)
+    y = ungety(mouse_y)
     camera_x = x - camera_drag_x + camera_org_x
     camera_y = y - camera_drag_y + camera_org_y
   )
@@ -411,8 +411,8 @@ def "input_update"
   if current_tool != "brush" "creating_brush_stage = 0"
   if current_tool != "entity" "creating_entity_stage = 0"
 
-  mouse_wld_x = mouse_x.ungetx().round
-  mouse_wld_y = mouse_y.ungety().round
+  mouse_wld_x = ungetx(mouse_x).round
+  mouse_wld_y = ungety(mouse_y).round
 
   if delete_click (
     if selected_brush != 0 (
@@ -581,8 +581,8 @@ def "tools_update"
     brsy = brs[2]
     brsw = brs[3]
     brsh = brs[4]
-    sbrsx = brsx.getx()
-    sbrsy = brsy.gety()
+    sbrsx = getx(brsx)
+    sbrsy = gety(brsy)
     sbrsw = brsw * scale
     sbrsh = brsh * scale
     goto sbrsx + (-4.5 * (brsw * 10).len) sbrsy + sbrsh + 10
@@ -758,7 +758,7 @@ def "scene_brush_update"
       if dragging_handle == "l" (
         ax = mouse_wld_x
       )
-      brushes[brsi] = [].append(ax.mid(bx)).append(ay.mid(by)).append((bx - ax * .5).abs).append((by - ay * .5).abs).append(org_txt)
+      brushes[brsi] = [].append(mid(ax,bx)).append(mid(ay,by)).append((bx - ax * .5).abs).append((by - ay * .5).abs).append(org_txt)
     )
   )
   eventaddon "gui_brush_update"
@@ -767,8 +767,8 @@ def "scene_brush_update"
     draw_guides = true
     draw_brush dragging_brush_data
     c #ff0000
-    x = dragging_brush_data[1].getx()
-    y = dragging_brush_data[2].gety()
+    x = getx(dragging_brush_data[1])
+    y = gety(dragging_brush_data[2])
     goto x y
     icon "close" .4
   )
@@ -827,8 +827,8 @@ def "scene_entity_update"
   hovered_entity = 0
   if entities.len > 0 (
     each entityi entity entities (
-      entx = entity[1].getx()
-      enty = entity[2].gety()
+      entx = getx(entity[1])
+      enty = gety(entity[2])
       enttype = entity[3]
       if enttype.str != "enttype" (
         goto entx enty
@@ -900,8 +900,8 @@ def "scene_entity_update"
   if creating_entity_stage != 0 (
     can_interact = false
     if creating_entity_stage == 1 (
-      sentx = creating_entity_x.getx()
-      senty = creating_entity_y.gety()
+      sentx = getx(creating_entity_x)
+      senty = gety(creating_entity_y)
 
       goto sentx senty
       square 15 15 7 : c#1dff4a
@@ -943,8 +943,8 @@ endef
 def "center_axis"
   // center axis
   c #006464
-  x = 0.getx()
-  y = 0.gety()
+  x = getx(0)
+  y = gety(0)
   pen "size" 1
   goto 0 0
   line x window_height x window_height * -1
@@ -1057,6 +1057,7 @@ mainloop:
     topbar_update
   )
   
+  //log Variables()
   
   eventaddon "gui_state_" ++ state
   
