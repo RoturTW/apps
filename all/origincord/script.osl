@@ -15,6 +15,8 @@ base = {
 // base packet
 window "dimensions" 1000 600
 
+origincord_logo = "c #5865f2 w 20 dot 0 0 c #fff w 3 line 3 2 5 -2 cont 3 -3 cont 2 -2 cont -2 -2 cont -3 -3 cont -5 -2 cont -3 2.5 cont -2 2.5 cont -1 1.7 cont 1 1.7 cont 2 2.5 cont 3 2.5 cont 5 -2 w 4.5 line -2 0 2 0 c #5865f2 w 2.5 dot 2 -1 dot -2 -1"
+
 // get system properties
 loaded = []
 
@@ -39,7 +41,7 @@ def "message_copy" "this.msg" (; clipboard "set" this.msg.content;)
 def "message_reply" "this.msg" (; current_reply = this.msg;)
 
 def "message_delete" "this.msg" (
-  this.out = ("https://apps.mistium.com/discord-delete-message?channelid=" ++ current_channel ++ "&messageid=" ++ this.msg.id ++ "&token=" ++ token).getAsync()
+  this.out = ("https://apps.mistium.com/discord-delete-message?channelid=" ++ current_channel ++ "&messageid=" ++ this.msg.id ++ "&token=" ++ token ++ "&user_account=" ++ discord_isUser).getAsync()
 )
 
 message_menu = [
@@ -49,7 +51,7 @@ message_menu = [
 ]
 
 def "user_dm" "this.user" (
-  this.url = "https://apps.mistium.com/get-dm-channel?userid=" ++ this.user ++ "&token=" ++ token
+  this.url = "https://apps.mistium.com/get-dm-channel?userid=" ++ this.user ++ "&token=" ++ token ++ "&user_account=" ++ discord_isUser
   current_channel = this.url.http("GET",{},{})
 )
 
@@ -93,7 +95,7 @@ def "setStatus" "type,title" (
 )
 
 def "send_sticker" "this.sticker_id, this.channel" (
-  this.api = "https://apps.mistium.com/send-discord-sticker?token=" ++ token ++ "&channelid=" ++ this.channel ++ "&stickerid=" ++ this.sticker_id
+  this.api = "https://apps.mistium.com/send-discord-sticker?token=" ++ token ++ "&channelid=" ++ this.channel ++ "&stickerid=" ++ this.sticker_id ++ "&user_account=" ++ discord_isUser
   this.out = this.api.getAsync()
 )
 
@@ -113,7 +115,7 @@ def "send_file" "this.content, this.channel, this.file_name, this.file_content" 
   }
   this.obj.dataURI = this.file_content.startsWith("data:") ? this.file_content this.file_content.makeUrl("text/plain")
   
-  this.out = "https://apps.mistium.com/upload-discord-file".http("POST",this.obj,{"Content-Type":"application/json"})
+  this.out = ("https://apps.mistium.com/upload-discord-file?user_account=" ++ discord_isUser).http("POST",this.obj,{"Content-Type":"application/json"})
 )
 
 import as "window_tools"
@@ -122,9 +124,7 @@ import as "glass" from "packages"
 round_pfp = "w 2 line 11 11 11 -11 cont -11 -11 cont -11 11 cont 11 11 cutcircle 9 9 2 4. 45 cutcircle 9 -9 2 13.5 40 cutcircle -9 9 2 -4.5 45 cutcircle -9 -9 2 -13.5 45"
 circle_pfp = "@dynamic s = 20 d = 17 -d = -17 w 3 cutcircle 0 0 17 0 180 w 3.5 cutcircle 0 0 @s 4.5 10 cutcircle 0 0 @s 13.5 10 cutcircle 0 0 @s 22.5 10 cutcircle 0 0 @s 31.5 10 line @d @d @d @-d cont @-d @-d cont @-d @d cont @d @d"
 
-originCord_icn = "c #5865f2 w 20 dot 0 0 c #fff w 3 line 3 2 5 -2 cont 3 -3 cont 2 -2 cont -2 -2 cont -3 -3 cont -5 -2 cont -3 2.5 cont -2 2.5 cont -1 1.7 cont 1 1.7 cont 2 2.5 cont 3 2.5 w 4.5 line -2 0 2 0 c #5865f2 w 2.5 dot 2 -1 dot -2 -1"
-
-window_tools:seticon originCord_icn
+window_tools:seticon origincord_logo
 permission "request" "notifications"
 permission "request" "file admin"
 
@@ -142,7 +142,7 @@ edits = {}
 previous_author = {}
 
 def "async_msg" "content, channel" (
-  link = "https://apps.mistium.com/send-discord-message?token=" ++ token ++ "&channelid=" ++ channel ++ "&content=" ++ encodeURIComponent(content.toStr())
+  link = "https://apps.mistium.com/send-discord-message?token=" ++ token ++ "&channelid=" ++ channel ++ "&content=" ++ encodeURIComponent(content.toStr()) ++ "&user_account=" ++ discord_isUser
   this.result = link.getAsync()
 )
 
@@ -164,6 +164,7 @@ def makepfp(this.aut) (
 )
 
 def "focusChannel" "this.id" (
+  guilds_last_channels[current_guild[4] ?? "@me"] = guilds_last_channels
   current_channel = this.id
 )
 
@@ -266,6 +267,88 @@ def "handle_message" "msg, ping" (
   )
 )
 
+def displayNameOf(this.user) (
+  this._name = this.user.display_name
+  this._name ??= this.user.global_name
+  this._name ??= this.user.username
+  return this._name
+)
+
+def "handle_guild" "dat" (
+  roles[dat.id] = dat.roles.sortBy("position").reverse()
+  ping_channels = []
+  guild_icon = proxy ++ encodeURIComponent("https://cdn.discordapp.com/icons/" ++ dat.id ++ "/" ++ dat.icon ++ ".png?size=64")
+
+  channels = dat.channels.sortBy("position")
+  categories = {"null":[]}
+  each channel channels (
+    parent = channel.parent_id ?? "null"
+    if channel.nsfw == "" (
+      parent = channel.id
+    )
+    categories[parent] = (categories[parent] ?? []).append(channel)
+  )
+
+  channels = []
+  each cat categories.getValues() (
+    channels = channels ++ cat
+  )
+      
+  members = dat.members
+
+  r2 = roles[dat.id]
+  r3 = r2.getKeys("id")
+
+  for i members.len (
+    _dat = members[i]
+    _name = _dat.nick
+    _name ??= _dat.user.global_name
+    _name ??= _dat.user.username
+
+    members[i].user.name = _name
+
+    r = _dat.roles
+    out = r3.len + 1
+    i2 = 0
+    loop r.len (
+      i2 ++
+      role_id = r[i2]
+      role_current = r3.index(role_id)
+      if r2[role_current].color != 0 and out > role_current (
+        out = role_current
+      )
+    )
+    if out == r3.len + 1 (
+      members[i].user.colour = ""
+      members[i].user.role_name = ""
+      members[i].order = 0
+    ) else (
+      members[i].user.colour = r2[out].color
+      members[i].user.role_name = r2[out].name
+      members[i].order = r2[out].position
+    )
+  )
+  members = members.sortBy("order").reverse()
+      
+  each presence dat.presences (
+    presences[presence.user.id] = presence.status
+  )
+      
+  this.arr = [
+    dat.name,
+    guild_icon,
+    channels,
+    dat.id,
+    dat.banner,
+    dat.member_count
+  ]
+  guilds.append(this.arr)
+
+  all_members[dat.id] = members
+  all_member_ids[dat.id] = members.getKeys("user").getKeys("id")
+  stickers[dat.id] = dat.stickers
+)
+
 def "draw_guilds" (
   c window_colour
   len = guilds.len
@@ -283,13 +366,20 @@ def "draw_guilds" (
     ) else (
       square 40 40 10 0 1
       if onclick (
-        current_guild = guild
-        current_roles = roles[guild_id].getKeys("id")
-        current_members = all_members[guild[4]]
-        current_member_ids = all_member_ids[guild[4]]
+        current_guild @= guild
+        current_channel = guilds_last_channels[guild_id] ?? 0
+        if guild != "@me" (
+          current_roles @= roles[guild_id].getKeys("id")
+          current_members @= all_members[guild[4]]
+          current_member_ids @= all_member_ids[guild[4]]
+        )
       )
     )
-    image guild[2] 40 40
+    if guild == "@me" (
+      icon origincord_logo 2 
+    ) else (
+      image guild[2] 40 40
+    )
     icon circle_pfp 1.3 : c#window_colour
     if guild_id == current_guild[4] (
       icon "w 1.5 cutcircle 0 0 17 0 180" 1.3 : c#seco
@@ -301,7 +391,8 @@ def "draw_guilds" (
   frame "clear"
 )
 
-def "draw_channels" "cur" (
+def "draw_channels" (
+  cur @= cur_channels
   c prim
   len = cur.len
   this.ih = 45
@@ -334,11 +425,21 @@ def "draw_channels" "cur" (
             square w 25 15 : c#window_colour
           )
           rightclick channel_menu chnl
-          if clicked or this.current_channel (
+          if onclick (
+          
+            if current_guild == "@me" (
+              current_members = chnl.recipients.append(discord_user).map(def(this.user) -> (
+                this.user.colour = txtc
+                this.user.name = displayNameOf(this.user)
+                return {"user": this.user}
+              ))
+              
+              current_member_ids = chnl.recipients.getKeys("id").append(discord_id)
+            )
             focusChannel id
           )
           if typing[id].len > 0 (
-            this.pos = def(this.x) -> (
+            this.pos @= def(this.x) -> (
               return (timer + this.x * 300).sin() * 10
             )
             loc -2 2 -20 y + this.pos(0)
@@ -357,13 +458,32 @@ def "draw_channels" "cur" (
           text "#" 15 : chx#-7
           change_x 5
           break
+        case 1
+          change_x 10
+          image makepfp(chnl.recipients[1]) 30 30
+          icon circle_pfp 0.975 : c#window_colour
+          change_x 30
+          break
         case 2
           icon "microphone" 0.7 : chx#0.2
           change_x 10
           break
+        case 3
+          if chnl.icon (
+            change_x 10
+            image doProxy("https://cdn.discordapp.com/channel-icons/" ++ id ++ "/" ++ chnl.icon ++ ".png?size=80") 30 30
+            icon circle_pfp 0.975 : c#window_colour
+            change_x 30
+          ) else (
+            text "#" 15 : chx#-7
+            change_x 5
+            break
+          )
+          break
         case 5
           icon "send" 0.7 : chx#0.2
           change_x 10
+          break
         default
           break
       )
@@ -383,7 +503,7 @@ def "draw_chat" "cur_msgs" (
   y = scroll_ychat % this.ih
   
   w = frame.width
-  loop (window_height // this.ih).clamp(0,len) (
+  loop (window_height // this.ih).clamp(0,len + 1) (
     count ++
     msg @= cur_msgs[count]
     loc 999 2 0 y
@@ -412,6 +532,7 @@ def "draw_chat" "cur_msgs" (
     ) else if msg[1] != "" (
       change -10 -10
       image msg[3] 40 40
+      icon circle_pfp 1.3 : c#window_colour
       change 30 10
       text msg[1] 10 : c#msg[5]
       rightclick user_menu msg_data.author.id
@@ -494,7 +615,7 @@ def "draw_members" "cur_mem" (
   len = current_member_ids.len
   sidebar_len = len
 
-  count = scroll_ymembers // this.ih
+  count = max(0, scroll_ymembers // this.ih)
   y = scroll_ymembers % this.ih - (this.ih / 2)
   
   last_rolename = ""
@@ -596,6 +717,7 @@ def "setup" (
   all_messages = {}
   typing = {}
   stickers = {}
+  guilds_last_channels = {}
 
   current_channel = ""
   current_attachment = ""
@@ -604,7 +726,7 @@ def "setup" (
   current_guild = ""
 
   disc_connect
-  setStatus "online" "originCord"
+  // setStatus "online" "originCord"
 
   guild_info_shift = 0
 
@@ -652,20 +774,21 @@ if loaded_cord.not (
   frame window.left + 360 window.top - 50 window.right window.bottom contents.len * 50
     y = 25
     each token_file contents (
-      goto 0 frame.top - y
-      square frame.width - 25 30 10 : c#prim
+      goto -25 frame.top - y
+      square frame.width - 80 30 10 : c#prim
       if mouse_touching (
-        square frame.width - 25 30 10 : c#seco
-        square frame.width - 25 30 5 : c#prim
+        square frame.width - 80 30 10 : c#seco
+        square frame.width - 80 30 5 : c#prim
         if onclick (
           token_in = token_file.saveGet()
           setup
         )
       )
-      change_x frame.width / -2 + 15
+      change_x frame.width / -2 + 45
       text token_file.split(".").first() 10 : c#txtc
       goto frame.width / 2 - 30 frame.top - y
-      icon "bin" 0.8
+      square 30 30 10 : c#prim
+      icon "bin" 0.8 : c#txtc
       if onclick (
         save token_file "delete"
       )
@@ -724,80 +847,40 @@ if discord.wsHasnew() (
       discord_id = discord_user.id
       discord_pfp = proxy ++ "https://cdn.discordapp.com/avatars/" ++ discord_id ++ "/" ++ discord_user.avatar ++ ".png"
       discord_username = discord_user.username
-      break
-    case "GUILD_CREATE"
-      roles[dat.id] = dat.roles.sortBy("position").reverse()
-      ping_channels = []
-      guild_icon = proxy ++ encodeURIComponent("https://cdn.discordapp.com/icons/" ++ dat.id ++ "/" ++ dat.icon ++ ".png?size=64")
-
-      channels = dat.channels.sortBy("position")
-      categories = {"null":[]}
-      each channel channels (
-        parent = channel.parent_id ?? "null"
-        if channel.nsfw == "" (
-          parent = channel.id
-        )
-        categories[parent] = (categories[parent] ?? []).append(channel)
-      )
-
-      channels = []
-      each cat categories.getValues() (
-        channels = channels ++ cat
-      )
+      discord_isUser = (dat.guilds.len > 0).toNum()
       
-      members = dat.members
-      
-      r2 = roles[dat.id]
-      r3 = r2.getKeys("id")
+      if discord_isUser == 1 (
 
-      for i members.len (
-        _dat = members[i]
-        _name = _dat.nick
-        _name ??= _dat.user.global_name
-        _name ??= _dat.user.username
+        discord_dms = dat.private_channels
+        current_guild = "@me"
         
-        members[i].user.name = _name
-        
-        r = _dat.roles
-        out = r3.len + 1
-        i2 = 0
-        loop r.len (
-          i2 ++
-          role_id = r[i2]
-          role_current = r3.index(role_id)
-          if r2[role_current].color != 0 and out > role_current (
-            out = role_current
+        for i discord_dms.len (
+          _dat @= discord_dms[i]
+          discord_dms[i].last_message_id = discord_dms[i].last_message_id.toNum()
+          if _dat["type"] == 1 (
+            discord_dms[i].name = displayNameOf(_dat.recipients[1])
+          )
+          if _dat["type"] == 3 and discord_dms[i].name == null (
+            _name = ""
+            each name _dat.recipients (
+              _name += displayNameOf(name) ++ ", "
+            )
+            discord_dms[i].name = _name.trim(1,-3)
           )
         )
-        if out == r3.len + 1 (
-          members[i].user.colour = ""
-          members[i].user.role_name = ""
-          members[i].order = 0
-        ) else (
-          members[i].user.colour = r2[out].color
-          members[i].user.role_name = r2[out].name
-          members[i].order = r2[out].position
+        
+        discord_dms.sortBy("last_message_id")
+        discord_dms.reverse()
+        
+        this.guilds = dat.guilds
+        guilds.append("@me")
+        each guild this.guilds (
+          handle_guild guild
         )
       )
-      members = members.sortBy("order").reverse()
-      
-      each presence dat.presences (
-        presences[presence.user.id] = presence.status
-      )
-      
-      this.arr = [
-        dat.name,
-        guild_icon,
-        channels,
-        dat.id,
-        dat.banner,
-        dat.member_count
-      ]
-      guilds.append(this.arr)
-
-      all_members[dat.id] = members
-      all_member_ids[dat.id] = members.getKeys("user").getKeys("id")
-      stickers[dat.id] = dat.stickers
+      break
+    case "GUILD_CREATE"
+      handle_guild dat
       break
     case "TYPING_START"
       channel = dat.channel_id
@@ -849,6 +932,7 @@ if discord.wsHasnew() (
         scroll_framey_chat = 9999999999
       )
       handle_message dat ping
+      
       new_messages[channel] = true
       new_messages[dat.guild_id] = true
       break
@@ -879,21 +963,21 @@ if file_dropped != 0 (
 if current_channel != "" (
   new_messages[current_channel] = false
   if loaded.contains(current_channel).not (
-    log current_channel
-    data = ("https://apps.mistium.com/get-discord-messages?channelid=" ++ current_channel ++ "&token=" ++ token).getAsync()
+    data = ("https://apps.mistium.com/get-discord-messages?channelid=" ++ current_channel ++ "&token=" ++ token ++ "&user_account=" ++ discord_isUser).getAsync()
     
     goto 0 0
     direction timer * 200
     icon "w 3 cutcircle 0 0 10 0 50" 1 : c#txtc
     direction 90
     if data != "Loading" (
-      data = data.JsonClean().reverse()
+      data @= data.JsonClean().reverse()
       channel = current_channel
       typing = {}
       each load_msg data (
         handle_message load_msg false
       )
       loaded.append(current_channel)
+      data = ""
     )
   )
   clicked = false
@@ -922,7 +1006,7 @@ if mention_picker.match.len > 0 (
   if mention_picker.temp != mention_picker.match[2] (
     mention_picker.temp = mention_picker.match[2]
     mention_list = []
-    mention_users = current_members.getKeys("user")
+    mention_users @= current_members.getKeys("user")
     
     i = 0
     while i < mention_users.len and mention_list.len < 7 (
@@ -996,14 +1080,19 @@ if mention_picker.match.len > 0 (
 loc 999 2 0 -20
 square window_width 30 10 : c#prim
 loc 2 2 20 -20
-icon originCord_icn 1
+icon origincord_logo 1
 text "originCord" 10 : c#txtc chx#20
 
 draw_guilds
 
 current_guild_id = current_guild[4]
 
-draw_channels current_guild[3]
+if current_guild == "@me" (
+  cur_channels @= discord_dms
+) else (
+  cur_channels @= current_guild[3]
+)
+draw_channels
 
 guild_info_shift = window.top - (current_guild[5].len == 32 ? 260 110)
 
@@ -1082,7 +1171,7 @@ if "enter".isKeyDown() and input_message != "" (
     exit
   )
   if send.startsWith(".version") (
-    async_msg "originCord v4.8" current_channel
+    async_msg "originCord v5.0" current_channel
     input_message = ""
     exit
   )
@@ -1090,9 +1179,15 @@ if "enter".isKeyDown() and input_message != "" (
     if current_reply == "" (
       async_msg send current_channel
     ) else (
-      link = "https://apps.mistium.com/discord-send-reply?token=" ++ token ++ "&channelid=" ++ current_channel ++ "&content=" ++ encodeURIComponent(send.toStr()) ++ "&messageid=" ++ current_reply.id
+      link = "https://apps.mistium.com/discord-send-reply?token=" ++ token ++ "&channelid=" ++ current_channel ++ "&content=" ++ encodeURIComponent(send.toStr()) ++ "&messageid=" ++ current_reply.id ++ "&user_account=" ++ discord_isUser
       this.result = link.getAsync()
       current_reply = ""
+    )
+    if current_guild == "@me" (
+      this.result = discord_dms.getKeys("id").index(current_channel)
+      this.channel = discord_dms[this.result]
+      discord_dms.delete(this.result)
+      discord_dms.insert(1,this.channel)
     )
   ) else (
     send_file send current_channel current_attachment[3] current_attachment[2]
