@@ -9,5 +9,7 @@ processedFeed = array.get(["user","content"]; feed)
 /@ event frame:
 ui.text("This is a Beta version of the Claw Client. It only supports CRLv0.11, and is read only. This is not an end product."; 1)
 ui.tabs(processedFeed; 2)
-msg = prompt("What message would you like to send?")
+if (false) ()
+	msg = prompt("What message would you like to send?")
+)
 if (msg !== undefined) (  log(msg)  )
