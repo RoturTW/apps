@@ -1235,7 +1235,7 @@ if "enter".isKeyDown() and input_message != "" (
     exit
   )
   if send.startsWith(".version") (
-    async_msg "originCord v5.0" current_channel
+    async_msg "originCord v5.1" current_channel
     input_message = ""
     exit
   )
