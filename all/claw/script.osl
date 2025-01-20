@@ -11,12 +11,6 @@ api = "https://claw.rotur.dev/"
 
 url = "feed"
 
-hovered_post = {
-  "user":    "Mist",
-  "pfp":     "https://avatars.githubusercontent.com/u/92952823?v=4&size=64",
-  "content": "Welcome To Claw! A simple and open social media platform built for your favorite rotur based operating systems!"
-}
-
 users = {}
 
 attachment = ""
@@ -54,6 +48,93 @@ def "load_profile" "this.username" (
   hovered_post = ""
 )
 
+def "render_post" "this.w, this.h, this.post, this.offset_y, this.reply" (
+  this.user = this.post.user.toLower()
+  loc 9999 2 0 y
+  square this.w this.h 10 : c#window_colour
+  if mouse_touching (
+    square this.w this.h 15 : c#seco
+    square this.w this.h 10 : c#prim
+    square this.w this.h - 70 10 0 1
+    if onclick and this.reply.not (
+      posts.feed = this.post.replies
+      posts.data = this.post
+      url = "Post_" ++ this.post.id
+    )
+  )
+  loc 2 2 33 y + this.offset_y
+  
+  if users[this.user] == "" (
+    this.val = (api ++ "profile?name=" ++ this.user).getAsync()
+    if this.val != "Loading" (
+      users[this.user] = this.val
+    )
+  )
+  this.user = users[this.user]
+  
+  image this.user.pfp 40 40
+  text this.user.username 10 : c#txtc chx#30
+  if onclick (
+    load_profile this.user.username
+  )
+  
+  this.time = this.post.timestamp
+  if timestamp - this.time > 12800000 (
+    this.time = this.time.timestamp("convert-date")
+  ) else (
+    this.time = this.time.timestamp("convert-relative")
+  )
+  this.tw = this.time.len * 8
+  loc -2 2 -20 - this.tw y + this.offset_y
+  text this.time 8
+  
+  if this.reply.not (
+    loc 2 2 20 y - this.offset_y
+    text "Posted From " ++ (this.post.os ?? "Unknown") 8
+      
+    loc -2 2 -30 y - this.offset_y
+    this.likes = this.post.likes
+    if this.likes == "" (
+      this.total_likes = 0
+      this.i_liked = false
+    ) else (
+      this.total_likes = this.likes.len
+      this.i_liked = this.likes.contains(username.toLower())
+    )
+    icon this.i_liked ? "favorites-full" "favorites" 0.8
+    if onclick (
+      feed[count].likes ??= []
+      if this.i_liked (
+        feed[count].likes = feed[count].likes.delete(username.toLower())
+        this.rating = 0
+      ) else (
+        feed[count].likes = feed[count].likes.append(username.toLower())
+        this.rating = 1
+      )
+      set_rating this.post.id this.rating
+      posts.feed = feed
+    )
+
+    change_x this.total_likes.len * -8 - 20
+    text this.total_likes 8
+    
+    change_x -40
+    icon "w 4 cutcircle 0 -5 10 4 45 w 4.1 line 10 -10 10 -5 line 0 5 -10 5 cont -5 0 line -10 5 -5 10" 0.7
+    this.total_replies = (this.post.replies ?? []).len
+    change_x this.total_replies.len * -8 - 20
+    text this.total_replies 8
+  )
+  if this.post.attachment == "" (
+    this.offset = 0
+  ) else (
+    this.offset = 3
+    loc -2 2 -30 y
+    icon "image" 0.8
+  )
+  loc 2 2 20 y + 20
+  text this.post.content.replace("\n"," ").wrapText(this.w / 9 - 1 - this.offset) 9
+)
+
 def "render_main" "feed" (
   this.ih = 180
     
@@ -68,121 +149,10 @@ def "render_main" "feed" (
     if count > len (
       return
     )
-    this.post = feed[count]
-    this.user = this.post.user
-
     this.h = this.ih - 20
-    this.offset_y = (this.h / 2 - 20)
     
-    
-    loc 9999 2 0 y
-    square this.w this.h 10 : c#window_colour
-      if mouse_touching (
-        square this.w this.h 15 : c#seco
-        square this.w this.h 10 : c#prim
-        if onclick (
-          hovered_post = this.post
-        )
-      )
-      loc 2 2 33 y + this.offset_y
-      image this.post.pfp 40 40
-      text this.user 10 : c#txtc chx#30
-      if onclick (
-        load_profile this.user
-      )
-    
-      this.time = this.post.timestamp
-      if timestamp - this.time > 12800000 (
-        this.time = this.time.timestamp("convert-date")
-      ) else (
-        this.time = this.time.timestamp("convert-relative")
-      )
-      this.tw = this.time.len * 8
-      loc -2 2 -20 - this.tw y + this.offset_y
-      text this.time 8
-      
-      loc 2 2 20 y - this.offset_y
-      text "Posted From " ++ (this.post.os ?? "Unknown") 8
-      
-      loc -2 2 -30 y - this.offset_y
-      this.likes = this.post.likes
-      if this.likes == "" (
-        this.total_likes = 0
-        this.i_liked = false
-      ) else (
-        this.total_likes = this.likes.len
-        this.i_liked = this.likes.contains(username.toLower())
-      )
-      icon this.i_liked ? "favorites-full" "favorites" 0.8
-      if onclick (
-        feed[count].likes ??= []
-        if this.i_liked (
-          feed[count].likes = feed[count].likes.delete(username.toLower())
-          this.rating = 0
-        ) else (
-          feed[count].likes = feed[count].likes.append(username.toLower())
-          this.rating = 1
-        )
-        set_rating this.post.id this.rating
-        posts.feed = feed
-      )
-
-      change_x this.total_likes.len * -8 - 20
-      text this.total_likes 8
-
-      if this.post.attachment == "" (
-        this.offset = 0
-      ) else (
-        this.offset = 3
-        loc -2 2 -30 y
-        icon "image" 0.8
-      )
-      loc 2 2 20 y + 20
-      text this.post.content.replace("\n"," ").wrapText(this.w / 9 - 1 - this.offset) 9
-      y -= this.ih
-    )
-)
-
-
-def "render_rightbar" (
-  goto 0 0
-  this.w = frame.width - 25
-  square this.w frame.height - 20 10 : c#window_colour
-  this.p = hovered_post
-  loc 2 2 30 -30
-  image this.p.pfp 30
-  text this.p.user 10 : c#txtc chx#30
-  if mouse_touching (
-    cursor "pointer"
-    if onclick (
-      load_profile this.p.user
-    )
-  )
-  
-  if this.p.user == username (
-    loc -2 2 -30 -30
-    icon "bin" 0.7 : tooltip#"Delete Post"
-    if onclick (
-      delete_post this.p.id
-      hovered_post = ""
-      posts.got = false
-      posts.feed = []
-    )
-  )
-  
-  loc 2 2 20 -60
-  text this.p.content.wrapText(this.w / 10 - 2) 10
-  
-  if this.p.attachment != "" (
-    goto 0 frame.bottom + (this.w / 2)
-    square this.w this.w 10 : c#prim
-    
-    this.att = this.p.attachment
-    if this.att.imageinfo("width") > this.att.imageinfo("height") (
-      image this.att this.w
-    ) else (
-      image this.att null this.w
-    )
+    render_post this.w this.h feed[count] (this.h / 2 - 20) url.startsWith("Post_")
+    y -= this.ih
   )
 )
 
@@ -200,8 +170,41 @@ def "side_button" "this.icon, this.txt, this.callback" (
   text this.txt 10 : c#txtc
 )
 
+def "claw_input" "this.y, this.w, this.onsend, this.message" (
+  goto x this.y
+  square this.w 90 10 : c#window_colour
+
+  change_y 25
+  input this.w - 15 23 "claw" this.message
+  input_claw.trim(0,100)
+  change this.w / -2 + 10 -50
+  text input_claw.len ++ "/100" 8 : c#txtc
+
+  change_x 40
+  text "Click Here To Paste An Image URL" 8
+  if onclick (
+    attachment = clipboard
+    if attachment.startsWith("https://").not (
+      attachment = ""
+      say "Invalid, must be https:// image"
+    )
+  )
+  if attachment != "" (
+    image attachment 30 30 : chx#30
+  )
+  goto 115 + (this.w / 2) this.y - 25
+  icon "send" 0.8
+  if onclick (
+    this.onsend()
+  )
+)
+
 mainloop:
-if url == "feed" or url.startsWith("following_feed") (
+if url.startsWith("Post_") (
+  wt:load_theme
+  window_accent = user.theme.accent
+  post_id = url.split("_")[2]
+) else if url == "feed" or url.startsWith("following_feed") (
   wt:load_theme
   window_accent = user.theme.accent
 ) else (
@@ -233,47 +236,39 @@ if posts.got (
   len = posts.feed.len
   
   if url == "feed" (
-    this.w = 790
-    goto x w.top - 110
-    square this.w 90 10 : c#window_colour
-
-    change_y 25
-    input this.w - 15 23 "claw" "Type your post..."
-    input_claw.trim(0,100)
-    change this.w / -2 + 10 -50
-    text input_claw.len ++ "/100" 8 : c#txtc
-  
-    change_x 40
-    text "Click Here To Paste An Image URL" 8
-    if onclick (
-      attachment = clipboard
-      if attachment.startsWith("https://").not (
-        attachment = ""
-        say "Invalid, must be https:// image"
-      )
-    )
-    if attachment != "" (
-      image attachment 30 30 : chx#30
-    )
-    goto 115 + (this.w / 2) w.top - 135
-    icon "send" 0.8
-    if onclick (
+    claw_input w.top - 110 790 def() -> (
       send_post input_claw attachment
-      wait 0.5
       input_claw = ""
       attachment = ""
       posts.got = false
       posts.feed = []
-    )
+    ) "Type your post..."
+  ) else if url.startsWith("Post_") (
+    top -= 190
+    
+    frame x - 408 w.top - 50 x + 408 top - 110
+      y = -100
+      render_post 790 170 posts.data 65
+    frame "clear"
+    
+    claw_input w.top - 300 790 def() -> (
+      c (api ++ "reply?id=" ++ posts.data.id ++ "&auth=" ++ token ++ "&content=" ++ encodeURIComponent(input_claw)).getAsync()
+      input_claw = ""
+      attachment = ""
+    ) "Reply to this post..."
   ) else (
     top = w.top - 60
   )
   
   c prim
 
-  frame x - 408 top x w.bottom len * 150 "feed"
+  frame x - 408 top x + 408 w.bottom len * 180 "feed"
     render_main posts.feed
   frame "clear"
+) else if url.startsWith("profile?name=") and users.contains(url.split("=").last()) (
+  name = url.split("=").last()
+  posts.feed = users[name].posts
+  posts.data = users[name].delete("posts")
 ) else (
   posts.feed = (api ++ url).getAsync()
   if posts.feed != "Loading" (
@@ -281,8 +276,8 @@ if posts.got (
     if url.startsWith("profile?") (
       posts.data = posts.feed.delete("posts")
       posts.feed = posts.feed.posts
-      hovered_post = posts.feed[1]
     )
+
   )
 )
 
@@ -293,63 +288,78 @@ if user_profile == "" (
   )
 )
 
-if hovered_post != "" (
-  frame x top x + 408 w.bottom
-    render_rightbar
-  frame "clear"
-)
-this.x = w.left + 25
+x = w.left + 25
 
 goto w.left + 120
 square 300 w.height 10 : c#window_colour
 
-if url.startsWith("profile").not (
-  loc 2 2 25 -75
-  side_button "image" + user_icon + "40" "My Profile" def() -> (
-    load_profile username
-  )
-
-  set_x this.x : chy#-40
-  side_button "" "Followers:" + user_profile.followers def() -> ()
-
-  set_x this.x : chy#-30
-  side_button "" "Following:" + user_profile.following def() -> ()
-) else (
+if url.startsWith("Post_") (
   loc 2 2 25 -75
   side_button "image" + posts.data.pfp + "40" posts.data.username def() -> (
     load_profile username
   )
 
-  set_x this.x : chy#-40
+  set_x x : chy#-40
   side_button "" "Followers:" + posts.data.followers def() -> ()
 
-  set_x this.x : chy#-30
+  set_x x : chy#-30
   side_button "" "Following:" + posts.data.following def() -> ()
 
-  set_x this.x : chy#-50
+  set_x x : chy#-50
   side_button "left-arrow" "Back To Feed" def() -> (
     posts.got = false
     posts.feed = []
     url = "feed"
   )
-  
-  set_x this.x : chy#-50
-  if posts.data.followed (
-    side_button "tick" "Unfollow" + posts.data.username def() -> (
-      this.url = api ++ "/unfollow?auth=" ++ token ++ "&username=" ++ posts.data.username
-      posts.data.followed = false
-      return this.url.getAsync()
+) else (
+  if url.startsWith("profile").not (
+    loc 2 2 25 -75
+    side_button "image" + user_icon + "40" "My Profile" def() -> (
+      load_profile username
     )
+
+    set_x x : chy#-40
+    side_button "" "Followers:" + user_profile.followers def() -> ()
+
+    set_x x : chy#-30
+    side_button "" "Following:" + user_profile.following def() -> ()
   ) else (
-    side_button "tick" "Follow" + posts.data.username def() -> (
-      this.url = api ++ "/follow?auth=" ++ token ++ "&username=" ++ posts.data.username
-      posts.data.followed = true
-      return this.url.getAsync()
+    loc 2 2 25 -75
+    side_button "image" + posts.data.pfp + "40" posts.data.username def() -> (
+      load_profile username
+    )
+
+    set_x x : chy#-40
+    side_button "" "Followers:" + posts.data.followers def() -> ()
+
+    set_x x : chy#-30
+    side_button "" "Following:" + posts.data.following def() -> ()
+
+    set_x x : chy#-50
+    side_button "left-arrow" "Back To Feed" def() -> (
+      posts.got = false
+      posts.feed = []
+      url = "feed"
+    )
+  
+    set_x x : chy#-50
+    if posts.data.followed (
+      side_button "tick" "Unfollow" + posts.data.username def() -> (
+        this.url = api ++ "/unfollow?auth=" ++ token ++ "&username=" ++ posts.data.username
+        posts.data.followed = false
+        return this.url.getAsync()
+      )
+    ) else (
+      side_button "tick" "Follow" + posts.data.username def() -> (
+        this.url = api ++ "/follow?auth=" ++ token ++ "&username=" ++ posts.data.username
+        posts.data.followed = true
+        return this.url.getAsync()
+      )
     )
   )
 )
 
-set_x this.x : chy#-50
+set_x x : chy#-50
 side_button "reload" "Reload" def() -> (
   posts.got = false
   posts.feed = []
