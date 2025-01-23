@@ -1,8 +1,8 @@
 {
   "title": "OriginCord",
-  "description": "An osl based discord client that you can use to talk through bots",
+  "description": "An osl based discord client",
   "author": "Mist",
-  "version": "5.1",
+  "version": "5.2",
   "genre": "Social",
   "game_modes": ["Single-player"],
   "permissions": ["notifications"],
