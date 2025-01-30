@@ -19,18 +19,18 @@ last_timer = timer
 game_timer = timer
 
 
-def generateStars(this.density,this.c) (
-  this.stars = "w 0.1 c " ++ this.c
+def generateStars(density, c) (
+  local stars = "w 0.1 c " ++ c
 
-  this.dist = 10
-  loop this.density (
-    this.dir = random(-180,180)
-    this.dist = random(10,200).round() / 10
-    this.x = this.dir.sin * this.dist
-    this.y = this.dir.cos * this.dist
-    this.stars += " dot" + this.x + this.y
+  local dist = 10
+  loop density (
+    local dir = random(-180,180)
+    local dist = random(10,200).round() / 10
+    local x = dir.sin() * dist
+    local y = dir.cos() * dist
+    local stars += " dot" + x + y
   )
-  return this.stars
+  return stars
 )
 
 stars = generateStars(100,"#777")
@@ -39,7 +39,6 @@ stars3 = generateStars(100,"#333")
 
 rings = "w 0.1 c #999"
 for i 3 (
-  dist = i * 10
   for i2 36 (
     dir = i2 * 10
     rings += " dot" + x + y
@@ -94,7 +93,7 @@ def "setup" (
   enemy_cap = 40
   arrow_cap = 10
   particle_cap = 50
-  bullet_cap = 40
+  bullet_cap = 1000
 
   // the arrays of each item to be rendered
   arrows = []
@@ -134,7 +133,7 @@ setup
 
 // 'move steps' block from scratch recreation
 def "move" "this.dist" (
-  change direction.sin * this.dist direction.cos * this.dist
+  change direction.sin() * dist direction.cos() * dist
 )
 
 // add an arrow object to the scene
@@ -142,19 +141,21 @@ def "create_arrow" "this.x, this.y ,this.dir, this.vel" (
   if arrows.len > arrow_cap (
     arrows.delete(1)
   )
-  this.obj = {}
-  this.obj.x = this.x + (this.dir.sin * this.vel * 2)
-  this.obj.y = this.y + (this.dir.cos * this.vel * 2)
-  this.obj.vel = this.vel
-  this.obj.dir = this.dir
-  arrows.append(this.obj)
+  
+  arrows.append({
+    "x":   x + (dir.sin() * vel * 2),
+    "y":   y + (dir.cos() * vel * 2),
+    "vel": vel,
+    "dir": dir,
+  })
 )
 
 // generate the positon from x y to world space
-def position_entity(this.x, this.y) (
-  this.x = player.x - this.x * s * -1
-  this.y = player.y - this.y * s * -1
-  return this
+def position_entity(x, y) (
+  return {
+    "x": player.x - x * s * -1,
+    "y": player.y - y * s * -1,
+  }
 )
 
 // add an enemy object to the scene
@@ -163,14 +164,13 @@ def "create_enemy" "this.x, this.y, this.health, this.reload" (
   if enemies.len > enemy_cap (
     enemies.delete(1)
   )
-
-  this.obj = this
-  this.obj.dir = 0
-  this.obj.vel = 3
-  this.obj.size = 1
-  this.obj.last = game_timer + (random(10,30) / 10)
   
-  enemies.append(this.obj)
+  enemies.append(this ++ {
+    "dir": 0,
+    "vel": 3,
+    "size": 1,
+    "last": game_timer + (random(10,30) / 10)
+  })
 )
 
 // add an enemy bullet object to the scene
@@ -178,8 +178,7 @@ def "create_bullet" "this.x, this.y, this.dir, this.vel" (
   if bullets.len > bullet_cap (
     bullets.delete(1)
   )
-  this.obj = this
-  bullets.append(this.obj)
+  bullets.append(this)
 )
 
 // add a simple particle object to the scene
@@ -187,29 +186,31 @@ def "create_particle" "this.x, this.y, this.dir, this.costume" (
   if particles.len > particle_cap (
     particles.delete(1)
   )
-  this.frames = 0
-  particles.append(this)
+  
+  particles.append(this ++ {
+    "frames": 0
+  })
 )
 
 // a command to handle simple character controlling with wasd and space for dashing
 def "movement" "this.speed" (
   if "d".pressed (
-    player.xvel += this.speed
+    player.xvel += speed
   )
   if "a".pressed (
-    player.xvel -= this.speed
+    player.xvel -= speed
   )
   if "w".pressed (
-    player.yvel += this.speed
+    player.yvel += speed
   )
   if "s".pressed (
-    player.yvel -= this.speed
+    player.yvel -= speed
   )
   goto 0 0
   pointat player.xvel player.yvel
   player.dir = direction
-  if "space".onpress (
-    if boosted.not and (game_timer - ability.last_used > ability.cooldown) (
+  if "space".onKeyDown() (
+    if !boosted and (game_timer - ability.last_used > ability.cooldown) (
       switch ability.name (
         case "Dash"
           move_player 200
@@ -226,28 +227,28 @@ def "movement" "this.speed" (
   player.xvel *= 0.8
   player.yvel *= 0.8
   
-  this.d = dist(0,0,player.x,player.y) - 1730
-  if this.d > 0 (
+  local d = dist(0,0,player.x,player.y) - 1730
+  if d > 0 (
     pointat -player.x -player.y
-    player.x += direction.sin * this.d
-    player.y += direction.cos * this.d
+    player.x += direction.sin * d
+    player.y += direction.cos * d
   )
 )
 
 // add velocity to the player in the direction its facing
 def "move_player" "this.speed" (
-  player.xvel += player.dir.sin * this.speed
-  player.yvel += player.dir.cos * this.speed
+  player.xvel += player.dir.sin() * speed
+  player.yvel += player.dir.cos() * speed
 )
 
 def "create_random_enemy" "this.level" (
   goto player.x player.y
   direction random(-180,180)
-  create_enemy direction.sin * random(300,2000) direction.cos * random(300,2000) this.level this.level
+  create_enemy direction.sin * random(300,2000) direction.cos * random(300,2000) level level
 )
 
 def "go" "this.x, this.y" (
-  goto this.x + cam_x this.y + cam_y
+  goto x + cam_x y + cam_y
 )
 
 def "apply_upgrade" "this.upgrade" (
@@ -346,7 +347,7 @@ if load_queue.len > 0 (
 
 w = window
 
-if paused.not (
+if !paused (
   movement player.speed
   game_timer += timer - last_timer
 )
@@ -422,7 +423,7 @@ image github ++ "assets/Charge/" ++ (per * 10 + 1).floor() ++ ".svg" 25 * s
 move -30 * s
 effect "clear"
 
-if paused.not (
+if !paused (
   if mouse_down (
     draw = game_timer - mouse_down_start * player.drawspeed
     dif = draw.clamp(0,300)
@@ -449,8 +450,8 @@ arrows_del = []
 for i arrows.len (
   arrow @= arrows[i]
   if paused.not (
-    arrow.x += arrow.dir.sin * arrow.vel
-    arrow.y += arrow.dir.cos * arrow.vel
+    arrow.x += arrow.dir.sin() * arrow.vel
+    arrow.y += arrow.dir.cos() * arrow.vel
   )
   direction arrow.dir
   pos = position_entity(arrow.x,arrow.y)
@@ -477,11 +478,11 @@ for i bullets.len (
   direction bullet.dir
   pos = position_entity(bullet.x, bullet.y)
   goto pos.x pos.y
-  dist = dist(x_position,y_position,0,0)
-  if dist > (2000 * s) (
+  dist2 = dist(x_position,y_position,0,0)
+  if dist2 > (2000 * s) (
     bullets_del.append(i)
   )
-  if dist < (30 * s) and player.damage_multiplier != 0 (
+  if dist2 < (30 * s) and player.damage_multiplier != 0 (
     bullets_del.append(i)
     player.health -= player.damage_multiplier
     damaged = game_timer
@@ -494,7 +495,7 @@ each i bullets_del (
   offset ++
 )
 
-dist = 50 * s
+dist2 = 50 * s
 
 // enemies
 enemies_del = []
@@ -511,16 +512,16 @@ for i enemies.len (
   )
   
   if dist00 < (2000 * s) (
-    if paused.not (
+    if !paused (
       if game_timer - enemy.last > 1 / enemy.reload (
         create_bullet player.x + (x / s) player.y + (y / s) direction + random(-5,5) 20
         enemy.last = game_timer
       )
-      if dist00 > (300 * s) and dist < (500 * s) (
+      if dist00 > (300 * s) and dist2 < (500 * s) (
         enemy.x += direction.sin * enemy.vel
         enemy.y += direction.cos * enemy.vel
       ) else (
-        if dist00 < dist (
+        if dist00 < dist2 (
           move_player -100
           damaged = game_timer - 0.3
           player.health -= 0.5
@@ -530,7 +531,7 @@ for i enemies.len (
       for i2 arrows.len (
         arrow @= arrows[i2]
         pos = position_entity(arrow.x,arrow.y)
-        if dist(pos.x, pos.y, x, y).abs() < dist (
+        if dist(pos.x, pos.y, x, y).abs() < dist2 (
           enemies_del.append(i)
           arrows.delete(i2)
           loop 5 (
@@ -558,9 +559,11 @@ each i enemies_del (
   )
 
   enemies.delete(i - offset)
-  obj = {"txt":"Enemy Killed"}
-  obj.time = timer
-  notifs.insert(1,obj)
+  notifs.insert(1,{
+    "txt":  "Enemy Killed",
+    "time": timer
+  })
+
   notif_y = 0
   offset ++
 )
