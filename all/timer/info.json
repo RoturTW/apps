@@ -2,7 +2,7 @@
   "title": "Timer",
   "description": "Timer is a small widget for origin that shows an analogue clock",
   "author": "Mist",
-  "version": "1.0",
+  "version": "1.1",
   "genre": "Utility",
   "permissions": [],
   "supports":["originOS"]
