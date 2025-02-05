@@ -36,7 +36,6 @@ logs = []
 
 icon_mallet = "w 20 c #d23a3a dot 0 0 w 2 c #2b2b2b line 6 -6 0 0 line 5 -7 7 -5 line 5 -7 2 -4 cont 2.5 -3.5 cont -1.5 0.5 line 7 -5 4 -2 cont 3.5 -2.5 cont -0.5 1.5 w 2 line -4.5 -1.5 1.5 4.5 line -4.5 -1.5 -7.5 1.5 line 1.5 4.5 -1.5 7.5 line -7.5 1.5 -1.5 7.5 w 3 line -5 1 -1 5"
 icon_addon = "c #881bbf w 6 square 0 -2 5 6 square -2 3 3 5 dot 0 -3 w 3 c #6d1499 line 2 9.5 6.5 5 cont 2 5 cont 2 9.5 w 1.5 c #fff line -3.25 -1 -5.75 -4 cont -3.25 -7 line 3.25 -1 5.75 -4 cont 3.25 -7 line -2.5 -4 2.5 -4 line 0 -6.5 0 -1.5"
-
 def "loadtheme"
   primary = user.theme.primary
   secondary = user.theme.secondary
@@ -53,7 +52,7 @@ window "set_dragbox" [[2,2,0,0],[-2,2,-90,-42]]
 minimised_text = "Mallet"
 save_dir = "mallet@flufi"
 
-permission "request" "file viewer"
+permission "request" "file admin"
 permission "request" "start run"
 
 file "install_type" "map" icon_mallet "Map File" []
@@ -184,7 +183,9 @@ def "loadfiles"
       )
       if filetokens[2] == "addon" (
         if disabledaddons.contains(filetokens[1]).not (
-          addons[filetokens[1]] = filedata.JsonParse()
+          // temp fix
+          //addons[filetokens[1]] = filedata.destr
+          addons[filetokens[1]] = filedata.replace("\n","").JsonParse()
           runaddon filetokens[1] "load"
         )
         addonnames.append(filetokens[1])
@@ -286,7 +287,7 @@ def "brush_touching"
   )
 endef
 
-def "arr.brush_create()"
+def "brush_create(arr)"
   ax = arr[1]
   ay = arr[2]
   bx = arr[3]
@@ -343,6 +344,17 @@ def "loadmap" "map"
   map_data = map.destr
   brushes = map_data["brushes"].destr
   entities = map_data["entities"].destr
+  each brushi brush brushes (
+    if brush.type == "string" (
+      brushes[brushi] = brush.JsonParse()
+    )
+  )
+  each enti ent entities (
+    if ent.type == "string" (
+      entities[enti] = ent.JsonParse()
+    )
+  )
+
 endef
 
 def "SEparams.getparamtype(SEtype)"
@@ -573,7 +585,7 @@ def "tools_update"
   shouldntdrag = shouldntdrag or selected_entity != 0
   shouldntdrag = shouldntdrag or hovered_entity != 0
   if mouse_down and drgtl_set and hovering_ui.not and shouldntdrag.not (
-    brs = [].append(drgtl_start_x).append(drgtl_start_y).append(mouse_wld_x).append(mouse_wld_y).brush_create()
+    brs = brush_create([].append(drgtl_start_x).append(drgtl_start_y).append(mouse_wld_x).append(mouse_wld_y))
     c #006464
     draw_brush brs
     
@@ -776,7 +788,7 @@ def "scene_brush_update"
     can_interact = false
     if creating_brush_stage == 1 (
       c #007272
-      brs = [].append(creating_brush_x).append(creating_brush_y).append(mouse_wld_x).append(mouse_wld_y).brush_create()
+      brs = brush_create([].append(creating_brush_x).append(creating_brush_y).append(mouse_wld_x).append(mouse_wld_y))
       draw_guides = true
       draw_brush brs
 
@@ -784,8 +796,8 @@ def "scene_brush_update"
       brsy = brs[2]
       brsw = brs[3]
       brsh = brs[4]
-      sbrsx = brsx.getx()
-      sbrsy = brsy.gety()
+      sbrsx = getx(brsx)
+      sbrsy = gety(brsy)
       sbrsw = brsw * scale
       sbrsh = brsh * scale
       goto sbrsx + (-4.5 * (brsw * 10).len) sbrsy + sbrsh + 10
@@ -794,7 +806,7 @@ def "scene_brush_update"
       text (brsh * 10) 9
     )
     if creating_brush_stage == 2 (
-      brs = [].append(creating_brush_x).append(creating_brush_y).append(creating_brush_end_x).append(creating_brush_end_y).brush_create()
+      brs = brush_create([].append(creating_brush_x).append(creating_brush_y).append(creating_brush_end_x).append(creating_brush_end_y))
       if brs[3] != 0 and brs[4] != 0 (
         brushes.append(brs)
         selected_brush = brushes.len
