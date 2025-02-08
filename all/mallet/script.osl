@@ -393,7 +393,7 @@ def "input_update"
     if "e".pressed "scale += delta_time * 15"
     if "q".pressed "scale -= delta_time * 15"
     
-    scale += scroll_velocity * .005
+    scale += scroll_velocity * -.005
   )
 
   if "`".pressed "loadfiles"
