@@ -120,7 +120,7 @@ def "newEntRaw" "id,x,y" (
 )
 def "newEnt" "id,x,y" (
   if entity_boss.contains(id) (
-    newBossEnt id x y
+    newBossEnt id
   ) else (
     newEntRaw id x y
   )
@@ -143,7 +143,9 @@ def "newBorderEnt" "id" (
   )
 )
 
-def "newBossEnt" "id,x,y" (
+def "newBossEnt" "id" (
+  x = random(screensize_x * -.5, screensize_x * .5)
+  y = random(screensize_y * -.5, screensize_y * .5)
   newEntRaw id x y
   window "add" window.file.uuid "ent" ++ ":" ++ enid
 )
@@ -351,19 +353,20 @@ chars = ["0","1","2","3","4","5","6","7","8","9","a","b","c","d","f"]
 def "enemyC" "r,g,b" (
   // so basically it turns (for each channel)
   // ff -> 255 -> + attack flash -> capped -> back to hex
-  r = hex.index(r)
-  g = hex.index(g)
-  b = hex.index(b)
+  
+  local r = hex.index(r)
+  local g = hex.index(g)
+  local b = hex.index(b)
   if attackTime > 0 (
-    r += attackTime * 2
-    g += attackTime * 2
-    b += attackTime * 2
-    if r > 256 (; r = 256; )
-    if g > 256 (; g = 256; )
-    if b > 256 (; b = 256; )
+    local r += attackTime * 2
+    local g += attackTime * 2
+    local b += attackTime * 2
+    if r > 256 (; local r = 256; )
+    if g > 256 (; local g = 256; )
+    if b > 256 (; local b = 256; )
   )
-  col = "#" ++ hex[r] ++ hex[g] ++ hex[b]
-  c col.destr
+  local col = "#" ++ hex[r] ++ hex[g] ++ hex[b]
+  c col
 )
 
 def "drawScene" "dentities,dbullets,denbullets,dgoop,dplayer_x,dplayer_y,d_particles,t" (
@@ -883,15 +886,22 @@ shopsmooth = [0,0,0]
 restocksmooth = 0
 if wintype == "" (
   shopitems = []
+  shoplocked = []
+  shoplockedlerp = []
   loop 3 (
     shopitems.append(upgrades.getKeys()[random(1,upgrades.len)])
+    shoplocked.append(false)
+    shoplockedlerp.append(0)
   )
   //win_setup
 )
 
 space_last = "space".pressed
 window "show"
+mouse_right_last = false
 mainloop:
+  click_right = mouse_right and mouse_right_last.not
+  mouse_right_last = mouse_right
   window_colour = #040404
   win_setup
   // basically if the main window is saying its dying, die youself
@@ -1042,6 +1052,7 @@ mainloop:
           v.upgrades[itm][1] *= random(18,35) / 10
           v.upgrades[itm][1] = v.upgrades[itm][1].round
           arr = []
+          v.shoplocked[panel_i] = false
           if upgrade[2].type == "array" (
             each cng upgrade[2] (
               arr.append("v." ++ cng[1] + cng[2] ++ "=" + cng[3])
@@ -1052,6 +1063,20 @@ mainloop:
           run arr
         )
       )
+      
+      if click_right and mouse_touching (
+        v.shoplocked[panel_i] = v.shoplocked[panel_i].not
+      )
+      
+      l = v.shoplockedlerp[panel_i]
+      l += (v.shoplocked[panel_i] ? 1 0) - l * .2
+      if l > 1 (
+        l = 1
+      )
+      if l < 0 (
+        l = 0
+      )
+      v.shoplockedlerp[panel_i] = l
       
       change_y shopsmooth[panel_i] * 20
       
@@ -1097,6 +1122,14 @@ mainloop:
       )
       change_x txt.len * -5
       text txt 10 : c#fff chy#-60
+      
+      tempicn = "w 3 square 0 -4.5 6 4 line -4 1 -4 3 cutcircle 0 5 4 0 80 cont 4 1"
+      
+      set_x sx
+      change 50 100
+      if v.shoplockedlerp[panel_i] > .1 (
+        icon tempicn v.shoplockedlerp[panel_i]
+      )
     )
     set_x 0
     set_y -150
@@ -1114,9 +1147,13 @@ mainloop:
         v.currency -= v.restockcost
         shopitems = []
         u = v.upgrades.getKeys()
-        loop 3 (
+        for ii 3 (
           r = random(1,u.len)
-          shopitems.append(u[r])
+          if v.shoplocked[ii] (
+            shopitems.append(v.shopitems[ii])
+          ) else (
+            shopitems.append(u[r])
+          )
         )
         v.shopitems = shopitems
         restocksmooth = 0
@@ -1141,8 +1178,7 @@ mainloop:
     icon "w 10 dot 0 0" 1 : chy#-35
     text v.restockcost 12 : chx#10
     set_x sx
-
-
+    
     window "dimensions" 700 450
     window "resizable" false
   )
