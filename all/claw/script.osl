@@ -68,18 +68,10 @@ def "render_post" "w, h, post, offset_y, reply" (
   )
   loc 2 2 33 y + offset_y
   
-  if users[user] == "" (
-    local val = (api ++ "profile?name=" ++ user).getAsync()
-    if val != "Loading" (
-      users[user] = val
-    )
-  )
-  local user = users[user]
-  
-  image user.pfp 40 40
-  text user.username 10 : c#txtc chx#30
+  image "https://avatars.rotur.dev/" ++ user 40 40
+  text user 10 : c#txtc chx#30
   if onclick (
-    load_profile user.username
+    load_profile user
   )
   
   local time = post.timestamp
@@ -299,7 +291,8 @@ square 300 w.height 10 : c#window_colour
 
 if url.startsWith("Post_") (
   loc 2 2 25 -75
-  side_button "image" + posts.data.pfp + "40" posts.data.username def() -> (
+  log posts.data.user
+  side_button "image https://avatars.rotur.dev/" ++ posts.data.user + "40" posts.data.username def() -> (
     load_profile username
   )
 
@@ -312,7 +305,6 @@ if url.startsWith("Post_") (
   set_x x : chy#-50
   side_button "left-arrow" "Back To Feed" def() -> (
     posts.got = false
-    posts.feed = []
     url = "feed"
   )
 ) else (
@@ -342,7 +334,6 @@ if url.startsWith("Post_") (
     set_x x : chy#-50
     side_button "left-arrow" "Back To Feed" def() -> (
       posts.got = false
-      posts.feed = []
       url = "feed"
     )
   
@@ -366,7 +357,7 @@ if url.startsWith("Post_") (
 set_x x : chy#-50
 side_button "reload" "Reload" def() -> (
   posts.got = false
-  posts.feed = []
+  
   if url.startsWith("Post_") (
     posts.got = true
     posts.feed = posts.data.replies
