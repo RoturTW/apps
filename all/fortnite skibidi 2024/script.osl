@@ -1,4 +1,4 @@
-if system_url.contains("embed?=").not() (
+if system_url.contains("embed=").not() (
   save "fortniteskibidi@rattusdong" "set_directory"
 
   if "highscore.txt".saveExists() (
