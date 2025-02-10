@@ -1,10 +1,13 @@
-save "fortniteskibidi@rattusdong" "set_directory"
-save "highscore.txt" "exists"
-if save_data (
-  save "highscore.txt" "get"
-  highscore = save_data
+if system_url.contains("embed?=").not() (
+  save "fortniteskibidi@rattusdong" "set_directory"
+
+  if "highscore.txt".saveExists() (
+    highscore = "highscore.txt".saveGet()
+  ) else (
+    save "highscore.txt" "set" 0
+    highscore = 0
+  )
 ) else (
-  save "highscore.txt" "set" 0
   highscore = 0
 )
 
@@ -15,7 +18,7 @@ window "resizable" False
 shotTimer = 0
 
 skibX = 600
-skibY = [-200,200].random
+skibY = random(-200,200)
 speed = 1
 score = 0
 dead = false
@@ -33,22 +36,22 @@ image "https://raw.githubusercontent.com/RattusDong/apps/main/all/fortnite%20ski
 if mouse_touching (
   cursor "crosshair"
 )
-if clicked and dead.not (
-  skibX += 500 + [0,150].random
+if clicked and dead.not() (
+  skibX += 500 + random(0,150)
   speed += 0.1
   score ++
   if score > highscore (
     save "highscore.txt" "set" score
     highscore = score
   )
-  skibY = [-200,200].random
+  skibY = random(-200,200)
 )
 if skibX < -200 (
   dead = true
   click = true
 )
 
-if clicked.not (
+if clicked.not() (
   click = false
 )
 
@@ -77,7 +80,7 @@ if dead (
     dieOff = 0
     score = 0
     skibX = 600
-    skibY = [-200,200].random
+    skibY = random(-200,200)
     speed = 1
   )
 )
