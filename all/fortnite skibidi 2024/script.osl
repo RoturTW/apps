@@ -1,4 +1,6 @@
-if system_url.contains("embed=").not() (
+save_access = system_url.contains("embed=").not()
+
+if save_access (
   save "fortniteskibidi@rattusdong" "set_directory"
 
   if "highscore.txt".saveExists() (
@@ -41,7 +43,9 @@ if clicked and dead.not() (
   speed += 0.1
   score ++
   if score > highscore (
-    save "highscore.txt" "set" score
+    if save_access (
+      save "highscore.txt" "set" score
+    )
     highscore = score
   )
   skibY = random(-200,200)
