@@ -6,8 +6,8 @@
     "auth": "Pnada"
   },
   "tiles": [
-    "fortnite skibidi 2024",
-    "origincord",
-    "claw"
+    {"title": "fortnite skibidi 2024"},
+    {"title": "origincord"},
+    {"title": "claw"}
   ]
 }
