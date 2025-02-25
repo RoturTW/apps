@@ -1,14 +1,13 @@
 {
   "featured": {
-    "name": "",
-    "image": "",
-    "desc": "",
-    "auth": ""
+    "name": "originkill",
+    "image": "https://raw.githubusercontent.com/RoturTW/apps/refs/heads/main/all/originkill/screenshots/originkill3.png",
+    "desc": "A semi-full recreation of window kill for originOS",
+    "auth": "Pnada"
   },
   "tiles": [
     "fortnite skibidi 2024",
     "origincord",
-    "claw",
-    "originkill"
+    "claw"
   ]
 }
