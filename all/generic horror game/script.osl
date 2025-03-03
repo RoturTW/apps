@@ -1,3 +1,4 @@
+
 // this game is unfinished, and in a beta stage
 
 github_url = "https://raw.githubusercontent.com/RoturTW/apps/main/all/generic%20horror%20game"
@@ -8,7 +9,7 @@ key_popup_img = github_url ++ "/assets/ui/keypopup.png"
 item_slot_img = github_url ++ "/assets/ui/item-slot.png"
 note_item = github_url ++ "/assets/items/note.png"
 note_fullscreen = github_url ++ "/assets/ui/big-note.png"
-
+eyes = github_url ++ "/assets/enemy/eyes.png"
 
 assets = []
 assets.append(base)
@@ -23,6 +24,7 @@ assets.append(vignette_img)
 assets.append(key_popup_img)
 assets.append(player_img)
 assets.append(note_item)
+assets.append(note_fullscreen)
 
 window.framerate = 60
 window_accent = #aaa
@@ -37,6 +39,14 @@ keys.up = "w"
 keys.down = "s"
 
 zoom = 1
+
+brightness = -100
+brightness_target = 0
+fisheye = -10
+fisheye_target = 0
+
+enemy_x = 0
+enemy_y = 0
 
 player_x = -150
 player_y = 150
@@ -58,30 +68,37 @@ lantern = {"x":-130,"y":100}
 lantern.img = github_url ++ "/assets/items/lantern.png"
 assets.append(lantern.img)
 
-def "handle_zoom" "this.scale"
-  w = window.width * this.scale
-  h = window.height * this.scale
+def "handle_zoom" "s" (
+  local w = window.width * s
+  local h = window.height * s
   if w > h (
-    this.mul = w
+    local mul = w
   ) else (
-    this.mul = h
+    local mul = h
   )
-  zoom = this.mul.int
+  zoom = mul.toNum()
   scale = 5 * zoom
-endef
+)
 
-def "position_item" "this.x, this.y"
+def "position_item" "this.x, this.y" (
   set_x player_x - this.x / 100 * zoom
   set_y player_y - this.y / 100 * zoom
-endef
+)
 
-def "render_base"
+def "apply_effects" (
+  brightness += brightness_target - brightness / 10
+  effect "brightness" brightness
+  fisheye += fisheye_target - fisheye / 10
+  effect "fisheye" fisheye
+)
+
+def "render_base" (
   position_item 0 0
   direction 90
   image base scale scale
-endef
+)
 
-def "player_controller" "this.speed"
+def "player_controller" "this.speed" (
   this.left = keys.left.pressed
   this.right = keys.right.pressed
   this.up = keys.up.pressed
@@ -107,11 +124,11 @@ def "player_controller" "this.speed"
   player_y += player_yv
   player_xv *= 0.7
   player_yv *= 0.7
-endef
+)
 
-def "player"
-  if (player_xv * 10).round != 0 or (player_yv * 10).round != 0 (
-    direction (timer * 400).sin * 5 + 90
+def "player" (
+  if (player_xv * 10).round() != 0 or (player_yv * 10).round() != 0 (
+    direction (timer * 400).sin() * 5 + 90
   ) else (
     direction = 0
   )
@@ -124,11 +141,11 @@ def "player"
   goto 0 0
   stretch "x" player_stretch
   stretch "y" 100
-  this.s = scale / mul * 2
-  image player_img this.s
-endef
+  local s = scale / mul * 2
+  image player_img s
+)
 
-def "interact(this.key)"
+def interact(this.key) (
   if dist(0,0,x_position,y_position) < (scale / 50) (
     change_y scale / 50
     this.s = scale / 180
@@ -140,11 +157,12 @@ def "interact(this.key)"
     )
   )
   return false
-endef
+)
 
-def "render_ui"
+def "render_ui" (
   vignette
   if popup != "" (
+    effect "clear"
     goto 0 0
     image note_fullscreen scale / 10
     change scale / -40 scale / 40
@@ -154,16 +172,37 @@ def "render_ui"
       popup = ""
     )
   )
-endef
+)
 
-def "vignette"
-  position_item lantern.x lantern.y
+def "vignette" (
   direction 90
   stretch [100,100]
-  image vignette_img scale
-endef
+  
+  lantern_dist = dist(lantern.x,lantern.y,player_x,player_y)
+  if lantern_dist < 50 (
+    brightness_target = lantern_dist.clamp(0,50) / -2
+    fisheye_target = 0
+  ) else (
+    brightness_target = -20
+    fisheye_target = (timer*100).sin * 2 - 1
+  )
+  if player_held_item == "lantern" (
+    lantern_dist = 0
+  )
+  if lantern_dist < 50 (
+    effect "transparency" lantern_dist.clamp(0,50) * 2
+    position_item lantern.x lantern.y
+    image vignette_img scale
+  )
+  effect "transparency" 100 - lantern_dist.clamp(0,100)
+  goto 0 0
+  loop 4 (
+    image vignette_img scale
+  )
+  effect "transparency" 0
+)
 
-def "lantern"
+def "lantern" (
   position_item lantern.x lantern.y
   direction 90
   stretch [100,100]
@@ -176,10 +215,13 @@ def "lantern"
     this.tx = player_x + (player_stretch_target == 100 ? 5 -5)
     lantern.x += this.tx - lantern.x / 5
     lantern.y += player_y - lantern.y / 5
+    if "q".onpress (
+      player_held_item = ""
+    )
   )
-endef
+)
 
-def "notes"
+def "notes" (
   position_item -100 90
   direction 90
   stretch [100,100]
@@ -187,9 +229,9 @@ def "notes"
   if interact(keys.interact) (
     popup = notes[1]
   )
-endef
+)
 
-def "collision" "this.x, this.y, this.w, this.h"
+def "collision" "this.x, this.y, this.w, this.h" (
   if dist(this.x,this.y,player_x,player_y) < (this.w + this.h * 5) (
     position_item this.x this.y
     this.w = this.w * scale / 62.5
@@ -202,9 +244,9 @@ def "collision" "this.x, this.y, this.w, this.h"
       player_yv = 0
     )
   )
-endef
+)
 
-def "hitboxes"
+def "hitboxes" (
   hitboxes_shown = false
   c #fff
   // outer walls
@@ -290,51 +332,51 @@ def "hitboxes"
     // car
     collision 50 63 4 2
   )
-endef
+)
 
-def "obj" "this.obj, this.c"
-  image github_url ++ "/assets/layers/" ++ this.obj ++ this.c ++ ".png" scale scale
-endef
+def "obj" "inp_obj" (
+  image github_url ++ "/assets/layers/" ++ inp_obj ++ ".png" scale scale
+)
 
-def "load_assets"
+def "load_assets" (
   each this.i this.asset assets (
-    image this.asset 0 0
-    if this.asset.imageinfo("loaded") (
-      assets.delete(this.i)
+    image asset 0 0
+    if asset.imageinfo("loaded") (
+      assets.delete(i)
     )
   )
-endef
+)
 
-def "find_render_order"
+def "find_render_order" (
   before = []
   after = []
   each this.i this.y tree_ys (
-    this.x = tree_xs[this.i]
-    if dist(this.x,this.y,player_x,player_y) < 150 (
-      if this.y < player_y (
-        before.append("trees" ++ this.i)
+    local x = tree_xs[i]
+    if dist(x, y, player_x, player_y) < 150 (
+      if y < player_y (
+        before.append("trees" ++ i)
       ) else (
-        after.append("trees" ++ this.i)
+        after.append("trees" ++ i)
       )
     )
   )
   each this.i this.y building_ys (
-    if (this.y - player_y).abs < 100 (
-      if this.y < player_y (
-        before.append("building" ++ this.i)
+    if (y - player_y).abs < 100 (
+      if y < player_y (
+        before.append("building" ++ i)
       ) else (
-        after.append("building" ++ this.i)
+        after.append("building" ++ i)
       )
     )
   )
-endef
+)
 
-def "render"
+def "render" (
   // render behind player
   direction 90
   position_item 0 0
   each this.t before (
-    obj this.t
+    obj t
   )
 
   notes
@@ -345,9 +387,9 @@ def "render"
   direction 90
   position_item 0 0
   each this.t after (
-    obj this.t
+    obj t
   )
-endef
+)
 
 
 tree_xs = [
@@ -370,6 +412,8 @@ load_assets
 last = timer
 mainloop:
 
+apply_effects
+
 if assets.len > 0 (
   load_assets
   loc 2 2 10 -20
@@ -378,8 +422,8 @@ if assets.len > 0 (
   exit
 )
 
-if timer - last > 0.1 (
-  // calculate what is infront and behind the player every 0.1 seconds
+if timer - last > 0.3 (
+  // calculate what is infront and behind the player every 0.3 seconds
   find_render_order
 )
 
@@ -405,5 +449,9 @@ loc 2 2 10 -20
 text "Notes : " ++ total_collected_notes ++ "/5" 10 : c#fff
 loc 2 2 10 -40
 text "Fuel  : " ++ fuel_collected ++ "/1" 10
+if player_held_item != "" (
+  loc 2 2 10 -60
+  text "Press Q To Drop" 10
+)
 
 import "win-buttons"
