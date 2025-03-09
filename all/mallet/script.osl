@@ -735,8 +735,10 @@ def "scene_brush_update"
     org_h = dragging_brush_data[4]
     org_txt = brushes[dragging_brush][5]
     if dragging_handle == "drag" (
-      brushes[brsi] = [].append(mouse_wld_x - dragging_org_x + org_x).append(mouse_wld_y - dragging_org_y + org_y).append(org_w).append(org_h).append(org_txt)
+      log brsi
+      brushes[dragging_brush] = [mouse_wld_x - dragging_org_x + org_x,mouse_wld_y - dragging_org_y + org_y,org_w,org_h,org_txt]
     )
+    log dragging_handle
     if dragging_handle != "drag" (
       ax = org_x - org_w
       ay = org_y - org_h
@@ -770,7 +772,8 @@ def "scene_brush_update"
       if dragging_handle == "l" (
         ax = mouse_wld_x
       )
-      brushes[brsi] = [].append(mid(ax,bx)).append(mid(ay,by)).append((bx - ax * .5).abs).append((by - ay * .5).abs).append(org_txt)
+      brushes[dragging_brush] = [].append(mid(ax,bx)).append(mid(ay,by)).append((bx - ax * .5).abs()).append((by - ay * .5).abs()).append(org_txt)
+      log brushes
     )
   )
   eventaddon "gui_brush_update"
