@@ -103,7 +103,25 @@ if passed_data == "" (
   play_ost = true
 )
 
-def "newEntRaw" "id,x,y" (
+def "newEntRaw" "id,x,y,isboss" (
+  if id == "wyrm" (
+    rx = x
+    ry = y
+    wyrmi = 0
+    loop random(2,4) (
+      wyrmi ++
+      newEntRaw2 id rx ry isboss
+      enteee = entities[enid]
+      enteee.append({ "parent":lastseg, "attackTime":0, "wyrmi": wyrmi, "ishead": wyrmi == 1 })
+      enteee[7] = wyrmi - 1 * -500
+      entities[enid] = enteee
+      lastseg = enid
+    )
+  ) else (
+    newEntRaw2 id x y isboss
+  )
+)
+def "newEntRaw2" "id,x,y,isboss" (
   // spawns an entity with
   // id, x, y, health, velocity_x, velocity_y, spawn_smoothing
   // then adds an extra one which is extras in an obj
@@ -117,6 +135,9 @@ def "newEntRaw" "id,x,y" (
   temp.append(0)
   enid = ouidNew()
   entities[enid] = temp
+  if isboss (
+    window "add" window.file.uuid "ent" ++ ":" ++ enid
+  )
 )
 def "newEnt" "id,x,y" (
   if entity_boss.contains(id) (
@@ -144,16 +165,15 @@ def "newBorderEnt" "id" (
 )
 
 def "newBossEnt" "id" (
-  x = random(screensize_x * -.5, screensize_x * .5)
-  y = random(screensize_y * -.5, screensize_y * .5)
-  newEntRaw id x y
-  window "add" window.file.uuid "ent" ++ ":" ++ enid
+  x = random(screensize_x * -.5 + 50, screensize_x * .5 - 50)
+  y = random(screensize_y * -.5 + 50, screensize_y * .5 - 50)
+  newEntRaw id x y true
 )
 
 def "newGoop" "gamt,gx,gy" (
   // spawns the blob with a bit of randomness depending
   // on how much big the blob is
-  if amt >= 1 (
+  if amt >= 5 (
     gx += random(-100,100) / (amt * .75) * .5
     gy += random(-100,100) / (amt * .75) * .5
     goop.append([gamt,gx,gy])
@@ -178,8 +198,11 @@ def "newGoopGroup" "amt,x,y" (
   )
 )
 
-def "newEntBullet" "bx,by,bdir,bc,ben" (
-  enbullets.append([bx,by,bdir,ouidNew(),bc,4,ben])
+def "newEntBullet" "bx,by,bdir,bc,ben,bs" (
+  if bs.type != "number" (
+    local bs = 4
+  )
+  enbullets.append([bx,by,bdir,ouidNew(),bc,bs,ben])
 )
 
 def "newParticle" "par,px,py,pdir" (
@@ -198,7 +221,7 @@ def "entDie" "id" (
     case "circle"
       newGoopGroup random(8,16).round * currencymult ex ey
       break
-    case "spiker"
+    case "spiker"; case "wyrm"
       newGoopGroup random(20,30).round * currencymult ex ey
       break
   )
@@ -266,6 +289,8 @@ if passed_data == "" (
   win_w_velocity = 0
   win_h_velocity = 0
   
+  win_updateforcemult = 1.2
+  
   bullet_cooldown_max = 40
   
   player_raw_x = 0
@@ -277,12 +302,14 @@ if passed_data == "" (
   entity_width = {
     "tri": 30,
     "circle": 20,
-    "spiker": 50
+    "spiker": 50,
+    "wyrm": 60
   }
   entity_health = {
     "tri": 100,
     "circle": 20,
-    "spiker": 200
+    "spiker": 200,
+    "wyrm": 200
   }
   entity_touchHurt = [
     "tri",
@@ -290,33 +317,37 @@ if passed_data == "" (
     "spiker"
   ]
   entity_boss = [
-    "spiker"
+    "spiker",
+    "wyrm"
   ]
   
   // how many frames per spawn
   entity_spawnMax = {
     "tri":300,
     "circle": 350,
-    "spiker": 2000
+    "spiker": 6000,
+    "wyrm": 6000
   }
   // limit for how fast they can spawn
   entity_spawnTop = {
     "tri":100,
     "circle":120,
-    "spiker": 1000
+    "spiker": 3000,
+    "wyrm": 3000
   }
   // if the entity should spawn
   entity_shouldSpawn = {
-    "tri": true, "circle": true, "spiker": true
+    "tri": true, "circle": true, "spiker": true, "wyrm": true
   }
   each key entity_shouldSpawn.getKeys() (
-    //entity_shouldSpawn[key] = false
+    entity_shouldSpawn[key] = true
   )
   // spawn after this frame
   entity_spawnAfter = {
     "tri":100,
     "circle": 1000,
-    "spiker": 4000
+    "spiker": 4000,
+    "wyrm": 7000
   }
   
   bulletTimerA = 0
@@ -346,26 +377,32 @@ if passed_data == "" (
   //newBossEnt "spiker" 100 100
   //newBossEnt "spiker" 100 -100
   //newEnt "spiker" 100 100
+  
+  //newBossEnt "wyrm" 100 -100
 )
 
 chars = ["0","1","2","3","4","5","6","7","8","9","a","b","c","d","f"]
 
-def "enemyC" "r,g,b" (
+def "nothing" (;)
+
+def "enemyC" "cr,cg,cb" (
   // so basically it turns (for each channel)
   // ff -> 255 -> + attack flash -> capped -> back to hex
   
-  local r = hex.index(r)
-  local g = hex.index(g)
-  local b = hex.index(b)
+  nothing
+  
+  local cr = hex.index(cr)
+  local cg = hex.index(cg)
+  local cb = hex.index(cb)
   if attackTime > 0 (
-    local r += attackTime * 2
-    local g += attackTime * 2
-    local b += attackTime * 2
-    if r > 256 (; local r = 256; )
-    if g > 256 (; local g = 256; )
-    if b > 256 (; local b = 256; )
+    local cr += attackTime * 2
+    local cg += attackTime * 2
+    local cb += attackTime * 2
+    if cr > 256 (; local cr = 256; )
+    if cg > 256 (; local cg = 256; )
+    if cb > 256 (; local cb = 256; )
   )
-  local col = "#" ++ hex[r] ++ hex[g] ++ hex[b]
+  local col = "#" ++ hex[cr] ++ hex[cg] ++ hex[cb]
   c col
 )
 
@@ -409,6 +446,19 @@ def "drawScene" "dentities,dbullets,denbullets,dgoop,dplayer_x,dplayer_y,d_parti
         icn = "w 1.3 line -5 10 0 14 cont 5 10 cont 12 12 cont 10 5 cont 14 0 cont 10 -5 cont 12 -12 cont 5 -10 cont 0 -14 cont -5 -10 cont -12 -12 cont -10 -5 cont -14 0 cont -10 5 cont -12 12 cont -5 10"
         icon icn 3.5 * entity[5]
         break
+      case "wyrm"
+        enemyC "FF" "47" "65"
+        icn = "w 1 cutcircle 0 0 10 0 70 cutcircle 0 0 10 18 70 cutcircle 14.5 5.5 5.5 22 30 cutcircle 14.5 -5.5 5.5 -4 30 cutcircle -14.5 5.5 5.5 14 30 cutcircle -14.5 -5.5 5.5 4 30"
+        icn = ext["ishead"] ? "w 1 cutcircle 0 0 10 0 180" icn
+        direction ext["dir"] + 90
+        icon icn 4 * entity[5]
+        d = lookat(ex,ey,dplayer_x,dplayer_y)
+        game_goto ex ey
+        direction d
+        change direction.sin() * 20 * entity[5] direction.cos() * 20 * entity[5]
+        icon "w 1 cutcircle 0 0 2.8 0 180" 4 * entity[5]
+
+        break
     )
   )
   
@@ -423,8 +473,12 @@ def "drawScene" "dentities,dbullets,denbullets,dgoop,dplayer_x,dplayer_y,d_parti
   each eb denbullets (
     game_goto eb[1] eb[2]
     direction eb[3]
-    c eb[5]
-    icon "w 4 cutcircle 0 0 8 0 180" .8
+    if eb[5] == "wyrm" (
+      icon "c #fff w 8 cutcircle 0 0 12 0 180 c #000 w 5 cutcircle 0 0 12 0 180" 1.4
+    ) else (
+      c eb[5]
+      icon "w 4 cutcircle 0 0 8 0 180" .8
+    )
   )
 
   
@@ -507,7 +561,8 @@ def "mainloop_main" (
     )
     game_goto ex ey
     entity[5] += (1 - entity[5]) * .05
-    // behaviour / update
+    docollision = true
+    // behaviour / update  
     switch eid (
       case "tri"
         edir = lookat(ex,ey,player_x,player_y)
@@ -532,7 +587,7 @@ def "mainloop_main" (
       case "spiker"
         if entity[8].getKeys().contains("timer").not (
           entity[8]["timer"] = 0
-        )
+        ) 
         if entity[8]["timer"] == 0 (
           entity[8]["timer"] = 100
           for r 9 (
@@ -540,6 +595,65 @@ def "mainloop_main" (
           )
         )
         entity[8]["timer"] --
+        break
+      case "wyrm"
+        //log entity[8]
+        entity[8]["dir"] ??= 0
+        entity[8]["localdir"] ??= 0
+        entity[8]["timer"] ??= entity[8]["wyrmi"] * 15
+        parent = entities[entity[8]["parent"]]
+        parentdir = parent[8]["dir"]
+        entity[8]["timer"] --
+        if entity[8]["timer"] < 0 (
+          entity[8]["timer"] = 100
+          newEntBullet ex ey lookat(player_x,player_y,ex,ey) + 180 "wyrm" entitykey 6
+        )
+        if parent (
+          enttimeyes = (timer * 120 + (entity[8]["wyrmi"] * -90)).toNum()
+          entchangevar = (enttimeyes.sin().toNum() * 15)
+          entity[8]["localdir"] = entchangevar
+          entity[8]["dir"] += parentdir.toNum() + entity[8]["localdir"].toNum() - entity[8]["dir"] * .1
+          ex = entity[8]["dir"].sin().toNum() * -150 + parent[2].toNum()
+          ey = entity[8]["dir"].cos().toNum() * -150 + parent[3].toNum()
+        ) else (
+          entity[8]["tardir"] ??= random(0,360)
+          if framei % 5 == 0 (
+            entity[8]["tardir"] += random(-10,10)
+          )
+          entity[8]["localdir"] += entity[8]["tardir"] - entity[8]["localdir"] * .5
+          entity[8]["dir"] += entity[8]["localdir"].toNum() - entity[8]["dir"] * .1
+          ex += entity[8]["dir"].sin() * 3
+          ey += entity[8]["dir"].cos() * 3
+          if ey > (screensize_y * .5 - 80) (
+            ey = (screensize_y * .5 - 80)
+            entity[8]["tardir"] += 2
+          )
+          if ey < (screensize_y * -.5 + 80) (
+            ey = (screensize_y * -.5 + 80)
+            entity[8]["tardir"] += 2
+          )
+          if ex > (screensize_x * .5 - 80) (
+            ex = (screensize_x * .5 - 80)
+            entity[8]["tardir"] += 2
+          )
+          if ex < (screensize_x * -.5 + 80) (
+            ex = (screensize_x * -.5 + 80)
+            entity[8]["tardir"] += 2
+          )
+          if ey > (screensize_y * .5) - 100 and entity[8]["dir"] % 360 < 0 (
+            entity[8]["tardir"] += 5
+          )
+          if ey < (screensize_y * -.5) + 80 + 100 and entity[8]["dir"] % 360 < 180 (
+            entity[8]["tardir"] += 5
+          )
+          if ex > (screensize_x * .5) - 100 and entity[8]["dir"] % 360 < 90 (
+            entity[8]["tardir"] += 5
+          )
+          if ex < (screensize_x * -.5) + 100 and entity[8]["dir"] % 360 < 270 (
+            entity[8]["tardir"] += 5
+          )
+        )
+        docollision = false
         break
     )
     // enemy death
@@ -549,8 +663,8 @@ def "mainloop_main" (
       entDie eid
     )
     // collision
-    if performance_collision (
-      if random(1,performance_skipamt) == 1 or true (
+    if performance_collision and docollision (
+      if random(1,performance_skipamt) == 1 (
         each colentitykey entities.getKeys() (
           if entitykey != colentitykey (
             colentity = entities[colentitykey]
@@ -584,11 +698,11 @@ def "mainloop_main" (
         pointat ex ey
         dir = direction
         
-        player_raw_x = dir.sin * -80 + player_x
-        player_raw_y = dir.cos * -80 + player_y
+        player_raw_x = dir.sin * -90 + player_x
+        player_raw_y = dir.cos * -90 + player_y
         
-        vx = dir.sin * 30
-        vy = dir.cos * 30
+        vx = dir.sin * 40
+        vy = dir.cos * 40
         entTouch eid
         sound "enemyHit" "play"
       )
@@ -603,6 +717,7 @@ def "mainloop_main" (
     vy = vy * .95
     entity[6] = vx
     entity[7] = vy
+    entity[8]["attackTime"] ??= 0
     entity[8]["attackTime"] -= 10
     entities[entitykey] = entity
   )
@@ -702,7 +817,7 @@ def "mainloop_main" (
     y = enbullets[enbulleti][2]
     enbulletkey = enbullet[4]
     parent = entities[enbullet[7]]
-    parent_size = entity_width[parent[1]] + 25
+    parent_size = entity_width[parent[1]] + 40
     parent_x = parent[2]
     parent_y = parent[3]
     // if the bullet hit the window borders
@@ -849,8 +964,8 @@ def "win_update" (
     win_w_velocity *= .95
     win_h_velocity *= .95
   ) else (
-    win_w_velocity += 350 - win_width / 2500
-    win_h_velocity += 350 - win_height / 2500
+    win_w_velocity += 350 - win_width / 2500 * win_updateforcemult
+    win_h_velocity += 350 - win_height / 2500 * win_updateforcemult
     win_width += win_w_velocity * .5
     win_height += win_h_velocity * .5
     win_w_velocity *= .95
@@ -858,7 +973,6 @@ def "win_update" (
   )
   
   // update the window
-  window "refresh_bg"
   window.x = win_x
   window.y = win_y
   window.width = win_width
@@ -899,7 +1013,10 @@ if wintype == "" (
 space_last = "space".pressed
 window "show"
 mouse_right_last = false
+framecounter2 = 0
 mainloop:
+  window "refresh_bg"
+  framecounter2 ++
   click_right = mouse_right and mouse_right_last.not
   mouse_right_last = mouse_right
   window_colour = #040404
@@ -917,6 +1034,20 @@ mainloop:
     ) else (
       if winrestart (
         window "stop"
+      )
+    )
+  )
+  if window.parent (
+    if window.parent.variables.framecounter2 (
+      if window.parent.variables.framecounter2 > 10 and framecounter2 > 2 (
+        if lastframe1 == lastframe2 and lastframe2 == lastframe3 and lastframe3 == lastframe4 and lastframe4 == lastframe5 (
+          window "stop"
+        )
+        lastframe5 = lastframe4
+        lastframe4 = lastframe3
+        lastframe3 = lastframe2
+        lastframe2 = lastframe1
+        lastframe1 = window.parent.variables.framecounter2
       )
     )
   )
