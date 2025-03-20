@@ -5,7 +5,7 @@ wt:load_theme
 
 wt:seticon "image https://raw.githubusercontent.com/RoturTW/apps/refs/heads/main/all/booruclient/assets/appicon.png 20"
 
-proxy_url = "https://proxy.milosantos.com/cors.php?url="
+proxy_url = "https://proxy.mistium.com?url="
 
 domains = {
   "https://safebooru.org":{},
@@ -24,7 +24,7 @@ domains = {
 */
 // these sites do work, however, by using them, you agree that you are over 18
 
-domain = domains.getKeys()[2]
+domain = domains.getKeys()[1]
 domain_inf = domains[domain]
 
 query_url = domain ++ (domain_inf.autocomplete ?? "/autocomplete.php?q=")
@@ -40,8 +40,8 @@ main_fetched = true
 main_results = []
 // setup the main api
 
-def aspectRatio(this.img) (
-  return this.img.imageinfo("width") / this.img.imageinfo("height")
+def aspectRatio(img) (
+  return img.imageinfo("width") / img.imageinfo("height")
 )
 
 def "handleRequests" (
@@ -91,33 +91,33 @@ def "renderMain" (
   loc 2 2 10 -20
   text "BooruClient" 10 : c#txtc
   
-  this.divider = window.left + 300
-  this.top = window.top - 50
+  local divider = window.left + 300
+  local top = window.top - 50
   
   c seco
-  frame window.left this.top this.divider window.bottom (
+  frame window.left top divider window.bottom (
     renderSearch
   )
   
   c seco
-  frame this.divider this.top window.right window.bottom main_results.len * 250 "list" (
+  frame divider top window.right window.bottom main_results.len * 250 "list" (
     renderList
   )
 )
 
 def "renderSearch" (
   color prim
-  this.w = frame.width - 20
+  local w = frame.width - 20
   set_y frame.top - 25
-  square this.w 30 10
-  input this.w - 10 25 "search"
+  square w 30 10
+  input w - 10 25 "search"
   // render the search bar
 
   change_y -40
   // offset the position of the search results down by 30 pixels
   each i item query_results (
     set_x 0
-    square this.w 15 10 : c#prim hover_c#seco
+    square w 15 10 : c#prim hover_c#seco
     if onclick (
       main_tag = item.value ?? item.name
     )
@@ -125,7 +125,7 @@ def "renderSearch" (
     
     set_x frame.left + 10
     name = item.label ?? item.name
-    text name.trimText(this.w / 8) 8 : c#txtc
+    text name.trimText(w / 8) 8 : c#txtc
     // render the text os a search result
     
     change_y -28
@@ -133,45 +133,44 @@ def "renderSearch" (
   )
 )
 
-def "renderImg" "this.w,this.url" (
-  square this.w - 10 480 10 : c#prim
-  this.vid = this.url.endsWith(".webm") or this.url.endsWith(".mp4")
-  if this.url.imageinfo("loaded") or this.url.videoinfo("loaded") (
-    iw = this.vid ? this.url.videoinfo("width") this.url.imageinfo("width")
-    ih = this.vid ? this.url.videoinfo("height") this.url.imageinfo("height")
+def "renderImg" "w, url" (
+  local start_w = w
+  square w - 10 480 10 : c#prim
+  local vid = url.endsWith(".webm") or url.endsWith(".mp4")
+  if url.imageinfo("loaded") or url.videoinfo("loaded") (
+    iw = vid ? url.videoinfo("width") url.imageinfo("width")
+    ih = vid ? url.videoinfo("height") url.imageinfo("height")
     
-    w = this.w / iw
     h = 480 / ih
-    if h > w (
-      w = this.w
+    if h > w / iw (
       h = null
     ) else (
       w = null
       h = 480
     )
-    if this.vid (
-      video this.url "play"
-      video this.url w h
+    if vid (
+      video url "play"
+      video url w h
     ) else (
-      image this.url w h
+      image url w h
     )
-    this.pos = x_position
-    this.x = this.w / 2 - 20
-    change this.x 225
+    local pos = x_position
+    local x = start_w / 2 - 20
+    change x 225
     square 20 20 10 : c#prim hover_c#seco
     if onclick (
-      clipboard "set" this.url
+      clipboard "set" url
     )
     icon "copy" 0.8 : c#txtc
-    change_x this.x * -2
+    change_x x * -2
     text iw ++ "x" ++ ih 8
-    set_x this.pos
+    set_x pos
     change_y -225
   ) else (
-    if this.vid (
-      video this.url 0
+    if vid (
+      video url 0
     ) else (
-      image this.url 0
+      image url 0
     )
     direction timer * 200
     icon "cutcircle 0 0 10 0 90" 2 : c#txtc
@@ -180,15 +179,15 @@ def "renderImg" "this.w,this.url" (
 )
 
 def getUrl(obj) (
-  this.url = obj.jpeg_url ?? obj.file_url ?? "none"
-  if this.url.startsWith("https://") (
-    return encodeURIComponent(this.url)
+  local url = obj.jpeg_url ?? obj.file_url ?? "none"
+  if url.startsWith("https://") (
+    return encodeURIComponent(url)
   )
   return domain ++ "/images/" ++ obj.directory ++ "/" ++ obj.image
 )
 
 def "renderList" (
-  this.w = frame.width - 20 / 2
+  local w = frame.width - 20 / 2
   set_y frame.top - 250 + scroll_ylist
   y = y_position
   ft = frame.top + 250
@@ -199,11 +198,11 @@ def "renderList" (
   loop main_results.len / 2 (
     if y < ft and y > fb (
       set_x lp
-      renderImg this.w proxy_url ++ getUrl(main_results[i])
+      renderImg w proxy_url ++ getUrl(main_results[i])
       i ++
       
       set_x rp
-      renderImg this.w proxy_url ++ getUrl(main_results[i])
+      renderImg w proxy_url ++ getUrl(main_results[i])
       i ++
     ) else (
       i += 2
