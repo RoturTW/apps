@@ -1,0 +1,1 @@
+w 23 c #7600ba dot 0 0 w 3 c #fff line -7 -3 -4 4 line -7 -3 -5.25 -4.5 line -5.25 -4.5 -3 -5 line -3 -5 0 -2 line 7 -3 4 4 line 7 -3 5.25 -4.5 line 5.25 -4.5 3 -5 line 3 -5 0 -2 cutcircle -2.3 1.9 2.75 1 45 cutcircle 2.3 1.9 2.75 -1 45 w 5 line -4 -1 -2 1 line 4 -1 2 1 w 2 c #7600ba dot -2.75 2.5 dot 2.75 2.5 cutcircle -2.1 0 -2.25 -.2 70 cutcircle 2.1 0 -2.25 .2 70
