@@ -1,0 +1,423 @@
+import "window_tools" as "wt"
+import as "glass" from "packages"
+
+permission "request" "rotur token"
+
+portName = ("social:" ++ OuidNew())
+
+portName.roturConnect()
+
+window "min_size" 225 300
+
+class Config (
+  server = "flf-server"
+  serversUrl = "https://raw.githubusercontent.com/ThePandaDever/flf/refs/heads/main/social/servers.json"
+  servers = self.serversUrl.get().JsonParse()
+)
+
+class Net (
+  gotPingBack = false
+  roturUsers = {}
+  roturToken = roturToken()
+  
+  getCooldown = 0
+  getMessageCooldown = {}
+  
+  channels = null
+  channelData = {}
+  channelMessages = {}
+  channelMessagesLoaded = {}
+  
+  messages = {}
+  
+  def wipe() (
+    self.gotPingBack = false
+    self.roturUsers = {}
+    self.getCooldown = 0
+    self.getMessageCooldown = {}
+    self.channels = null
+    self.channelData = {}
+    self.channelMessages = {}
+    self.channelMessagesLoaded = {}
+    self.messages = {}
+  )
+  
+  class packetworker (
+    queue = []
+    worker = null
+    def start() (
+      self.worker = worker({
+        oncreated: def() -> (
+          portName.roturConnect()
+        ),
+        onframe: def() -> (
+          if Net.packetworker.queue.len > 0 (
+            void Config.server.roturSend(Net.packetworker.queue.pop())
+          )
+        )
+      })
+    )
+  )
+  
+  class onlineworker (
+    queue = []
+    worker = null
+    def start() (
+      self.worker = worker({
+        oncreated: def() -> (
+          oldtimer = timer
+        ),
+        onframe: def() -> (
+          if (timer - oldtimer) > 5 (
+            Net.send({"cmd":"ping"})
+            oldtimer = timer
+          )
+        )
+      })
+    )
+  )
+
+  
+  def send(data) (
+    log "send" data
+    self.packetworker.queue.append(data)
+  )
+  def update() (
+    if new_network_data (
+      Net.handlePacket(packet)
+      new_network_data = false
+    )
+    self.getCooldown -= 1
+    each this.msg self.getMessageCooldown.getKeys() (
+      self.getMessageCooldown[msg] = self.getMessageCooldown[msg] - 1
+    )
+  )
+  def handlePacket(p) (
+    local data = p["data"]
+    log p
+    if data.getKeys().contains("cmd") (
+      switch data["cmd"] (
+        case "ping"
+          self.gotPingBack = true
+          break
+        case "channel_list"
+          self.channels = data["data"]
+          break
+        case "channel_get"
+          self.channelData[data["key"]] = data["data"]
+          break
+        case "channel_messages"
+          self.channelMessages[data["key"]] = data["data"]
+          self.channelMessagesLoaded[data["key"]] = true
+          break
+        case "message_get"
+          self.messages[data["key"]] = data["data"]
+          break
+        
+        case "update_messages"
+          self.getChannelMessages(data["data"], self.channelMessages[data["key"]].len, 999)
+          break
+        
+        default
+          throw "unknown packet command" + data["cmd"]
+          window "stop"
+          break
+      )
+    )
+  )
+  def getRoturUser(u) (
+    if roturUsers.getKeys().contains(u).not() (
+      roturUsers[u] = ("https://social.rotur.dev/profile?name=" ++ u ++ "&include_posts=0").get()
+    )
+  )
+  
+  def ping() (
+    Net.send({"cmd":"ping"})
+  )
+  def getChannelList() (
+    Net.send({"cmd":"channel_list"})
+    self.getCooldown = 10
+  )
+  def getChannel(channel) (
+    Net.send({"cmd":"channel_get","data":channel})
+    self.getCooldown = 20
+  )
+  def getChannelMessages(channel, start, amount) (
+    Net.send({"cmd":"channel_messages","data":channel,"start":start,"amount":amount})
+    self.getCooldown = 10
+  )
+  def getMessage(message) (
+    if self.getMessageCooldown[message] <= 0 (
+      Net.send({"cmd":"message_get","data":message})
+      self.getMessageCooldown[message] = 100
+    )
+  )
+  
+  def sendMessage(content, channel, attachments) (
+    attachments = attachments == "attachments" ? null attachments
+    Net.sendMessageRaw(channel,{"content":content,"attachments":attachments ?? []})
+  )
+  def sendMessageRaw(channel,message) (
+    Net.send({"cmd":"message_send","data":message,"channel":channel})
+  )
+)
+
+class UI (
+  selected_channel = null
+  channelTypes = {
+    "text": {
+      icon: "w 4 line -6 -10 -3 10 line 3 -10 6 10 line -8 5 10 5 line -10 -5 8 -5"
+    }
+  }
+  neededMessagesDefault = 20
+  neededMessages = {}
+  
+  def getLocation() (
+    return self.selected_channel ?? "no where"
+  )
+  
+  class channel_list (
+    width = 200
+    real_width = self.width
+    height = 0
+    shown = true
+    
+    def update() (
+      self.shown = frame.width > 650
+      self.real_width = self.shown ? self.width 0
+      if self.shown (
+        glass:frame frame.left frame.top frame.left + self.real_width frame.bottom UI.channel_list.height "channel_list"
+          UI.channel_list.list()
+        frame "clear"
+      )
+    )
+    def list() (
+      local loaded = true
+      each this.chn Net.channels (
+        loaded = loaded and Net.channelData[chn] != null  
+      )
+      if Net.channels != null and loaded and typeof(Net.channels) == "array" (
+        if Net.channels.len > 0 (
+          local y = frame.top - 27.5
+          each this.channel Net.channels (
+            local channelData = Net.channelData[channel]
+            goto 0 y
+            local isSelected = UI.selected_channel == channel
+            local col = isSelected ? global_accent window_colour
+            if isSelected (
+              square frame.width - 25 30 15 : c#col
+              square frame.width - 25 30 10 : c#prim
+            )
+            square frame.width - 25 30 15 0 1
+            if mouse_touching (
+              cursor "pointer"
+              if Input.mouse.leftClick (
+                UI.selected_channel = channel
+                UI.neededMessages[channel] = UI.neededMessagesDefault
+              )
+            )
+            goto frame.width * -.5 + 25 y
+            icon UI.channelTypes[channelData["type"] ?? "unknown"].icon .9 : c#txtc
+            text channel 10 : c#txtc chx#20
+            y -= 50
+          )
+        ) else (
+          goto 0 0
+          centext "no channels :(" 10 : c#txtc
+        )
+      ) else (
+        goto 0 0
+        direction timer * 720
+        icon "sync" .75 : c#txtc
+        direction 90
+      )
+    )
+  )
+  
+  class topbar (
+    def update() (
+      local dragBox = [[2,2,UI.channel_list.real_width,0],[-2,2,-90,-40]]
+      window "set_dragbox" dragBox
+      self.locationBar()
+      self.winButtons()
+    )
+    def winButtons() (
+      window "show"
+      direction 90
+      loc -2 2 -45 -20
+      c prim
+      square 70 17 10
+      change_x 25
+      c txtc
+      icon "close" 0.6 : hover_size#1.1
+      if mouse_touching (
+        cursor "pointer"
+        if Input.mouse.leftClick (
+          window "stop"
+        )
+      )
+      icon "down" 0.6 : chx#-25 hover_size#1.1
+      if mouse_touching (
+        cursor "pointer"
+        if Input.mouse.leftClick (
+          window "minimise"
+        )
+      )
+      icon "maximise" 0.6 : chx#-25 hover_size#1.1
+      if mouse_touching (
+        cursor "pointer"
+        if Input.mouse.leftClick (
+          window "maximise"
+        )
+      )
+    )
+    def locationBar() (
+      frame frame.left + UI.channel_list.real_width frame.top frame.right frame.top - 40 (
+        square frame.width frame.height : c#prim
+        
+        loc 2 9999 15 0
+        text UI.getLocation() 10 : c#txtc
+      )
+    )
+  )
+  
+  class messages (
+    height = 1
+    messageSize = 10
+    def update() (
+      c prim
+      frame frame.left + UI.channel_list.real_width frame.top frame.right frame.bottom self.height "messages" (
+        local messages = Net.channelMessages[UI.selected_channel]
+        local start = frame.bottom - (self.height > frame.height ? (frame.scrollMax.height - frame.scroll) 0)
+        local y = start
+        each this.msgi this.msg messages (
+          local msgData = Net.messages[msg]
+          local content = msgData.content.wrapText(frame.width / self.messageSize - 4)
+          //temp = {}
+          local isConnected = def(msgData,otherData) -> (
+            // if its the same user, and the messages are less than 30 seconds apart
+            local timeconnected = true
+            if msgData.timestamp != null and otherData.timestamp != null (
+              timeconnected = msgData.timestamp - otherData.timestamp < (30 * 1000)
+            )
+            //temp["time"] = timeconnected
+            return msgData.user == otherData.user and timeconnected
+          )
+          local doTitle = (messages[msgi + 1] != null) ? isConnected(msgData,Net.messages[messages[msgi + 1]]).not true
+          local connected = (messages[msgi - 1] != null) ? isConnected(Net.messages[messages[msgi - 1]],msgData) false
+          local height = 0
+          height += content.split("\n").len * self.messageSize * 2.3
+          height += doTitle ? (connected ? (self.messageSize * 2) 25) 0
+          y += height * .5
+          
+          goto 0 y
+          c prim
+          pen "opacity" 10
+          square frame.width height 0
+          
+          if doTitle (
+            goto frame.left y + (height / 2 - 20)
+            image "https://avatars.rotur.dev/" ++ (msgData.user ?? "_") 25 25 : chx#17.5 chy#0
+            text msgData.user ?? "?" self.messageSize : chx#25 c#txtc chx#-6.25 chy#6.25
+          )
+          
+          goto frame.left y + (height / 2 - (doTitle ? (self.messageSize * 2) -2.5))
+          text content self.messageSize : c#txtc : chx#36.5 chy#-15
+          
+          //text connected ++ "," + doTitle ++ "," + temp["time"] 10 : c#txtc chx#30
+          
+          y += height * .5
+        )
+        self.height = y - start - (height / 2)
+      )
+    )
+  )
+  
+  class input_bar (
+    height = 40
+    def update() (
+      frame frame.left + UI.channel_list.real_width frame.top frame.right frame.bottom (
+        local height = min(inputs["input_bar"].len * 23 - 1, 150)
+        loc 9999 -2 0 height * .5 + 9
+        c prim
+        self.height = height + 18
+        textbox frame.width - 15 self.height - 18 "input_bar" 8 {
+          "bg_colour": prim,
+          "text_colour": txtc,
+          "line_numbers": false
+        }
+        if "enter".onKeyDown() and "shift".isKeyDown().not() (
+          Net.sendMessage(inputs["input_bar"].join("\n"), UI.selected_channel)
+          inputs["input_bar"] = []
+        )
+      )
+    )
+  )
+)
+
+class Input (
+  class mouse (
+    leftClick = false
+    leftDown = false
+  )
+  def update() (
+    self.mouse.leftClick = mouse_left and self.mouse.leftDown.not()
+    self.mouse.leftDown = mouse_left
+  )
+)
+
+Net.ping()
+Net.packetworker.start()
+Net.onlineworker.start()
+
+mainloop:
+  wt:load_theme
+  Net.update()
+  Input.update()
+  
+  if Net.gotPingBack and Net.channels == null and Net.getCooldown <= 0 (
+    Net.getChannelList()
+  )
+  each this.channel Net.channels (
+    if Net.channelData.getKeys().contains(channel).not() (
+      if Net.getCooldown <= 0 (
+        Net.getChannel(channel)
+      )
+    ) else (
+      if UI.neededMessages[channel] > 0 and (Net.channelMessagesLoaded[channel] ?? false).not() (
+        Net.getChannelMessages(channel, (Net.channelMessages[channel] ?? []).len ?? 0, UI.neededMessages[channel] ?? 0)
+        UI.neededMessages[channel] = 0
+      )
+    )
+  )
+  if UI.selected_channel != null (
+    local msgs = Net.channelMessages[UI.selected_channel]
+    if msgs (
+      each this.msg msgs ( 
+        if Net.messages[msg] == null (
+          Net.getMessage(msg)
+        )
+      )
+    )
+  )
+  
+  frame window.left window.top window.right window.bottom (
+    frame frame.left frame.top - 40 frame.right frame.bottom + UI.input_bar.height (
+      UI.messages.update()
+    )
+    UI.input_bar.update()
+    UI.channel_list.update()
+    UI.topbar.update()
+  )
+  
+  if false (
+    goto 0 0
+    square 200 100 10 : c#prim hover_c#seco
+    if mouse_touching (
+      cursor "pointer"
+      if Input.mouse.leftClick (
+        Net.sendMessage("hi","general")
+      )
+    )
+    centext "funny message" 10 : c#txtc
+  )
