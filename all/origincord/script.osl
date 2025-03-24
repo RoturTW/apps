@@ -275,7 +275,7 @@ def "handle_message" "msg, ping" (
     if content.len > 0 (
       content.split("\n")
       each item content (
-        emoji_match = item.strip().match("/^<a?:[^:]+:(\d+)>$/")
+        emoji_match = item.toStr().strip().match("/^<a?:[^:]+:(\d+)>$/")
         if emoji_match.len > 0 (
           att = {
             url: "https://media.discordapp.net/emojis/" ++ emoji_match[2] ++ ".png?size=128&quality=lossless",
@@ -343,7 +343,7 @@ def "handle_guild" "dat" (
   categories = {"null":[]}
   each channel channels (
     parent = channel.parent_id ?? "null"
-    if channel.nsfw == "" (
+    if channel["type"] == 4 (
       parent = channel.id
     )
     categories[parent] = (categories[parent] ?? []).append(channel)
@@ -1374,7 +1374,7 @@ if "enter".isKeyDown() and input_message != "" (
     exit
   )
   if send.startsWith(".version") (
-    async_msg "originCord v5.2" current_channel
+    async_msg "originCord v5.5" current_channel
     inputs.message = ""
     exit
   )
@@ -1397,4 +1397,3 @@ if "enter".isKeyDown() and input_message != "" (
     current_attachment = ""
   )
   inputs.message = ""
-)
