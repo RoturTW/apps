@@ -68,7 +68,7 @@ goto -200 0 + dieOff
 pointat mouse_x mouse_y
 direction direction.clamp(45,135)
 turnright 45
-image "https://raw.githubusercontent.com/RattusDong/apps/main/all/fortnite%20skibidi%202024/assets/shotgun.png"
+image "https://raw.githubusercontent.com/RattusDong/apps/main/all/fortnite%20skibidi%202024/assets/shotgun.png" 180
 direction 90
 if dead (
   goto 0 -150
