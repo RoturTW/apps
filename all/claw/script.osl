@@ -24,7 +24,7 @@ proxy = "https://proxy.mistium.com?url="
 
 window "set_dragbox" [[2,2,30,0],[-2,2,-100,-40]]
 window "dimensions" 1200 700
-window "min_size" 800 700
+window "min_size" 1100 700
 
 def "send_post" "this.content, this.attachment" (
   local url = "https://claw.rotur.dev/post?os=originOS&auth=" ++ token
@@ -404,7 +404,7 @@ if url.startsWith("profile").not() and url.startsWith("Post_").not() (
   )
 
   set_x w.left + 10 : chy#-30
-  text (user.bio ?? "You can set a bio in originOS settings").wrapText(25) 9
+  text (user.bio ?? "You can set a bio in originOS settings").wrapText(23) 9
 ) else if posts.got (
   set_x w.left + 110
   set_y w.top - 150
