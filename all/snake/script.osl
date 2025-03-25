@@ -16,7 +16,7 @@ snakex = [0]
 snakey = [0]
 snake_dir = 0
 mode = "Menu"
-window "resizable" False
+window "resizable" false
 window "dimensions" 400 430
 score = 0
 slider_speed = 0.2
@@ -69,15 +69,15 @@ if mode == "Play" (
     if snakedir == "d" "move 20 0"
   )
   temp = snakex.len
-  head_x = snakex.[temp].int
-  head_y = snakey.[temp].int
+  head_x = snakex[temp].toNum()
+  head_y = snakey[temp].toNum()
   count = temp + 1
   loop snakelen (
     count --
-    draw_x = snakex[count].int
-    draw_y = snakey[count].int
+    draw_x = snakex[count].toNum()
+    draw_y = snakey[count].toNum()
     goto draw_x draw_y
-    if draw_x == head_x and ( draw_y == head_y ) and ( count < snakex.len ) "mode = "menu""
+    if draw_x == head_x and ( draw_y == head_y ) and ( count < snakex.len ) "mode = \"menu\""
     c #65ad5b
     if snakex.len - count % 2 == 0 "c #416f3b"
     if count == snakex.len "c #cd0000"
@@ -92,8 +92,8 @@ if mode == "Play" (
   square 5 5 10
   if head_x == foodx and ( head_y == foody ) (
     snakelen ++
-    foodx = [-9,9].random * 20
-    foody = [-9,9].random * 20 - 20
+    foodx = random(-9, 9) * 20
+    foody = random(-9, 9) * 20 - 20
   )
 )
 import "win-buttons"
