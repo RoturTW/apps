@@ -673,14 +673,14 @@ if stage == 0 and (page == "main") (
       player2_target *= 0.1
       player2_double = false
     )
-    if "up arrow".isKeyDown() and player2_grounded (
+    if "arrowUp".isKeyDown() and player2_grounded (
       player2_yvel = 50
       player2_grounded = false
       player2_stretch *= 0.3
       player2_target *= 0.1
       player2_startdou = true
     )
-    if player2_startdou and "up arrow".isKeyDown().not (
+    if player2_startdou and "arrowUp".isKeyDown().not (
       player2_double = true
     )
     player1_yvel -= player1_gravity
