@@ -1,11 +1,12 @@
 {
   "featured": {
-    "name": "originkill",
-    "image": "https://raw.githubusercontent.com/RoturTW/apps/refs/heads/main/all/originkill/screenshots/originkill3.png",
-    "desc": "A semi-full recreation of window kill for originOS",
-    "auth": "Pnada"
+    "name": "super slime bros",
+    "image": "https://raw.githubusercontent.com/RoturTW/apps/refs/heads/main/all/super%20slime%20bros/screenshots/Screenshot%202024-08-21%20at%2020.22.16.png",
+    "desc": "A simple local multiplayer brawler!!!",
+    "auth": "Mist"
   },
   "tiles": [
+    {"title": "originkill"},
     {"title": "fortnite skibidi 2024"},
     {"title": "origincord"},
     {"title": "claw"}
