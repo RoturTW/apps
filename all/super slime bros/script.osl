@@ -1,5 +1,4 @@
 window.framerate = 60
-
 github = "https://raw.githubusercontent.com/Mistium/Super-Slime-Bros/main/"
 
 def "switchslime" "this.slime, player"
@@ -100,8 +99,8 @@ def "reset_data"
 
   shake_x = 0
   shake_y = 0
-  shake_x_vel = 0
-  shake_y_vel = 0
+  shake_x_mag = 0
+  shake_y_mag = 0
 
   p1_lst = timer
   p2_lst = timer
@@ -260,14 +259,13 @@ def "ability" "abi_name, this.pl"
 endef
 
 def "screenshake" "this.x, this.y"
-  shake_x_vel += this.x * 10
-  shake_y_vel += this.y * 10
+  shake_x_mag += this.x * 10
+  shake_y_mag += this.y * 10
 endef
 
 def "load" "link"
   // loads an image
   link = github ++ link ++ ".png"
-  image link 100
   loading.append(link)
   loading_total += 1
 endef
@@ -327,13 +325,10 @@ mainloop:
 
 if loading.len > 0 (
   // handle loading the assets
-
-  for count loading.len (
-    if loading[count].imageinfo("loaded") (
-      loading_cur = loading[count]
-      loading.delete(count)
-      count -= 1
-    )
+  if loading[1].imageinfo("loaded") (
+    loading.delete(1)
+  ) else (
+    loading_cur = loading[1]
     image loading_cur 0 0
   )
   load_percent = 1 - (loading.len / loading_total)
@@ -343,7 +338,7 @@ if loading.len > 0 (
   goto 0 0
   bar 300 20 10 load_percent
   goto -130 -30
-  text (load_percent * 100).round ++ "% Loaded" 10 : c#000
+  text (load_percent * 100).round() ++ "% Loaded" 10 : c#000
   loc 2 2 20 -20
   text `Loading: ${loading_cur}` 10 : c#000
   // renders a loading bar for the currently loading images
@@ -550,8 +545,8 @@ if stage == 0 and (page == "main") (
     )
   )
   if stage != 0 (
-    p1_upordown = "s".pressed.not and "w".pressed.not
-    p2_upordown = "down arrow".pressed.not and "up arrow".pressed.not
+    p1_upordown = "s".isKeyDown().not() and "w".isKeyDown().not()
+    p2_upordown = "down arrow".isKeyDown().not() and "up arrow".isKeyDown().not()
     shake_x += shake_x_mag * delta_time
     shake_y += shake_y_mag * delta_time
     shake_x_mag -= shake_x_mag * 1.5
@@ -584,7 +579,7 @@ if stage == 0 and (page == "main") (
     image stage 1000 * zoom
 
     if player1_anim != "attack1" (
-      move = "d".pressed or "a".pressed
+      move = "d".isKeyDown() or "a".isKeyDown()
       if player1_anim != "walk" and move (
         player1_anim = "walk"
         player1_frame = 1
@@ -604,7 +599,7 @@ if stage == 0 and (page == "main") (
     )
 
     if player2_anim != "attack1" (
-      move = "right arrow".pressed or "left arrow".pressed
+      move = "arrowRight".isKeyDown() or "arrowLeft".isKeyDown()
       if player2_anim != "walk" and move (
         player2_anim = "walk"
         player2_frame = 1
@@ -642,21 +637,21 @@ if stage == 0 and (page == "main") (
     player1_health.clamp(0,9999)
     player2_health.clamp(0,9999)
 
-    if "d".pressed (
+    if "d".isKeyDown() (
       player1_xvel += player1_speedmod
       player1_dir = "r"
     )
-    if "a".pressed (
+    if "a".isKeyDown() (
       player1_xvel -= player1_speedmod
       player1_dir = "l"
     )
-    if player1_ability == "double_jump" and player1_double and "w".pressed and player1_grounded.not (
+    if player1_ability == "double_jump" and player1_double and "w".isKeyDown() and player1_grounded.not() (
       player1_yvel = 50
       player1_stretch *= 0.3
       player1_target *= 0.1
       player1_double = false
     )
-    if "w".pressed and player1_grounded (
+    if "w".isKeyDown() and player1_grounded (
       player1_yvel = 50
       player1_grounded = false
       player1_stretch *= 0.3
@@ -664,28 +659,28 @@ if stage == 0 and (page == "main") (
       player1_double = true
     )
   
-    if "right arrow".pressed (
+    if "arrowRight".isKeyDown() (
       player2_xvel += player2_speedmod
       player2_dir = "r"
     )
-    if "left arrow".pressed (
+    if "arrowLeft".isKeyDown() (
       player2_xvel -= player2_speedmod
       player2_dir = "l"
     )
-    if player2_ability == "double_jump" and player2_double and "up arrow".pressed and player2_grounded.not (
+    if player2_ability == "double_jump" and player2_double and "up arrow".isKeyDown() and player2_grounded.not() (
       player2_yvel = 50
       player2_stretch *= 0.3
       player2_target *= 0.1
       player2_double = false
     )
-    if "up arrow".pressed and player2_grounded (
+    if "up arrow".isKeyDown() and player2_grounded (
       player2_yvel = 50
       player2_grounded = false
       player2_stretch *= 0.3
       player2_target *= 0.1
       player2_startdou = true
     )
-    if player2_startdou and "up arrow".pressed.not (
+    if player2_startdou and "up arrow".isKeyDown().not (
       player2_double = true
     )
     player1_yvel -= player1_gravity
@@ -852,8 +847,5 @@ if stage == 0 and (page == "main") (
       page = "main"
     )
   )
-if mouse_down.not "can = true"
+if mouse_down.not() "can = true"
 frame "clear"
-
-loc -2 -2 -75 15
-text fps + "fps" 10 : c#000
