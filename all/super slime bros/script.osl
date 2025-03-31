@@ -1,137 +1,144 @@
 window.framerate = 60
 github = "https://raw.githubusercontent.com/Mistium/Super-Slime-Bros/main/"
 
-def "switchslime" "this.slime, player"
-  switch this.slime (
+def "switchslime" "slime, player" (
+  switch slime (
     case "basic"
       out_speed = 4
-      out_knockback = 2
+      out_knockback = 1.5
       out_weight = 1.75
       out_size = 1
       break
     case "heavy"
       out_speed = 3
-      out_knockback = 4
+      out_knockback = 2
       out_weight = 2
       out_size = 1.5
       break
     case "light"
       out_speed = 5
-      out_knockback = 1
+      out_knockback = 0.5
       out_weight = 1.5
       out_size = 1
       break
   )
   if player == 1 (
-    player1_type = this.slime
+    player1_type = slime
     player1_speed = out_speed
     player1_knockback = out_knockback
     player1_gravity = out_weight
     player1_size = out_size * 200
   )
   if player == 2 (
-    player2_type = this.slime
+    player2_type = slime
     player2_speed = out_speed
     player2_knockback = out_knockback
     player2_gravity = out_weight
     player2_size = out_size * 200
   )
-endef
+)
 
-def "switchability" "this.abi, this.pl"
-  if this.pl == 1 (
-    player1_ability = this.abi
+def "switchability" "abi, pl" (
+  if pl == 1 (
+    player1_ability = abi
     player1_ability_lastused = 0
   )
-  if this.pl == 2 (
-    player2_ability = this.abi
+  if pl == 2 (
+    player2_ability = abi
     player2_ability_lastused = 0
   )
-endef
+)
 
-def "reset_data"
-  guy1_frm = 0
-  guy1_stretch = 80
-  guy1_direction = 90
+def "reset_data" (
+  number guy1_frm = 0
+  number guy1_stretch = 80
+  number guy1_direction = 90
 
-  guy2_frm = 0
-  guy2_stretch = -80
-  guy2_direction = 90
+  number guy2_frm = 0
+  number guy2_stretch = -80
+  number guy2_direction = 90
 
   // player main data
-  player1_x = -100
-  player1_y = 50
-  player1_xvel = 0
-  player1_yvel = 0
-  player1_health = 0
-  player1_lives = 3
-  player1_ifrm = 0
+  number player1_x = -100
+  number player1_y = 50
+  number player1_xvel = 0
+  number player1_yvel = 0
+  number player1_health = 0
+  number player1_lives = 3
+  number player1_ifrm = 0
 
-  player2_x = 100
-  player2_y = 50
-  player2_xvel = 0
-  player2_yvel = 0
-  player2_health = 0
-  player2_lives = 3
-  player2_ifrm = 0
+  number player2_x = 100
+  number player2_y = 50
+  number player2_xvel = 0
+  number player2_yvel = 0
+  number player2_health = 0
+  number player2_lives = 3
+  number player2_ifrm = 0
 
   // player animation variables
-  player1_anim = "idle"
-  player1_frame = 1
-  player1_endfrm = 3
+  string player1_anim = "idle"
+  number player1_frame = 1
+  number player1_endfrm = 3
 
-  player2_anim = "idle"
-  player2_frame = 1
-  player2_endfrm = 3
+  string player2_anim = "idle"
+  number player2_frame = 1
+  number player2_endfrm = 3
 
   // player display variables
-  player1_stretch = -100
-  player1_target = -100
-  player1_grounded = true
-  player1_dir = "r"
-  player1_double = false
+  number player1_stretch = -100
+  number player1_target = -100
+  
+  boolean player1_grounded = true
+  string player1_dir = "r"
+  boolean player1_double = false
 
-  player2_stretch = 100
-  player2_target = 100
-  player2_grounded = true
-  player2_dir = "l"
-  player2_double = false
+  number player2_stretch = 100
+  number player2_target = 100
+  
+  boolean player2_grounded = true
+  string player2_dir = "l"
+  boolean player2_double = false
 
-  shake_x = 0
-  shake_y = 0
-  shake_x_mag = 0
-  shake_y_mag = 0
+  number shake_x = 0
+  number shake_y = 0
+  number shake_x_mag = 0
+  number shake_y_mag = 0
 
-  p1_lst = timer
-  p2_lst = timer
+  number p1_lst = timer
+  number p2_lst = timer
 
-  cam_x = 0
-  cam_y = 0
-  stage_x = 0
-  stage_y = 0
+  number cam_x = 0
+  number cam_y = 0
+  number stage_x = 0
+  number stage_y = 0
 
-  width = 200
-  height = 200
-  logo_dir = 90
-endef
+  number width = 200
+  number height = 200
+  number logo_dir = 90
+)
 
 zoom = 1
 main_image = random(0,3)
 
-types = {
+object types = {
   "basic":"The Basic Slime :/",
   "heavy":"Slower, heavier, less knockback",
   "light":"Faster, lighter, more knockback"
 }
 
-abilities = {
+object abilities = {
   "heal":"Gain Back Your Health Over Time",
   "double_jump":"Jump While Not Touching The Ground",
   "dash":"Go Really Fast In The Air"
 }
 
-stages = ["Spike","Tree","Mushroom"]
-stage_offset = {
+array stages = [
+  "Spike",
+  "Tree",
+  "Mushroom"
+]
+
+object stage_offset = {
   "spike":0,
   "tree":60,
   "mushroom":105
@@ -153,81 +160,91 @@ selected_stage = 0
 page = "main"
 window_colour = #fff
 
-def "anim_guys"
-  guy1_frm = random(4,8)
-  guy1_stretch = random(90,110)
-  guy1_direction = random(80,100)
-  guy2_frm = random(0,5)
-  guy2_stretch = random(-80,-120)
-  guy2_direction = random(70,110)
-endef
+def "anim_guys" (
+  guy1_frm = random(4, 8)
+  guy1_stretch = random(90, 110)
+  guy1_direction = random(80, 100)
+  guy2_frm = random(0, 5)
+  guy2_stretch = random(-80, -120)
+  guy2_direction = random(70, 110)
+)
 
-def "p1_attack"
+def "p1_attack" (
   if timer - p2_ifrm_temp > 0.2 (
-    player2_health += 2
+    player2_health += 5
     player2_yvel += player2_health + 30 / player2_knockback / 10
-    player2_y += 20
-    player2_yvel += 30
+    player2_y += 10
     anim_guys
-    if player1_dir == "r" "player2_xvel += player2_health + 60 / player2_knockback"
-    if player1_dir == "l" "player2_xvel -= player2_health + 60 / player2_knockback"
+    
+    if player1_dir == "r" (
+      player2_xvel += player2_health + 60 / player2_knockback
+    )
+    if player1_dir == "l" (
+      player2_xvel -= player2_health + 60 / player2_knockback
+    )
+    
     zoom = 0.95
     player2_ifrm = timer
   )
   pause = timer + 0.1
-endef
+)
 
-def "p2_attack"
+def "p2_attack" (
   if timer - p1_ifrm_temp > 0.2 (
-    player1_health += 2
+    player1_health += 5
     player1_yvel += player1_health + 30 / player1_knockback / 10
-    player1_y += 20
-    player1_yvel += 30
+    player1_y += 10
     anim_guys
-    if player2_dir == "r" "player1_xvel += player1_health + 60 / player1_knockback"
-    if player2_dir == "l" "player1_xvel -= player1_health + 60 / player1_knockback"
+    
+    if player2_dir == "r" (
+      player1_xvel += player1_health + 60 / player1_knockback
+    )
+    if player2_dir == "l" (
+      player1_xvel -= player1_health + 60 / player1_knockback
+    )
+    
     zoom = 0.95
     player1_ifrm = timer
   )
   pause = timer + 0.1
-endef
+)
 
-def "attack" "player, attack_type"
+def "attack" "player, attack_type" (
   if player == 1 and attack_type == 1 (
     if timer - p1_ifrm_temp > 0.5 (
-      goto player1_x player1_y + player1_xvel
+      goto player1_x player1_y + player1_yvel
       if player1_dir == "r" "change 40" else "change -40"
-      hitbox 200 150 player2_x player2_y
+      hitbox 200 150 player2_x + cam_x player2_y + cam_y
       if collided "p1_attack"
     )
   )
   if player == 2 and attack_type == 1 (
     if timer - p2_ifrm_temp > 0.5 (
-      goto player2_x player2_y + player2_vel
+      goto player2_x player2_y + player2_yvel
       if player2_dir == "r" "change 40" else "change -40"
-      hitbox 200 150 player1_x player1_y
+      hitbox 200 150 player1_x + cam_x player1_y + cam_y
       if collided "p2_attack"
     )
   )
-endef
+)
 
-def "collide" "width, height, reset, droppable"
-  hitbox width height player1_x player1_y - 50
-  if p1_upordown and droppable or droppable.not and collided (
+def "collide" "width, height, reset, droppable" (
+  hitbox width height player1_x + cam_x player1_y - 40 + cam_y
+  if p1_upordown and droppable or droppable.not() and collided (
     player1_grounded = true
     player1_y = reset
     player1_yvel = 0
   )
 
-  hitbox width height player2_x player2_y - 50
-  if p2_upordown and droppable or droppable.not and collided (
+  hitbox width height player2_x + cam_x player2_y - 40 + cam_y
+  if p2_upordown and droppable or droppable.not() and collided (
     player2_grounded = true
     player2_y = reset
     player2_yvel = 0
   )
-endef
+)
 
-def "ssb_button" "txt, location"
+def "ssb_button" "txt, location" (
   change mouse_x - x_position / 40 mouse_y - y_position / 40
   square 360 40 10 : c#fff
   if mouse_touching (
@@ -238,51 +255,51 @@ def "ssb_button" "txt, location"
     square 360 40 20 : c#eee
   )
   text txt 10 : c#000 chx#-170
-endef
+)
 
-def "slime" "sli_name, this.pl"
+def "slime" "sli_name, pl" (
   if selected == sli_name (
     square 80 80 15 : c#000
   )
   square 80 80 10 : c#eee
-  if onclick "switchslime sli_name this.pl"
+  if onclick "switchslime sli_name pl"
   image github ++ "assets/" ++ sli_name ++ "/walk/" ++ curframe.round ++ ".png" 130
-endef
+)
 
-def "ability" "abi_name, this.pl"
+def "ability" "abi_name, pl" (
   if selected == abi_name (
     square 80 80 15 : c#000
   )
   square 80 80 10 : c#eee
-  if onclick "switchability abi_name this.pl"
+  if onclick "switchability abi_name pl"
   image github ++ "assets/abilities/" ++ abi_name ++ ".png" 80
-endef
+)
 
-def "screenshake" "this.x, this.y"
-  shake_x_mag += this.x * 10
-  shake_y_mag += this.y * 10
-endef
+def "screenshake" "x, y" (
+  shake_x_mag += x * 10
+  shake_y_mag += y * 10
+)
 
-def "load" "link"
+def "load" "link" (
   // loads an image
   link = github ++ link ++ ".png"
   loading.append(link)
   loading_total += 1
-endef
+)
 
-def "update_stage_data"
+def "update_stage_data" (
   current_level_view = stages[lvl_page]
   name = current_level_view.toLower()
   url = github ++ "assets/stages/" ++ name ++ ".png"
   
   selected_stage = url
   stage_name = name
-endef
+)
 
 reset_data
 
 loading_total = 0
-loading = []
+array loading = []
 
 for count 6 (
   load "assets/basic/walk/" ++ count
@@ -312,14 +329,14 @@ load "assets/stages/mushroom"
 load "assets/stages/spike"
 load "assets/stages/tree"
 
-current_level_view = "Spike"
+string current_level_view = "Spike"
 tot_lvls = 3
 selected_stage = github ++ "assets/stages/spike.png"
-stage_name = "spike"
+string stage_name = "spike"
 
 loading_cur = "Loading"
 cur_loaded_image = 0
-loaded_images = []
+array loaded_images = []
 
 mainloop:
 
@@ -379,11 +396,12 @@ if page == "win" (
     txt = "Player 2 Wins!"
   )
   t = timer * 150
-  width += 100 - (t.sin * 5) * 10 - width / 5
-  height += 100 + (t.sin * 5) * 10 - height / 5
+  width += 100 - (t.sin() * 5) * 10 - width / 5
+  height += 100 + (t.sin() * 5) * 10 - height / 5
   logo_dir += 90 - logo_dir / 5
   goto txt.len * -10 height * -0.4 + 210
   text txt 20 : c#000
+  
   goto 0 110
   direction logo_dir
   image player_image width height
@@ -394,10 +412,10 @@ if page == "win" (
   )
   exit
 )
-if stage == 0 and (page == "main") (
-    loc -5 -5 mouse_x / 10 mouse_y / 10
-    image github ++ "assets/stages/spike.png" window_width + 700 / 2
-  )
+if stage == 0 and page == "main" (
+  loc -5 -5 mouse_x / 10 mouse_y / 10
+  image github ++ "assets/stages/spike.png" window_width + 700 / 2
+)
   if stage == 0 (
     loc 2 999 210 0
     change mouse_x - x_position / 80 mouse_y - y_position / 80
@@ -546,21 +564,23 @@ if stage == 0 and (page == "main") (
   )
   if stage != 0 (
     p1_upordown = "s".isKeyDown().not() and "w".isKeyDown().not()
-    p2_upordown = "down arrow".isKeyDown().not() and "up arrow".isKeyDown().not()
+    p2_upordown = "arrowDown".isKeyDown().not() and "arrowUp".isKeyDown().not()
     shake_x += shake_x_mag * delta_time
     shake_y += shake_y_mag * delta_time
     shake_x_mag -= shake_x_mag * 1.5
     shake_y_mag -= shake_y_mag * 1.5
-    cam_x += player1_x + player2_x / -2 - cam_x * delta_time
-    cam_y += player1_y + player2_y / -2 - cam_y * delta_time
+    cam_x += player1_x + player2_x / -2 - cam_x * delta_time * 4
+    cam_y += player1_y + player2_y / -2 - cam_y * delta_time * 4
 
+    frame window.left * 2 + cam_x window.top * 2 + cam_y window.right * 2 + cam_x window.bottom * 2 + cam_y
+    
     guy1_stretch += 100 - guy1_stretch / 10
     guy1_direction += 90 - guy1_direction / 10
     guy2_stretch += -100 - guy2_stretch / 10
     guy2_direction += 90 - guy2_direction / 10
 
-    stage_x = cam_x + shake_x
-    stage_y = cam_y + shake_y
+    stage_x = shake_x
+    stage_y = shake_y
     
     goto stage_x / 5 - (window_width / 3) stage_y / 5
     direction guy1_direction
@@ -611,7 +631,7 @@ if stage == 0 and (page == "main") (
           player2_endfrm = 3
         )
       )
-      if "enter".onpress (
+      if "enter".onKeyDown() (
         player2_anim = "attack1"
         player2_frame = 1
         player2_endfrm = 7
@@ -623,12 +643,12 @@ if stage == 0 and (page == "main") (
 
     player1_speedmod = player1_speed
     if player1_grounded "player1_speedmod += 2"
-    if player1_ability == "dash" and player1_grounded.not "player1_speedmod *= 2"
+    if player1_ability == "dash" and player1_grounded.not() "player1_speedmod *= 2"
     if timer - player1_ifrm < 0.5 "player1_speedmod /= 4"
 
     player2_speedmod = player2_speed
     if player2_grounded "player2_speedmod += 2"
-    if player2_ability == "dash" and player2_grounded.not "player2_speedmod *= 2"
+    if player2_ability == "dash" and player2_grounded.not() "player2_speedmod *= 2"
     if timer - player2_ifrm < 0.5 "player2_speedmod /= 4"
 
     if player1_ability == "heal" "player1_health -= 0.02"
@@ -795,7 +815,7 @@ if stage == 0 and (page == "main") (
     )
 
     z = 20 * zoom
-    goto player1_x * zoom + cam_x player1_y * zoom + cam_y + 20
+    goto player1_x * zoom player1_y * zoom + 20
     if player1_type == "heavy" "change_y 25 * zoom"
     stretch "x" player1_stretch.int
     image `https://raw.githubusercontent.com/Mistium/Super-Slime-Bros/main/assets/${player1_type}/${player1_anim}/${player1_frame.round}.png` player1_size * zoom
@@ -804,14 +824,16 @@ if stage == 0 and (page == "main") (
     change_x -5 * zoom
     text "1" 10 * zoom : c#fff
 
-    goto player2_x * zoom + cam_x player2_y * zoom + cam_y + 20
+    goto player2_x * zoom player2_y * zoom + 20
     if player2_type == "heavy" "change_y 25 * zoom"
-    stretch "x" player2_stretch.int
+    stretch "x" player2_stretch.toNum()
     image `https://raw.githubusercontent.com/Mistium/Super-Slime-Bros/main/assets/${player2_type}/${player2_anim}/${player2_frame.round}.png` player2_size * zoom
     change_y 60 * zoom
     square z z 10 * zoom : c#345b8a
     change_x -5 * zoom
     text "2" 10 * zoom : c#fff
+    
+    frame "clear"
 
     loc 999 -2 -90 35
     square 150 50 20 : c#000
