@@ -1,13 +1,29 @@
+isType = "normal"
+if passed_Data == "SYS.onboot" (
+  isType = "notif"
+  //window "stop"
+)
+
 import "window_tools" as "wt"
 import as "glass" from "packages"
 
 permission "request" "rotur token"
+//permission "request" "start run"
+permission "request" "notifications"
 
 portName = ("social:" ++ OuidNew())
 
 portName.roturConnect()
 
 window "min_size" 225 300
+
+def msg_reply(msg) (
+  log msg
+)
+
+rightclick_msg = [
+  {"Reply":"msg_reply"}
+]
 
 class Config (
   server = "flf-server"
@@ -110,12 +126,18 @@ class Net (
           self.channelMessages[data["key"]] = data["data"]
           self.channelMessagesLoaded[data["key"]] = true
           break
+        
         case "message_get"
           self.messages[data["key"]] = data["data"]
           break
+        case "message_new"
+          if window.permissions.contains("notifications") (
+          
+          )
+          break
         
         case "update_messages"
-          self.getChannelMessages(data["data"], self.channelMessages[data["key"]].len, 999)
+          self.getChannelMessages(data["data"], UI.neededMessagesDefault)
           break
         
         default
@@ -142,8 +164,8 @@ class Net (
     Net.send({"cmd":"channel_get","data":channel})
     self.getCooldown = 20
   )
-  def getChannelMessages(channel, start, amount) (
-    Net.send({"cmd":"channel_messages","data":channel,"start":start,"amount":amount})
+  def getChannelMessages(channel, amount) (
+    Net.send({"cmd":"channel_messages","data":channel,"amount":amount})
     self.getCooldown = 10
   )
   def getMessage(message) (
@@ -161,6 +183,7 @@ class Net (
     Net.send({"cmd":"message_send","data":message,"channel":channel})
   )
 )
+
 
 class UI (
   selected_channel = null
@@ -311,14 +334,19 @@ class UI (
           y += height * .5
           
           goto 0 y
-          c prim
-          pen "opacity" 10
-          square frame.width height 0
+          square frame.width height 0 0 1
+          if mouse_touching (
+            c prim
+            square frame.width height 1
+            rightclick rightclick_msg "hi"
+          )
           
           if doTitle (
             goto frame.left y + (height / 2 - 20)
             image "https://avatars.rotur.dev/" ++ (msgData.user ?? "_") 25 25 : chx#17.5 chy#0
             text msgData.user ?? "?" self.messageSize : chx#25 c#txtc chx#-6.25 chy#6.25
+            log msgData.timestamp
+            text msgData.timestamp.timestamp("to-relative") self.messageSize * .7 : chx#10
           )
           
           goto frame.left y + (height / 2 - (doTitle ? (self.messageSize * 2) -2.5))
@@ -385,7 +413,7 @@ mainloop:
       )
     ) else (
       if UI.neededMessages[channel] > 0 and (Net.channelMessagesLoaded[channel] ?? false).not() (
-        Net.getChannelMessages(channel, (Net.channelMessages[channel] ?? []).len ?? 0, UI.neededMessages[channel] ?? 0)
+        Net.getChannelMessages(channel, UI.neededMessages[channel] ?? 0)
         UI.neededMessages[channel] = 0
       )
     )
@@ -393,7 +421,7 @@ mainloop:
   if UI.selected_channel != null (
     local msgs = Net.channelMessages[UI.selected_channel]
     if msgs (
-      each this.msg msgs ( 
+      each this.msg msgs.reverse() ( 
         if Net.messages[msg] == null (
           Net.getMessage(msg)
         )
