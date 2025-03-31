@@ -83,7 +83,7 @@ def "setup" (
   // wave timer and text notification data
   current_wave = 0
   object wave_popup = {
-    "y":60
+    "y": 60
   }
   wave_popup.time = game_timer
   
