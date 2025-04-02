@@ -8,7 +8,7 @@ import "window_tools" as "wt"
 import as "glass" from "packages"
 
 permission "request" "rotur token"
-//permission "request" "start run"
+permission "request" "start run"
 permission "request" "notifications"
 
 portName = ("social:" ++ OuidNew())
