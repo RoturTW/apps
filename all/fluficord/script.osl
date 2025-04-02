@@ -1,15 +1,15 @@
 isType = "normal"
 if passed_Data == "SYS.onboot" (
   isType = "notif"
-  //window "stop"
+  window "stop"
 )
 
 import "window_tools" as "wt"
 import as "glass" from "packages"
 
-permission "request" "rotur token"
-permission "request" "start run"
-permission "request" "notifications"
+//permission "request" "rotur token"
+//permission "request" "start run"
+//permission "request" "notifications"
 
 portName = ("social:" ++ OuidNew())
 
