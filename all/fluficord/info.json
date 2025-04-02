@@ -2,7 +2,7 @@
   "title": "Fluficord",
   "description": "A funny silly communication app (inspired by discord as you could probably tell) :P",
   "author": "Flufi",
-  "version": "0.2a",
+  "version": "0.2b",
   "genre": "Social",
   "game_modes": ["Single-player"],
   "permissions": ["rotur token"],
