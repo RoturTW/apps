@@ -133,7 +133,7 @@ class Net (
           break
         case "channel_users"
           self.channelUsers[data["key"]] = data["data"]
-          log "users" + data["key"] data["data"]
+          //log "users" + data["key"] data["data"]
           break
         
         case "message_get"
@@ -230,10 +230,10 @@ class UI (
     shown = true
     
     def update() (
-      self.shown = frame.width > 500
+      self.shown = window.width > 500
       self.real_width = self.shown ? self.width 0
       if self.shown (
-        glass:frame frame.left frame.top frame.left + self.real_width frame.bottom UI.channel_list.height "channel_list"
+        glass:frame window.left window.top window.left + self.real_width window.bottom UI.channel_list.height "channel_list"
           UI.channel_list.list()
         frame "clear"
       )
@@ -320,7 +320,8 @@ class UI (
       )
     )
     def locationBar() (
-      frame frame.left + UI.channel_list.real_width frame.top frame.right frame.top - 40 (
+      frame window.left + UI.channel_list.real_width window.top window.right window.top - 40 (
+        goto 0 0
         square frame.width frame.height : c#prim
         
         loc 2 9999 15 0
@@ -334,7 +335,7 @@ class UI (
     messageSize = 10
     def update() (
       c prim
-      frame frame.left + UI.channel_list.real_width frame.top frame.right frame.bottom self.height "messages" (
+      frame window.left + UI.channel_list.real_width window.top window.right - UI.user_list.real_width window.bottom + UI.input_bar.height self.height "messages" (
         local messages = Net.channelMessages[UI.selected_channel]
         local start = frame.bottom - (self.height > frame.height ? (frame.scrollMax.height - frame.scroll) 0)
         local y = start
@@ -389,7 +390,7 @@ class UI (
   class input_bar (
     height = 40
     def update() (
-      frame frame.left + UI.channel_list.real_width frame.top frame.right frame.bottom (
+      frame window.left + UI.channel_list.real_width window.bottom + self.height window.right - UI.user_list.real_width window.bottom (
         local height = min(inputs["input_bar"].len * 23 - 1, 150)
         loc 9999 -2 0 height * .5 + 9
         c prim
@@ -413,11 +414,11 @@ class UI (
     height = 0
     shown = true
     def update() (
-      self.shown = frame.width > (600 + self.width)
+      self.shown = window.width > (600 + self.width)
       self.real_width = self.shown ? self.width 0
       if self.shown (
         c prim
-        frame frame.right - self.real_width frame.top - 40 frame.right frame.bottom self.height "users" (
+        frame window.right - self.real_width window.top - 40 window.right window.bottom self.height "users" (
           goto 0 0
           line frame.left frame.top frame.left frame.bottom : c#prim
           
@@ -465,7 +466,7 @@ class UI (
               y -= 20
             )
             self.height = start - y - 20
-            log self.height
+            //log self.height
           )
         )
       )
@@ -524,17 +525,11 @@ mainloop:
     )
   )
   
-  frame window.left window.top window.right window.bottom (
-    frame frame.left frame.top frame.right - UI.user_list.real_width frame.bottom (
-      frame frame.left frame.top frame.right frame.bottom + UI.input_bar.height (
-        UI.messages.update()
-      )
-      UI.input_bar.update()
-      UI.channel_list.update()
-    )
-    UI.user_list.update()
-    UI.topbar.update()
-  )
+  UI.messages.update()
+  UI.input_bar.update()
+  UI.channel_list.update()
+  UI.user_list.update()
+  UI.topbar.update()
   
   if false (
     goto 0 0
