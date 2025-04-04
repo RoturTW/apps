@@ -24,7 +24,7 @@ proxy = "https://proxy.mistium.com?url="
 
 window "set_dragbox" [[2,2,30,0],[-2,2,-100,-40]]
 window "dimensions" 1200 700
-window "min_size" 1100 700
+window "min_size" 800 700
 
 def "send_post" "this.content, this.attachment" (
   local url = "https://claw.rotur.dev/post?os=originOS&auth=" ++ token
@@ -66,7 +66,7 @@ def "render_post" "w, h, post, offset_y, reply" (
   )
 
   local user = post.user.toLower()
-
+  
   loc 9999 2 0 y
   square w h 10 : c#prim
   if mouse_touching (
@@ -81,8 +81,9 @@ def "render_post" "w, h, post, offset_y, reply" (
       url = "Post_" ++ post.id
     )
   )
-  loc 2 2 33 y + offset_y
   
+
+  loc 2 2 33 y + offset_y
   image "https://avatars.rotur.dev/" ++ user 40 40
   text post.user 10 : c#txtc chx#30
   if onclick (
@@ -283,12 +284,32 @@ if social.wsOpen() (
   social = "socialws.rotur.dev".newWebsocket()
 )
 
-theme = System().user.theme
+w = window
+
+goto 135 0
+square w.width - 270 w.height 10 : c#window_colour
+
+
+theme = user.theme
 if url.startsWith("Post_") (
   post_id = url.split("_")[2]
 ) else if posts.data.theme (
   theme = posts.data.theme
 )
+
+if url.startsWith("profile") (
+  goto 0 0
+  image "https://avatars.rotur.dev/.banners/" ++ url.split("=").last() null w.height
+) else (
+  goto -window.x -window.y
+  image "wallpaper_blur" background_width background_height
+)
+goto 0 0
+pen "size" w.width + w.height
+c window_colour
+pen "opacity" 50
+pen "down"
+pen "up"
 prim = theme.primary
 seco = theme.secondary
 tert = theme.tertiary
@@ -296,15 +317,8 @@ txtc = theme.text
 window_accent = theme.accent
 window_colour = theme.background
 
-w = window
-
-glass:frame w.left w.top w.right w.bottom
+frame w.left w.top w.left + 265 w.bottom
   goto 0 0
-  pen "size" w.width + w.height
-  c window_colour
-  pen "opacity" 30
-  pen "down"
-  pen "up"
   pen "opacity" 80
   pen "size" 210
   goto frame.left + 160 frame.top
@@ -312,9 +326,6 @@ glass:frame w.left w.top w.right w.bottom
   set_y frame.bottom
   pen "up"
 frame "clear"
-
-goto 135 0
-square w.width - 270 w.height 10 : c#window_colour
 
 top = w.top - 170
 x = 130
@@ -396,7 +407,7 @@ if url.startsWith("profile").not() and url.startsWith("Post_").not() (
   set_x w.left + 110
   set_y w.top - 150
     
-  image "https://avatars.rotur.dev/" ++ user.username 200 200
+  image user.pfp 200 200
   change_y -120
   centext user.username 10 : c#txtc
   if onclick (
@@ -404,7 +415,7 @@ if url.startsWith("profile").not() and url.startsWith("Post_").not() (
   )
 
   set_x w.left + 10 : chy#-30
-  text (user.bio ?? "You can set a bio in originOS settings").wrapText(23) 9
+  text (user.bio ?? "You can set a bio in originOS settings").wrapText(25) 9
 ) else if posts.got (
   set_x w.left + 110
   set_y w.top - 150
