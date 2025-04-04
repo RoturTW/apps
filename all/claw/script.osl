@@ -278,6 +278,11 @@ if social.wsOpen() (
         main_feed_obj.delete(id)
         main_feed = main_feed_obj.getValues()
         break
+      case "followers"
+        if typeof(posts.data.followers) == "number" and current.val.username == posts.data.username (
+          posts.data.followers = current.val.followers
+        )
+        break
     )
   )
 ) else if network.connected (
@@ -302,7 +307,7 @@ if url.startsWith("profile") (
   image "https://avatars.rotur.dev/.banners/" ++ url.split("=").last() null w.height
 ) else (
   goto -window.x -window.y
-  image "wallpaper_blur" background_width background_height
+  image "wallpaper_blur" background_width background_height 
 )
 goto 0 0
 pen "size" w.width + w.height
@@ -437,18 +442,20 @@ if url.startsWith("profile").not() and url.startsWith("Post_").not() (
     text posts.data.followers ++ (posts.data.followers == 1 ? " Follower" " Followers") 10
   )
 
-  set_x x : chy#-50
-  if posts.data.followed (
-    side_button "tick" "Unfollow" def() -> (
-      local url = api ++ "/unfollow?auth=" ++ token ++ "&username=" ++ posts.data.username
-      posts.data.followed = false
-      void url.getAsync()
-    )
-  ) else (
-    side_button "tick" "Follow" def() -> (
-      local url = api ++ "/follow?auth=" ++ token ++ "&username=" ++ posts.data.username
-      posts.data.followed = true
-      void url.getAsync()
+  if posts.data.username != user.username (
+    set_x x : chy#-50
+    if posts.data.followed (
+      side_button "tick" "Unfollow" def() -> (
+        local url = api ++ "/unfollow?auth=" ++ token ++ "&username=" ++ posts.data.username
+        posts.data.followed = false
+        void url.getAsync()
+      )
+    ) else (
+      side_button "tick" "Follow" def() -> (
+        local url = api ++ "/follow?auth=" ++ token ++ "&username=" ++ posts.data.username
+        posts.data.followed = true
+        void url.getAsync()
+      )
     )
   )
    
