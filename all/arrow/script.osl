@@ -126,7 +126,7 @@ def "setup" (
     }
   }
   
-  string ability = ""
+  object ability = {}
 )
 
 // run the setup
@@ -320,7 +320,7 @@ s += s_target - s / 5
 c #fff
 direction 90
 
-if current_wave == 0 and ability == "" (
+if current_wave == 0 and ability.name == "" (
   goto 0 window.top - 20
   centext "Pick your ability\n\n" 10
   
@@ -339,22 +339,30 @@ if current_wave == 0 and ability == "" (
   goto 0 0
   c #fff
   cha = 360 / abilities.len
+  goto 0 0
   for i abilities.len (
     dir = mouse_dir - direction
     high = direction + (cha / 2)
     low = direction - (cha / 2)
     icn_s = 1.5
+    cur_ability = abilities.getKeys()[i]
     if mouse_dir > low and mouse_dir < high (
       icn_s = 1.7
       if mouse_down (
-        ability = abilities.getKeys()[i]
+        ability = abilities[cur_ability]
         exit
       )
     )
-    icon ability_sel_icn icn_s
-    pos = { x_position, y_position, direction }
+    icon ability_sel_icn icn_s : c#fff
+    pos = { direction }
     
-    goto pos.x_position pos.y_position
+    local dir = pos.direction - 45
+    change dir.sin() * 170 dir.cos() * 170
+    turnright 45
+    move cur_ability.len * -5
+    text cur_ability 10
+    
+    goto 0 0
     direction pos.direction
     turnright cha
   )
@@ -367,7 +375,7 @@ if current_wave == 0 and ability == "" (
 if player.died (
   goto 0 0
   centext "You Died, press 'space' to continue" 30 : c#fff
-  if "space".onpress (
+  if "space".onKeyDown() (
     player.died = false
   )
   import "win-buttons"
