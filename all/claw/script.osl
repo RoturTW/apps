@@ -283,7 +283,7 @@ if social.wsOpen() (
   social = "socialws.rotur.dev".newWebsocket()
 )
 
-theme = user.theme
+theme = System().user.theme
 if url.startsWith("Post_") (
   post_id = url.split("_")[2]
 ) else if posts.data.theme (
@@ -396,7 +396,7 @@ if url.startsWith("profile").not() and url.startsWith("Post_").not() (
   set_x w.left + 110
   set_y w.top - 150
     
-  image user.pfp 200 200
+  image "https://avatars.rotur.dev/" ++ user.username 200 200
   change_y -120
   centext user.username 10 : c#txtc
   if onclick (
