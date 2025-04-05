@@ -5,6 +5,6 @@
   "version": "0.2d",
   "genre": "Social",
   "game_modes": ["Single-player"],
-  "permissions": ["rotur token"],
+  "permissions": [],
   "supports":["originOS"]
 }
