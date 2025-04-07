@@ -20,14 +20,6 @@ window "min_size" 225 300
 window.width = 900
 window.height = 500
 
-def msg_reply(msg) (
-  log msg
-)
-
-rightclick_msg = [
-  {"Reply":"msg_reply"}
-]
-
 class Config (
   server = "flf-server"
   serversUrl = "https://raw.githubusercontent.com/ThePandaDever/flf/refs/heads/main/social/servers.json"
@@ -51,6 +43,8 @@ class Net (
   onlineUsers = null
   messages = {}
   
+  emotes = null
+  
   def wipe() (
     self.gotPingBack = false
     self.roturUsers = {}
@@ -60,7 +54,10 @@ class Net (
     self.channelData = {}
     self.channelMessages = {}
     self.channelMessagesLoaded = {}
+    self.channelUsers = {}
+    self.onlineUsers = null
     self.messages = {}
+    self.emotes = null
   )
   
   class packetworker (
@@ -100,7 +97,7 @@ class Net (
 
   
   def send(data) (
-    log "send" data
+    //log "send" data
     self.packetworker.queue.append(data)
   )
   def update() (
@@ -128,7 +125,6 @@ class Net (
           self.channelData[data["key"]] = data["data"]
           break
         case "channel_messages"
-          log "hi"
           self.channelMessages[data["key"]] = data["data"]
           self.channelMessagesLoaded[data["key"]] = true
           break
@@ -157,6 +153,10 @@ class Net (
           self.onlineUsers = data["data"]
           break
         
+        case "emote_list"
+          self.emotes = data["data"]
+          break
+        
         case "comb"
           each this.packet2 data["packets"] (
             self.handlePacket({"data":packet2})
@@ -164,8 +164,8 @@ class Net (
           break
         
         default
-          throw "unknown packet command" + data["cmd"]
-          window "stop"
+          log "unknown packet command" + data["cmd"]
+          //window "stop"
           break
       )
     )
@@ -213,6 +213,10 @@ class Net (
   def sendMessageRaw(channel,message) (
     Net.send({"cmd":"message_send","data":message,"channel":channel})
   )
+  
+  def toggleEmote(message, emote) (
+    Net.send({"cmd":"emote_toggle","message":message,"emote":emote})
+  )
 )
 
 
@@ -228,6 +232,16 @@ class UI (
   
   def getLocation() (
     return self.selected_channel ?? "no where"
+  )
+  
+  def drawEmote(emote, size) (
+    local e = Net.emotes[emote]
+    if e["text"] (
+      change size * -13 size * -1
+      text e["text"] size * 24 : c#txtc
+    ) else (
+      icon e["icon"] ?? "grid-apps-full" size : c#txtc
+    )
   )
   
   class channel_list (
@@ -362,16 +376,19 @@ class UI (
           local doTitle = (messages[msgi + 1] != null) ? isConnected(msgData,Net.messages[messages[msgi + 1]]).not true
           local connected = (messages[msgi - 1] != null) ? isConnected(Net.messages[messages[msgi - 1]],msgData) false
           local height = 0
+          local emotes = msgData["emotes"]
           height += content.split("\n").len * self.messageSize * 2.3
           height += doTitle ? (connected ? (self.messageSize * 2) 25) 0
+          height += emotes.getKeys().len > 0 ? 37.5 0
           y += height * .5
           
           goto 0 y
           square frame.width height 0 0 1
+          local hovered = mouse_touching
           if mouse_touching (
             c prim
+            pen "opacity" 10
             square frame.width height 1
-            rightclick rightclick_msg "hi"
           )
           
           if doTitle (
@@ -384,6 +401,72 @@ class UI (
           
           goto frame.left y + (height / 2 - (doTitle ? (self.messageSize * 2) -2.5))
           text content self.messageSize : c#txtc : chx#36.5 chy#-15
+          
+          if hovered (
+            local actions = {
+              "reply": {
+                "shown": false,
+                "icon": "w 4 line 0 8 -8 0 cont 0 -8 line -8 0 -2 0 cutcircle 0 -8 8 4.5 45",
+                "code": def() -> (
+                
+                )
+              },
+              "react": {
+                "icon": "w 2.5 cutcircle 0 0 9 0 180 dot -3 1.5 dot 3 1.5 cutcircle 0 2.5 6 18 30",
+                "code": def(msg) -> (
+                  UI.emote_menu.open = UI.emote_menu.open.not()
+                  UI.emote_menu.x = UI.mouse_x
+                  UI.emote_menu.y = UI.mouse_y
+                  UI.emote_menu.message = msg
+                )
+              }
+            }
+            local actionWidth = 22
+            goto frame.right - 25 y + (height / 2) - 12
+            change_x actionWidth / 2
+            each this.actionKey actions.getKeys() (
+              local action = actions[actionKey]
+              if action.shown ?? true (
+                square 10 10 10 : c#prim hover_c#seco
+                icon action["icon"] .6 : c#txtc
+                if mouse_touching (
+                  cursor "pointer"
+                  if onclick (
+                    action.code(msg)
+                  )
+                )
+                change_x -actionWidth
+              )
+            )
+          )
+          
+          if emotes.getKeys().len > 0 (
+            local x2 = frame.left
+            local spacing = 27.5
+            local sizeFunction = def(emote, spacing) -> (
+              return spacing + (emotes[emote].len.toStr().len * 10)
+            )
+            local y2 = y - (height * .5) + 20.5
+            each this.emote emotes.getKeys() (
+              local emoteUsers = emotes[emote]
+              goto x2 + 57.5 y2
+              local w3 = sizeFunction(emote, spacing)
+              local pri = emoteUsers.contains(username.toLower()) ? seco prim
+              local hov = emoteUsers.contains(username.toLower()) ? tert seco
+              square w3 20 10 : c#pri hover_c#hov
+              if mouse_touching (
+                cursor "pointer"
+                if onclick (
+                  Net.toggleEmote(msg, emote)
+                )
+              )
+              goto x2 + 50 y2
+              UI.drawEmote(emote, .75)
+              goto x2 + 65 y2
+              text emoteUsers.len 10 : c#txtc
+              x2 += spacing + (emoteUsers.len.toStr().len * 10) + 17.5
+            )
+          )
           
           //text connected ++ "," + doTitle ++ "," + temp["time"] 10 : c#txtc chx#30
           
@@ -479,6 +562,66 @@ class UI (
       )
     )
   )
+  
+  class emote_menu (
+    open = false
+    x = 0
+    y = 0
+    message = null
+    def update() (
+      if self.open.not() (
+        return
+      )
+      local width = 150
+      local height = 200
+      
+      if self.y - (height * .5) < window.bottom + 10 + UI.input_bar.height (
+        self.y = window.bottom + 10 + UI.input_bar.height + (height * .5)
+      )
+      if self.y + (height * .5) > window.top - 50 (
+        self.y = window.top - 50 - (height * .5)
+      )
+      local x = self.x - (width * .5) - 20
+      local y = self.y
+      
+      goto x y
+      square width height 15 : c#global_accent
+      square width height 10 : c#prim
+      
+      if Net.emotes != null (
+        frame x - (width * .5) y + (height * .5) x + (width * .5) y - (height * .5) (
+          local emote_size = 25
+          local ex = frame.left + (emote_size * 1)
+          local ey = frame.top - (emote_size * 1)
+          each this.emoteKey Net.emotes.getKeys() (
+            local emote = Net.emotes[emoteKey]
+            goto ex ey
+            square emote_size * 1.5 emote_size * 1.5 10 0 1
+            if mouse_touching (
+              cursor "pointer"
+              if Input.mouse.leftClick (
+                Net.toggleEmote(self.message, emoteKey)
+                self.open = false
+              )
+            )
+            c mouse_touching ? tert seco
+            square emote_size * 1.5 emote_size * 1.5 10
+            UI.drawEmote(emoteKey, emote_size / 17.5)
+            ex += emote_size * 2
+            if ex > frame.right (
+              ex = frame.left + (emote_size * 1)
+              ey -= emote_size * 2
+            )
+          )
+        )
+      ) else (
+        goto x y
+        direction timer * 720
+        icon "sync" .75 : c#txtc
+        direction 90
+      )
+    )
+  )
 )
 
 class Input (
@@ -495,7 +638,6 @@ class Input (
 Net.ping()
 Net.packetworker.start()
 Net.onlineworker.start()
-Net.getOnlineUsers()
 
 mainloop:
   wt:load_theme
@@ -532,10 +674,14 @@ mainloop:
     )
   )
   
+  UI.mouse_x = mouse_x
+  UI.mouse_y = mouse_y
+  
   UI.messages.update()
   UI.input_bar.update()
   UI.channel_list.update()
   UI.user_list.update()
+  void UI.emote_menu.update()
   UI.topbar.update()
   
   if false (
