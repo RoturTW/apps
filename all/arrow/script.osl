@@ -15,10 +15,73 @@ map_main = "w 1.7 c #666 cutcircle 0 0 14 0 180 w 1.2 c #777 cutcircle 0 0 14 0 
 
 crosshair = "w 3 line 7 7 10 10 line -7 7 -10 10 line -7 -7 -10 -10 line 7 -7 10 -10"
 
+array gamepads = getGamepads()
+
+if gamepads.len > 0 (
+  gamepad @= gamepads[1]
+  say "Gamepad mode enabled"
+)
 
 last_timer = timer
 game_timer = timer
 
+object io = {
+  ability: def() -> (
+    // left trigger
+    return "space".onKeyDown() or gamepad.buttons[7]["pressed"]
+  ),
+  mouse_down: def() -> (
+    // right trigger
+    return gamepads.len > 0 ? gamepad.buttons[8]["pressed"] mouse_down
+  ),
+  x: def() -> (
+    return gamepads.len > 0 ? (gamepad.axes[2].x * window.width / 4) mouse_x
+  ),
+  y: def() -> (
+    return gamepads.len > 0 ? (gamepad.axes[2].y * window.height / 4) mouse_y
+  ),
+  move_x: def(speed) -> (
+    return (gamepads.len > 0 ? gamepad.axes[1].x ("d".isKeyDown() - "a".isKeyDown())) * speed
+  ),
+  move_y: def(speed) -> (
+    return (gamepads.len > 0 ? -gamepad.axes[1].y ("s".isKeyDown() - "w".isKeyDown())) * speed
+  ),
+  haptic: def(option) -> (
+    local configs = {
+      weaker: {
+        duration: 100,
+        weakMagnitude: 0.1,
+        strongMagnitude: 0.1,
+      },
+      weak: {
+        duration: 100,
+        weakMagnitude: 0.2,
+        strongMagnitude: 0.2,
+      },
+      strong: {
+        duration: 100,
+        weakMagnitude: 1.0,
+        strongMagnitude: 1.0
+      }
+    }
+    
+    if gamepads.len > 0 (
+      void gamepad.haptic(configs[option])
+    )
+  ),
+  select1: def() -> (
+    // left button right controller
+    return "1".isKeyDown() or gamepad.buttons[3]["pressed"]
+  ),
+  select2: def() -> (
+    // top button right controller
+    return "2".isKeyDown() or gamepad.buttons[4]["pressed"]
+  ),
+  select3: def() -> (
+    // right button right controller
+    return "3".isKeyDown() or gamepad.buttons[2]["pressed"]
+  )
+}
 
 def generateStars(density, c) (
   local stars = "w 0.1 c " ++ c
@@ -64,14 +127,14 @@ def "load" "url" (
 def "setup" (
   // setup the player object
   object player = {
-    "x":0,
-    "y":0,
-    "xvel":0,
-    "yvel":0,
-    "health":10,
-    "speed":1,
-    "drawspeed":500,
-    "died":false,
+    "x": 0,
+    "y": 0,
+    "xvel": 0,
+    "yvel": 0,
+    "health": 10,
+    "speed": 1,
+    "drawspeed": 500,
+    "died": false,
   }
   
   array notifs = []
@@ -195,23 +258,13 @@ def "create_particle" "x, y, dir, costume" (
 
 // a command to handle simple character controlling with wasd and space for dashing
 def "movement" "speed" (
-  if "d".pressed (
-    player.xvel += speed
-  )
-  if "a".pressed (
-    player.xvel -= speed
-  )
-  if "w".pressed (
-    player.yvel += speed
-  )
-  if "s".pressed (
-    player.yvel -= speed
-  )
+  player.xvel += io.move_x(speed)
+  player.yvel -= io.move_y(speed)
   
   goto 0 0
   pointat player.xvel player.yvel
   player.dir = direction
-  if "space".onKeyDown() (
+  if io.ability() (
     if boosted.not() and (game_timer - ability.last_used > ability.cooldown) (
       switch ability.name (
         case "Dash"
@@ -272,7 +325,7 @@ object renderer = {
   drawPlayer: def() -> (
     stretch [100,100]
     icon player_body 2.3 * s
-    pointat mouse_x mouse_y
+    pointat io.x() io.y()
     move 40 * s
     icon player_eye 4.7 * s
     move 30 * s
@@ -315,6 +368,12 @@ mainloop:
 
 cycles ++
 
+gamepads @= getGamepads()
+
+if gamepads.len > 0 (
+  gamepad @= gamepads[1]
+)
+
 s += s_target - s / 5
 
 c #fff
@@ -331,7 +390,7 @@ if current_wave == 0 and ability.name == "" (
   renderer.drawPlayer()
   
   goto 0 0
-  pointat mouse_x mouse_y
+  pointat io.x() io.y()
   mouse_dir = direction + 45
   
   direction -90
@@ -348,7 +407,7 @@ if current_wave == 0 and ability.name == "" (
     cur_ability = abilities.getKeys()[i]
     if mouse_dir > low and mouse_dir < high (
       icn_s = 1.7
-      if mouse_down (
+      if io.mouse_down() (
         ability = abilities[cur_ability]
         exit
       )
@@ -412,13 +471,13 @@ if paused.not() (
 )
 last_timer = timer
 
-cam_x += mouse_x / -5 - cam_x / 10
-cam_y += mouse_y / -5 - cam_y / 10
+cam_x += io.x() / -5 - cam_x / 10
+cam_y += io.y() / -5 - cam_y / 10
 frame w.left * 2 + cam_x w.top * 2 + cam_y w.right * 2 + cam_x w.bottom * 2 + cam_y
 
 x = player.x
 y = player.y
-direction 90 
+direction 90
 goto x * -s y * -s
 icon stars 100
 goto x / 1.5 * -s y / 1.5 * -s
@@ -475,7 +534,7 @@ if paused.not() (
 renderer.drawPlayer()
 
 if paused.not() (
-  if mouse_down (
+  if io.mouse_down() (
     draw = game_timer - mouse_down_start * player.drawspeed
     dif = draw.clamp(0,300)
     per = dif / 300
@@ -484,6 +543,7 @@ if paused.not() (
       icon per == 1 ? arrow_charged arrow_main 8 * s
     )
     arrow_charging = true
+    void io.haptic("weaker")
   ) else (
     if per * 11 > 8 (
       create_arrow player.x player.y direction per * 33
@@ -523,8 +583,8 @@ bullets_del = []
 for i bullets.len (
   bullet @= bullets[i]
   if paused.not (
-    bullet.x += bullet.dir.sin * bullet.vel
-    bullet.y += bullet.dir.cos * bullet.vel
+    bullet.x += bullet.dir.sin() * bullet.vel
+    bullet.y += bullet.dir.cos() * bullet.vel
   )
   direction bullet.dir
   pos = position_entity(bullet.x, bullet.y)
@@ -535,6 +595,7 @@ for i bullets.len (
   )
   if dist2 < (30 * s) and player.damage_multiplier != 0 (
     bullets_del.append(i)
+    void io.haptic("strong")
     player.health -= player.damage_multiplier
     damaged = game_timer
   )
@@ -556,24 +617,21 @@ for i enemies.len (
   y = player.y - enemy.y * -s
   goto x y
   dist00 = dist(0,0,x,y).abs()
-  if random(1,3) == 1 (
-    pointat player.xvel * dist00 / 15 player.yvel * dist00 / 15
-  ) else (
-    pointat 0 0
-  )
+  pointat random(-100,100) random(-100,100)
   
   if dist00 < (2000 * s) (
     if paused.not() (
-      if game_timer - enemy.last > 1 / enemy.reload (
+      if game_timer - enemy.last > 2 / enemy.reload (
         create_bullet player.x + (x / s) player.y + (y / s) direction + random(-5,5) 20
         enemy.last = game_timer
       )
       if dist00 > (300 * s) and dist2 < (500 * s) (
-        enemy.x += direction.sin * enemy.vel
-        enemy.y += direction.cos * enemy.vel
+        enemy.x += direction.sin() * enemy.vel
+        enemy.y += direction.cos() * enemy.vel
       ) else (
         if dist00 < dist2 (
           move_player -100
+          void io.haptic("strong")
           damaged = game_timer - 0.3
           player.health -= 0.5
           enemies_del.append(i)
@@ -682,7 +740,7 @@ if upgrade_mode (
   
   each i upgrade upgrades (
     text "Press " ++ i ++ " To Upgrade: " ++ upgrade ++ "\n" 10
-    if i.onpress (
+    if io["select" ++ i]() (
       apply_upgrade upgrade
       upgrade_mode = false
       paused = false
