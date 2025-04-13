@@ -2,7 +2,7 @@
   "title": "super slime bros",
   "description": "Super Slime Bros is a remake of the core systems inside the game \"super smash bros\" written entirely in osl (origin scripting language)\n\nSSB is a video game tailored towards more competitive players who want to fight their friends in a complex games environment with many different play styles, there is no specific story that actually affects the gameplay, instead, the most popular version of the game is where you fight against other players using one of many different characters.\n\nIn SSB you can select characters and each character has a set of unique moves that it can use in order to deal damage to other players. Damage in this game doesn’t work in the traditional sense, instead of dying when you hit a certain threshold, you get knocked further, the more damage you’ve taken, when you are hit by attacks from players.",
   "author": "Mist",
-  "version": "2.7",
+  "version": "2.8",
   "genre": "Social",
   "game_modes": ["local-multi-player"],
   "permissions": [],
