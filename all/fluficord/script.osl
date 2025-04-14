@@ -97,7 +97,7 @@ class Net (
 
   
   def send(data) (
-    //log "send" data
+    log "send" data
     self.packetworker.queue.append(data)
   )
   def update() (
@@ -112,7 +112,7 @@ class Net (
   )
   def handlePacket(p) (
     local data = p["data"]
-    //log "get" data
+    log "get" data
     if data.getKeys().contains("cmd") (
       switch data["cmd"] (
         case "ping"
@@ -206,9 +206,9 @@ class Net (
     self.getCooldown = 10
   )
   
-  def sendMessage(content, channel, attachments) (
+  def sendMessage(content, channel, reply, attachments) (
     attachments = attachments == "attachments" ? null attachments
-    Net.sendMessageRaw(channel,{"content":content,"attachments":attachments ?? []})
+    Net.sendMessageRaw(channel,{"content":content,"attachments":attachments ?? [],"reply":reply})
   )
   def sendMessageRaw(channel,message) (
     Net.send({"cmd":"message_send","data":message,"channel":channel})
@@ -222,6 +222,7 @@ class Net (
 
 class UI (
   selected_channel = null
+  replying_message = null
   channelTypes = {
     "text": {
       icon: "w 4 line -6 -10 -3 10 line 3 -10 6 10 line -8 5 10 5 line -10 -5 8 -5"
@@ -242,6 +243,10 @@ class UI (
     ) else (
       icon e["icon"] ?? "grid-apps-full" size : c#txtc
     )
+  )
+  
+  def drawText(text, size, color) (
+    text text size : c#color
   )
   
   class channel_list (
@@ -360,6 +365,7 @@ class UI (
         local messages = Net.channelMessages[UI.selected_channel]
         local start = frame.bottom - (self.height > frame.height - 15 ? (frame.scrollMax.height - frame.scroll) 0)
         local y = start
+        local total_h = 0
         each this.msgi this.msg messages (
           local msgData = Net.messages[msg]
           local content = msgData.content.wrapText(frame.width / self.messageSize - 4)
@@ -371,7 +377,7 @@ class UI (
               timeconnected = msgData.timestamp - otherData.timestamp < (30 * 1000)
             )
             //temp["time"] = timeconnected
-            return msgData.user == otherData.user and timeconnected
+            return msgData.user == otherData.user and timeconnected and msgData["reply"] == null
           )
           local doTitle = (messages[msgi + 1] != null) ? isConnected(msgData,Net.messages[messages[msgi + 1]]).not true
           local connected = (messages[msgi - 1] != null) ? isConnected(Net.messages[messages[msgi - 1]],msgData) false
@@ -380,35 +386,35 @@ class UI (
           height += content.split("\n").len * self.messageSize * 2.3
           height += doTitle ? (connected ? (self.messageSize * 2) 25) 0
           height += emotes.getKeys().len > 0 ? 37.5 0
+          height += msgData["reply"] != null ? 20 0
+          total_h += height
           y += height * .5
           
           goto 0 y
           square frame.width height 0 0 1
           local hovered = mouse_touching
           if mouse_touching (
-            c prim
-            pen "opacity" 10
+            c tert
+            pen "opacity" UI.replying_message == msg ? 8 4
             square frame.width height 1
+          ) else (
+            if UI.replying_message == msg (
+              c tert
+              pen "opacity" 4
+              square frame.width height 1
+            )
           )
-          
-          if doTitle (
-            goto frame.left y + (height / 2 - 20)
-            image "https://avatars.rotur.dev/" ++ (msgData.user ?? "_") 25 25 : chx#17.5 chy#0
-            text msgData.user ?? "?" self.messageSize : chx#25 c#txtc chx#-6.25 chy#6.25
-            //log msgData.timestamp
-            text msgData.timestamp.timestamp("to-relative") self.messageSize * .7 : chx#10
-          )
-          
-          goto frame.left y + (height / 2 - (doTitle ? (self.messageSize * 2) -2.5))
-          text content self.messageSize : c#txtc : chx#36.5 chy#-15
           
           if hovered (
             local actions = {
               "reply": {
-                "shown": false,
-                "icon": "w 4 line 0 8 -8 0 cont 0 -8 line -8 0 -2 0 cutcircle 0 -8 8 4.5 45",
-                "code": def() -> (
-                
+                "icon": "w 4 line 0 8 -8 0 cont 0 -8 line -8 0 -2 0 cutcircle 0 -8 8 4.5 45" + (UI.replying_message == msg ? "w 7 c" + prim + "line -9 -9 9 9 9 -9 -9 9 c" + txtc + "w 4 line -9 -9 9 9 line 9 -9 -9 9 c" ""),
+                "code": def(msg) -> (
+                  if UI.replying_message == null (
+                    UI.replying_message = msg
+                  ) else (
+                    UI.replying_message = null
+                  )
                 )
               },
               "react": {
@@ -438,6 +444,33 @@ class UI (
                 change_x -actionWidth
               )
             )
+          )
+          
+          if msgData["reply"] != null (
+            goto frame.left + 30 y + (height / 2 - 13.5)
+            local replyMessage = Net.messages[msgData["reply"]]
+            if replyMessage == null (
+              Net.getMessage(msgData["reply"])
+            )
+            image "https://avatars.rotur.dev/" ++ (replyMessage.user ?? "_") 18 18 : chx#17.5 chy#0
+            text "@" ++ (replyMessage.user ?? "?") self.messageSize * .8 : chx#18 c#txtc chx#-6.25
+            UI.drawText(replyMessage.content, self.messageSize * .8,txtc, frame.width) : chx#5
+            y -= 20
+          )
+          
+          if doTitle (
+            goto frame.left y + (height / 2 - 20)
+            image "https://avatars.rotur.dev/" ++ (msgData.user ?? "_") 25 25 : chx#17.5 chy#0
+            text msgData.user ?? "?" self.messageSize : chx#25 c#txtc chx#-6.25 chy#6.25
+            //log msgData.timestamp
+            text msgData.timestamp.timestamp("to-relative") self.messageSize * .7 : chx#10
+          )
+          
+          goto frame.left y + (height / 2 - (doTitle ? (self.messageSize * 2) -2.5))
+          UI.drawText(content,self.messageSize,txtc) : chx#36.5 chy#-15
+          
+          if msgData["reply"] != null (
+            y += 20
           )
           
           if emotes.getKeys().len > 0 (
@@ -474,7 +507,7 @@ class UI (
           
           y += height * .5
         )
-        self.height = y - start - (height / 2)
+        self.height = total_h
       )
     )
   )
@@ -493,7 +526,8 @@ class UI (
           "line_numbers": false
         }
         if "enter".onKeyDown() and "shift".isKeyDown().not() (
-          Net.sendMessage(inputs["input_bar"].join("\n"), UI.selected_channel)
+          Net.sendMessage(inputs["input_bar"].join("\n"), UI.selected_channel, UI.replying_message)
+          UI.replying_message = null
           inputs["input_bar"] = []
         )
       )
