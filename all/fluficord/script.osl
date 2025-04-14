@@ -112,7 +112,7 @@ class Net (
   )
   def handlePacket(p) (
     local data = p["data"]
-    //log data
+    //log "get" data
     if data.getKeys().contains("cmd") (
       switch data["cmd"] (
         case "ping"
@@ -227,7 +227,7 @@ class UI (
       icon: "w 4 line -6 -10 -3 10 line 3 -10 6 10 line -8 5 10 5 line -10 -5 8 -5"
     }
   }
-  neededMessagesDefault = 20
+  neededMessagesDefault = 15
   neededMessages = {}
   
   def getLocation() (
@@ -449,22 +449,24 @@ class UI (
             local y2 = y - (height * .5) + 20.5
             each this.emote emotes.getKeys() (
               local emoteUsers = emotes[emote]
-              goto x2 + 57.5 y2
-              local w3 = sizeFunction(emote, spacing)
-              local pri = emoteUsers.contains(username.toLower()) ? seco prim
-              local hov = emoteUsers.contains(username.toLower()) ? tert seco
-              square w3 20 10 : c#pri hover_c#hov
-              if mouse_touching (
-                cursor "pointer"
-                if onclick (
-                  Net.toggleEmote(msg, emote)
+              if emoteUsers.len > 0 (
+                goto x2 + 57.5 y2
+                local w3 = sizeFunction(emote, spacing)
+                local pri = emoteUsers.contains(username.toLower()) ? seco prim
+                local hov = emoteUsers.contains(username.toLower()) ? tert seco
+                square w3 20 10 : c#pri hover_c#hov
+                if mouse_touching (
+                  cursor "pointer"
+                  if onclick (
+                    Net.toggleEmote(msg, emote)
+                  )
                 )
+                goto x2 + 50 y2
+                UI.drawEmote(emote, .75)
+                goto x2 + 65 y2
+                text emoteUsers.len 10 : c#txtc
+                x2 += spacing + (emoteUsers.len.toStr().len * 10) + 17.5
               )
-              goto x2 + 50 y2
-              UI.drawEmote(emote, .75)
-              goto x2 + 65 y2
-              text emoteUsers.len 10 : c#txtc
-              x2 += spacing + (emoteUsers.len.toStr().len * 10) + 17.5
             )
           )
           
