@@ -1,6 +1,10 @@
 brushes = []
 entities = []
 
+if window.permissions.contains("save admin").not (
+  permission "request" "save admin"
+)
+
 def "setdefaults"
   do_win_buttons = true
   do_sidebar = true
@@ -45,7 +49,7 @@ def "loadtheme"
 endef
 
 import "Window_Tools"
-seticon icon_mallet
+//seticon icon_mallet
 window "dimensions" 1100 700
 window "set_dragbox" [[2,2,0,0],[-2,2,-90,-42]]
 
@@ -200,6 +204,10 @@ def "loadfiles"
   )
   eventaddon "late_load"
 endef
+assetqueue = []
+def "loadassetfiletovariablenamewithflags" "path,variable,flags"
+  assetqueue.append([path,variable,flags])
+endef
 
 scale = 10
 sidebarexpanded = {}
@@ -245,6 +253,7 @@ def "checkxy" "x,y,bx,by,bw,bh"
 endef
 
 def "mid(a,b)"
+  a = a.toNum()
   return a + ((b - a) / 2)
 endef
 
@@ -288,12 +297,12 @@ def "brush_touching"
 endef
 
 def "brush_create(arr)"
-  ax = arr[1]
-  ay = arr[2]
-  bx = arr[3]
-  by = arr[4]
-  x = mid(ax,bx)
-  y = mid(ay,by)
+  local ax = arr[1]
+  local ay = arr[2]
+  local bx = arr[3]
+  local by = arr[4]
+  x = ax + bx / 2
+  y = ay + by / 2
   w = (bx - ax * .5).abs
   h = (by - ay * .5).abs
   return [].append(x).append(y).append(w).append(h).append(current_texture)
@@ -382,7 +391,7 @@ def "input_update"
   
   c background; pen "size" 99999999; pen "down"; pen "up"
   
-  speed = 1000 / scale * delta_time
+  speed = delta_time * (1000 / scale)
   
   if hovering_ui.not (
     if "w".pressed "camera_y += speed"
@@ -390,10 +399,10 @@ def "input_update"
     if "d".pressed "camera_x += speed"
     if "a".pressed "camera_x -= speed"
 
-    if "e".pressed "scale += delta_time * 15"
-    if "q".pressed "scale -= delta_time * 15"
+    if "e".pressed "scale *= delta_time * 5 + 1"
+    if "q".pressed "scale /= delta_time * 5 + 1"
     
-    scale += scroll_velocity * -.005
+    scale *= scroll_velocity * -.0005 + 1
   )
 
   if "`".pressed "loadfiles"
@@ -735,10 +744,8 @@ def "scene_brush_update"
     org_h = dragging_brush_data[4]
     org_txt = brushes[dragging_brush][5]
     if dragging_handle == "drag" (
-      log brsi
       brushes[dragging_brush] = [mouse_wld_x - dragging_org_x + org_x,mouse_wld_y - dragging_org_y + org_y,org_w,org_h,org_txt]
     )
-    log dragging_handle
     if dragging_handle != "drag" (
       ax = org_x - org_w
       ay = org_y - org_h
@@ -773,7 +780,6 @@ def "scene_brush_update"
         ax = mouse_wld_x
       )
       brushes[dragging_brush] = [].append(mid(ax,bx)).append(mid(ay,by)).append((bx - ax * .5).abs()).append((by - ay * .5).abs()).append(org_txt)
-      log brushes
     )
   )
   eventaddon "gui_brush_update"
@@ -838,6 +844,7 @@ def "scene_brush_update"
 endef
 
 def "scene_entity_update"
+  ignoreents = []
   eventaddon "gui_ent_update_early"
   hovered_entity = 0
   if entities.len > 0 (
@@ -848,8 +855,13 @@ def "scene_entity_update"
       if enttype.str != "enttype" (
         goto entx enty
         col = selected_entity == entityi ? #c0c #a0a
-        square 15 15 7 : c#col
-        if mouse_touching (; cursor "pointer"; if click (
+        notignored = ignoreents.contains(entityi).not
+        if notignored (
+          square 1 * scale 1 * scale .5 * scale : c#col
+          hov = mouse_touching
+        )
+        eventaddon "handle_entity"
+        if hov (; cursor "pointer"; if click (
           if selected_entity != entityi (; can_interact = false; )
           selected_entity = entityi
           type = entities[selected_entity][3]
@@ -868,11 +880,17 @@ def "scene_entity_update"
           )
         ); )
 
-        x = enttype.len * -4
-        if enttype.str != "enttype" (; text enttype 8 : c#text chx#x chy#20; )
+        change_y 1.5 * scale
+        if enttype.str != "enttype" and notignored (
+          centext enttype .5 * scale : c#text
+          if entity_types[enttype] == null (
+            change_x enttype.len * (-.25 * scale) - (scale * .75)
+            icon "w 5 c #ffa600 line -8 -8 0 8 cont 8 -8 cont -8 -8 w 11 dot 0 -2 w 5 c #000 line 0 5 0 0 dot 0 -6" .05 * scale : tooltip#"unknown entity type"
+          )
+        )
 
-        checkxy mouse_x mouse_y entx enty 20 20
-        if out and entityi == selected_entity (
+        //checkxy mouse_x mouse_y entx enty 20 20
+        if hov and entityi == selected_entity (
           hovered_entity = entityi
           if can_interact (
             cursor "move"
@@ -1039,6 +1057,21 @@ mainloop:
         topbar_text = "Mallet -" + name ++ ".map"
       )
       new_transmit = false
+    )
+  )
+  
+  if assetqueue.len > 0 (
+    while assetqueue.len > 0 (
+      assetfile = assetqueue.pop()
+      local assetdata = open(assetfile[1]).JsonStringify()
+      each this.flag assetfile[3] (
+        switch flag (
+          case "json"
+            assetdata = assetdata.replace("\n","").JsonParse()
+            break
+        )
+      )
+      run [assetfile[2] + "=" + assetdata.JsonStringify()]
     )
   )
   
