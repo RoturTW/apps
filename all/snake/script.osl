@@ -2,14 +2,16 @@ save "snake@mistium" "set_directory"
 
 save "highscore.txt" "get"
 highscore = save_data
-if save_data == null "highscore = 0"
+if save_data == null (
+  highscore = 0
+)
 
-def "move" "x,y"
+def "move" "x, y" (
   x += head_x
   y += head_y
-  snakex.append(x)
-  snakey.append(y)
-endef
+  void snakex.append(x)
+  void snakey.append(y)
+)
 
 t = 0
 snakex = [0]
@@ -42,8 +44,8 @@ if mode == "Menu" (
     head_x = 0
     head_y = -20
     move 0 20
-    foodx = [-9,9].random * 20
-    foody = [-9,9].random * 20 - 20
+    foodx = random(-9,9) * 20
+    foody = random(-9,9) * 20 - 20
   )
 )
 if mode == "menu" (
@@ -56,17 +58,33 @@ if mode == "Play" (
     highscore = snakelen
     save "highscore.txt" "set" highscore
   )
-  if "w".onpress and snakedir != "s" "snakedir = "w""
-  if "s".pressed and snakedir != "w" "snakedir = "s""
-  if "a".pressed and snakedir != "d" "snakedir = "a""
-  if "d".pressed and snakedir != "a" "snakedir = "d""
+  if "w".onKeyDown() and snakedir != "s" (
+    snakedir = "w"
+  )
+  if "s".isKeyDown() and snakedir != "w" (
+    snakedir = "s"
+  )
+  if "a".isKeyDown() and snakedir != "d" (
+    snakedir = "a"
+  )
+  if "d".isKeyDown() and snakedir != "a" (
+    snakedir = "d"
+  )
 
   if timer - slider_speed > t (
     t = timer
-    if snakedir == "w" "move 0 20"
-    if snakedir == "a" "move -20 0"
-    if snakedir == "s" "move 0 -20"
-    if snakedir == "d" "move 20 0"
+    if snakedir == "w" (
+      move 0 20
+    )
+    if snakedir == "a" (
+      move -20 0
+    )
+    if snakedir == "s" (
+      move 0 -20
+    )
+    if snakedir == "d" (
+      move 20 0
+    )
   )
   temp = snakex.len
   head_x = snakex[temp].toNum()
@@ -77,20 +95,26 @@ if mode == "Play" (
     draw_x = snakex[count].toNum()
     draw_y = snakey[count].toNum()
     goto draw_x draw_y
-    if draw_x == head_x and ( draw_y == head_y ) and ( count < snakex.len ) "mode = \"menu\""
+    if draw_x == head_x and draw_y == head_y and count < snakex.len (
+      mode = "menu"
+    )
     c #65ad5b
-    if snakex.len - count % 2 == 0 "c #416f3b"
-    if count == snakex.len "c #cd0000"
+    if snakex.len - count % 2 == 0 (
+      c #416f3b
+    )
+    if count == snakex.len (
+      c #cd0000
+    )
     square 13 13 6 1
   )
 
-  if ( head_x > 180 ) or ( head_x < -180 ) or ( head_y > 160 ) or ( head_y < -210 ) (
+  if head_x > 180 or head_x < -180 or head_y > 160 or head_y < -210 (
     mode = "menu"
   )
   c #cd0000
   goto foodx foody
   square 5 5 10
-  if head_x == foodx and ( head_y == foody ) (
+  if head_x == foodx and head_y == foody (
     snakelen ++
     foodx = random(-9, 9) * 20
     foody = random(-9, 9) * 20 - 20

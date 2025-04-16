@@ -15,8 +15,8 @@ if save_access (
 
 def shootgun() (
   turnleft 45
-  shotx = -250 + (90 * direction.sin) 
-  shoty = 0 + (90 * direction.cos)
+  shotx = -250 + (90 * direction.sin()) 
+  shoty = 0 + (90 * direction.cos())
   shotd = direction + 180
   
   sound "shoot" "start" 0
@@ -37,7 +37,7 @@ sound "https://github.com/RattusDong/apps/raw/refs/heads/main/all/fortnite%20ski
 sound "kill" "volume" 1.0
 window "show"
 window "dimensions" 800 450
-window "resizable" False
+window "resizable" false
 
 shotTimer = 0
 
@@ -144,7 +144,7 @@ effect "transparency" 0
 if mouse_down or gamepad.buttons[8]["pressed"] and cooldown <= 0 (
   sgwidth = (sgwidth + 1).clamp(0,10)
   if sgwidth == 8 (
-    if contr ( 
+    if contr (
       void gamepads[1].haptic({
         duration: 600,
         weakMagnitude: 0.05,
@@ -157,10 +157,10 @@ if mouse_down or gamepad.buttons[8]["pressed"] and cooldown <= 0 (
   sgwidth = 0
 )
 if contr (
-  if gamepad.buttons[8]["pressed"].not and ready and dead.not (
+  if gamepad.buttons[8]["pressed"].not and ready and dead.not() (
     shootgun()
   )
-) else if mouse_down.not and ready and dead.not (
+) else if mouse_down.not() and ready and dead.not() (
   shootgun()
 )
 
@@ -181,7 +181,7 @@ if dead (
 
   dieOff = 2000
 
-  if "space".pressed or gamepad.buttons[1]["pressed"] or gamepad.buttons[2]["pressed"] (
+  if "space".isKeyDown() or gamepad.buttons[1]["pressed"] or gamepad.buttons[2]["pressed"] (
     dead = false
     dieOff = 0
     score = 0
@@ -208,4 +208,6 @@ if clicked (
   window "stop"
 )
 
-//special thanks to rattus
+// special thanks to rattus
+
+// updated by mist to replace old syntax with more modern equivalents

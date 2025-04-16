@@ -39,16 +39,16 @@ goto -340 p1y
 square 0 100 10
 goto 340 p2y
 square 0 100 10
-if "w".pressed (
+if "w".isKeyDown() (
   p1y += paddle_speed * delta_time
 )
-if "s".pressed (
+if "s".isKeyDown() (
   p1y -= paddle_speed * delta_time
 )
-if "up arrow".pressed (
+if "up arrow".isKeyDown() (
   p2y += paddle_speed * delta_time
 )
-if "down arrow".pressed (
+if "down arrow".isKeyDown() (
   p2y -= paddle_speed * delta_time
 )
 p1y.clamp(-225,225)

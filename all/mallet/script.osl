@@ -382,30 +382,30 @@ def "input_update"
   last_middle_down = mouse_middle
   right_click = mouse_right and last_right_down.not
   last_right_down = mouse_right
-  delete_click = ("delete".pressed or "backspace".pressed) and last_delete_down.not
+  delete_click = ("delete".isKeyDown() or "backspace".isKeyDown()) and last_delete_down.not
   delete_click = delete_click and hovering_ui.not
-  last_delete_down = ("delete".pressed or "backspace".pressed)
-  enter_click = "enter".pressed and last_enter_down.not
+  last_delete_down = ("delete".isKeyDown() or "backspace".isKeyDown())
+  enter_click = "enter".isKeyDown() and last_enter_down.not
   enter_click = enter_click and hovering_ui.not
-  last_enter_down = "enter".pressed
+  last_enter_down = "enter".isKeyDown()
   
   c background; pen "size" 99999999; pen "down"; pen "up"
   
   speed = delta_time * (1000 / scale)
   
   if hovering_ui.not (
-    if "w".pressed "camera_y += speed"
-    if "s".pressed "camera_y -= speed"
-    if "d".pressed "camera_x += speed"
-    if "a".pressed "camera_x -= speed"
+    if "w".isKeyDown() "camera_y += speed"
+    if "s".isKeyDown() "camera_y -= speed"
+    if "d".isKeyDown() "camera_x += speed"
+    if "a".isKeyDown() "camera_x -= speed"
 
-    if "e".pressed "scale *= delta_time * 5 + 1"
-    if "q".pressed "scale /= delta_time * 5 + 1"
+    if "e".isKeyDown() "scale *= delta_time * 5 + 1"
+    if "q".isKeyDown() "scale /= delta_time * 5 + 1"
     
     scale *= scroll_velocity * -.0005 + 1
   )
 
-  if "`".pressed "loadfiles"
+  if "`".isKeyDown() "loadfiles"
 
   if right_click (
     camera_drag_x = ungetx(mouse_x)
@@ -826,7 +826,7 @@ def "scene_brush_update"
   // brushes
   if mouse_down.not (
     if dragging_brush != 0 (
-      if "shift".pressed (
+      if "shift".isKeyDown() (
         brs = [].append(org_x).append(org_y).append(org_w).append(org_h).append(org_txt)
         brushes.append(brs)
       )

@@ -1,6 +1,6 @@
 window_colour = #14d0ff
 
-def "Wall" "wallt,wallh"
+def "Wall" "wallt, wallh" (
   loc -2 9999 wallt - timer * 120 wallh
   direction 90
   stretch "x" 100
@@ -8,10 +8,14 @@ def "Wall" "wallt,wallh"
   image "https://raw.githubusercontent.com/Mistium/Origin-OS/main/OSL%20Programs/apps/games/assets/pipe.png" 1400
   change -87 -340
   hitbox 175 350 -100 birdheight
-  if collided "menu = True"
+  if collided (
+    menu = true
+  )
   change_y 660
   hitbox 175 350 -100 birdheight
-  if collided "menu = True"
+  if collided (
+    menu = true
+  )
   collided = false
     set_y 0
     hitbox 100 window_height -100 0
@@ -21,32 +25,35 @@ def "Wall" "wallt,wallh"
         can = false
       )
     ) else (
-      if ( x_position - 100 ).abs < 50 "can = true"
+      if abs(x_position - 100) < 50 (
+        can = true
+      )
     )
   if wallt - timer * 40 < -600 (
     wallt = timer
-    wallh = [-90,90].random
+    wallh = random(-90,90)
   )
-endef
+)
 
 window "dimensions" 400 600
-window "resizable" False
-def "reset_walls"
+window "resizable" false
+
+def "reset_walls" (
   t = timer + 3
   w1t = t
-  w1h = [-90,90].random
+  w1h = random(-90,90)
   w2t = t + 3
-  w2h = [-90,90].random
+  w2h = random(-90,90)
   w3t = t + 6
-  w3h = [-90,90].random
+  w3h = random(-90,90)
   w4t = t + 9
-  w4h = [-90,90].random
-endef
+  w4h = random(-90,90)
+)
 
 reset_walls
-menu = True
+menu = true
 points = 0
-allowed = True
+allowed = true
 page = "none"
 bird = save_data
 bird_dir = 0
@@ -55,14 +62,14 @@ birdvel = 0
 bird_str = 0
 mainloop:
 goto -100 birdheight
-bird_dir = 90 - ( birdvel.clamp(-82,82) / 4 ).round
-bird_str += ( birdvel.clamp(0,150) / 3 + 100 - bird_str / 20 )
+bird_dir = 90 - round(birdvel.clamp(-82,82) / 4)
+bird_str += birdvel.clamp(0,150) / 3 + 100 - bird_str / 20
 direction bird_dir
 stretch "x" bird_str
-log bird_str
+
 image "https://raw.githubusercontent.com/Mistium/Origin-OS/main/OSL%20Programs/apps/games/assets/flapper.png" 100
 colour #fff
-if "space".pressed.not "allowed = True"
+if "space".isKeyDown().not() "allowed = True"
 direction 90
 if menu (
   if page == "none" (
@@ -70,27 +77,27 @@ if menu (
     birdheight = 0
     loc 2 2 20 -30
     text "Press Space To Play" 10
-    if "space".pressed and allowed (
+    if "space".isKeyDown() and allowed (
       Menu = false
       reset_walls
     )
     loc 2 2 20 -50
     text "Press Enter To See Credits" 10
-    if "enter".pressed "page = credits"
+    if "enter".isKeyDown() "page = credits"
   )
   if page == "credits" (
     loc 2 2 20 -20
-    text `pipe by breaklife${newline}on pixilart.com` 10 : c#000
+    text "pipe by breaklife\non pixilart.com" 10 : c#000
     loc 2 2 20 -80
     text "Press Space To Return To Home" 10
-    if "space".pressed (
+    if "space".isKeyDown() (
       page = none
       allowed = false
     )
   )
 ) else (
   loc 2 2 20 -90
-  if "space".onpress (
+  if "space".onKeyDown() (
     birdvel = 650
     allowed = false
     timer2 = timer
@@ -120,6 +127,10 @@ if menu (
 window "show"
 loc -2 2 -30 -30
 square 30 30 10 : c#000
-if mouse_touching "cursor pointer"
-if clicked "window stop"
+if mouse_touching (
+  cursor "pointer"
+  if clicked (
+    window.close()
+  )
+)
 icon "close" 0.7 : c#fff

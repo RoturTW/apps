@@ -503,7 +503,7 @@ def "mainloop_main" (
   )
   // player movement
   if player_health != -9999 (
-    player_raw_x += ("d".pressed - "a".pressed) * player_speed
+    player_raw_x += ("d".isKeyDown() - "a".isKeyDown()) * player_speed
     if player_raw_x - 30 < winl (
       player_raw_x = winl + 30
     )
@@ -512,7 +512,7 @@ def "mainloop_main" (
     )
     player_x += player_raw_x - player_x * player_speed * .05
   
-    player_raw_y += ("w".pressed - "s".pressed) * player_speed
+    player_raw_y += ("w".isKeyDown() - "s".isKeyDown()) * player_speed
     if player_raw_y - 30 < winb (
       player_raw_y = winb + 30
     )
@@ -1010,7 +1010,7 @@ if wintype == "" (
   //win_setup
 )
 
-space_last = "space".pressed
+space_last = "space".isKeyDown()
 window "show"
 mouse_right_last = false
 framecounter2 = 0
@@ -1069,21 +1069,21 @@ mainloop:
     )
     // spawn the menus if u press the buttons
     if dead_open.not (
-      if "space".pressed and space_last.not (
+      if "space".isKeyDown() and space_last.not (
         if shop_open.not (
           window "add" window.file.uuid "shop"
           opened_shop_before = true
         )
         shop_open = shop_open.not
       )
-      space_last = "space".pressed
-      if "escape".pressed and pause_last.not (
+      space_last = "space".isKeyDown()
+      if "escape".isKeyDown() and pause_last.not (
         if pause_open.not (
           window "add" window.file.uuid "pause"
         )
         pause_open = pause_open.not
       )
-      pause_last = "escape".pressed
+      pause_last = "escape".isKeyDown()
     )
     
     // currecny
@@ -1361,7 +1361,7 @@ mainloop:
     window "dimensions" 480 400
     window "resizable" false
     
-    if "space".pressed (
+    if "space".isKeyDown() (
       v.winrestart = true
       v.realrestart = true
     )
