@@ -30,7 +30,7 @@ object io = {
     // left trigger
     return "space".onKeyDown() or gamepad.buttons[7]["pressed"]
   ),
-  mouse_down: def() -> (
+  down: def() -> (
     // right trigger
     return gamepads.len > 0 ? gamepad.buttons[8]["pressed"] mouse_down
   ),
@@ -363,6 +363,7 @@ Number.wrap = def(low, high) -> (
   return ((self - low) % (high - low + 1) + (high - low + 1)) % (high - low + 1) + low
 )
 
+can = mouse_down.not()
 
 mainloop:
 
@@ -407,7 +408,7 @@ if current_wave == 0 and ability.name == "" (
     cur_ability = abilities.getKeys()[i]
     if mouse_dir > low and mouse_dir < high (
       icn_s = 1.7
-      if io.mouse_down() (
+      if io.down() (
         ability = abilities[cur_ability]
         exit
       )
@@ -426,17 +427,19 @@ if current_wave == 0 and ability.name == "" (
     turnright cha
   )
   direction 90
-  
+ 
+  can = mouse_down.not()
   import "win-buttons"
   exit
 )
 
 if player.died (
   goto 0 0
-  centext "You Died, press 'space' to continue" 30 : c#fff
-  if "space".onKeyDown() (
+  centext "You Died, press 'click or trigger' to continue" 30 : c#fff
+  if io.down() (
     player.died = false
   )
+  can = mouse_down.not()
   import "win-buttons"
   exit
 )
@@ -534,7 +537,7 @@ if paused.not() (
 renderer.drawPlayer()
 
 if paused.not() (
-  if io.mouse_down() (
+  if io.down() (
     draw = game_timer - mouse_down_start * player.drawspeed
     dif = draw.clamp(0,300)
     per = dif / 300
@@ -766,4 +769,7 @@ if upgrade_mode (
 c #fff
 loc 2 -2 10 20
 text bullets.len + enemies.len + particles.len + arrows.len + "Objects / " ++ fps + "Fps / Game Timer" + game_timer 10
+
+can = mouse_down.not()
+
 import "win-buttons"
