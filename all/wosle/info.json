@@ -7,5 +7,5 @@
   "game_modes": ["Single-player"],
   "permissions": [],
   "supports": ["originOS"],
-  "screenshots": []
+  "screenshots": ["wosle1.png", "wosle2.png", "wosle3.png"]
 }
