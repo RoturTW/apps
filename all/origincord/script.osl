@@ -175,6 +175,10 @@ def makepfp(aut) (
   )
 )
 
+def "drawemoji" "id, size" (
+  image doProxy("https://media.discordapp.net/emojis/" ++ id ++ ".png?size=64&quality=lossless") size size
+)
+
 def "focusChannel" "id" (
   local guild = current_guild
   if guild != "@me" and discord_isUser == 1 (
@@ -212,7 +216,7 @@ def memFromId(id) (
 
 def "handle_message" "msg, ping" (
   if msg.istype("object") (
-    local member = memFromId(msg.author.id)
+    local member @= memFromId(msg.author.id)
     local type = msg["type"]
     
     if msg.webhook_id != null (
@@ -236,7 +240,7 @@ def "handle_message" "msg, ping" (
     msg_cha @= messages[channel]
     
     content = msg.content
-    attachments = msg.attachments
+    attachments @= msg.attachments
     local authid = msg.author.id ++ "/" ++ msg.author.username
     local isreply = type == 19
     
@@ -273,30 +277,27 @@ def "handle_message" "msg, ping" (
       msg_cha.append(message)
     )
     if content.len > 0 (
-      content.split("\n")
-      each item content (
-        emoji_match = item.toStr().strip().match("/^<a?:[^:]+:(\d+)>$/")
-        if emoji_match.len > 0 (
-          att = {
-            url: "https://media.discordapp.net/emojis/" ++ emoji_match[2] ++ ".png?size=128&quality=lossless",
-            filetype: "image"
-          }
-          msg_cha = addAttachment(att,1)
-        ) else (
-          local cur_content = item.match("/<[^ >]+>|[^<>\[\]()]+|./gm")
-          if cur_content.len == 1 and cur_content[1].startsWith("<").not() (
-            local cur_content = cur_content[1]
-          )
-          
-          msg_cha.append([
-            "",
-            cur_content,
-            "",
-            ping,
-            "",
-            msg
-          ])
+      emoji_match = content.toStr().strip().match("/^<a?:[^:]+:(\d+)>$/")
+      if emoji_match.len > 0 (
+        att = {
+          url: "https://media.discordapp.net/emojis/" ++ emoji_match[2] ++ ".png?size=128&quality=lossless",
+          filetype: "image"
+        }
+        msg_cha = addAttachment(att,1)
+      ) else (
+        local cur_content = content.match("/<[^ >]+>|[^<>\[\]()]+|./gm")
+        if cur_content.len == 1 and cur_content[1].startsWith("<").not() (
+          local cur_content = cur_content[1]
         )
+          
+        msg_cha.append([
+          "",
+          cur_content,
+          "",
+          ping,
+          "",
+          msg
+        ])
       )
     )
     each att attachments (
@@ -311,7 +312,7 @@ def "handle_message" "msg, ping" (
       }
       msg_cha ++= addAttachment(att,3)
     )
-    all_messages_by_id[msg.id] = msg
+    all_messages_by_id[msg.id] @= msg
     messages[channel] @= msg_cha
   )
 )
@@ -476,7 +477,7 @@ def "draw_channels" (
     loop (window_height // ih).clamp(0,len) (
       count ++
       chnl @= cur[count]
-      if chnl.istype("object").not (
+      if chnl.istype("object").not() (
         chnl = {}
       )
       y -= this.ih
@@ -484,7 +485,7 @@ def "draw_channels" (
    
       id = chnl.id
       local current_channel = current_channel == id
-      if id != "" (
+      if id (
         if chnl["type"] !== 4 (
           if current_channel (
             square w 25 15 : c#seco
@@ -575,22 +576,22 @@ def "draw_chat" "cur_msgs" (
   len = cur_msgs.len
   input_offset = 40
   local ih = 25
-  frame left top right bottom len * ih "chat"
-  chat_frame = frame
-  count = scroll_ychat // ih
-  y = scroll_ychat % ih
+  frame left top right bottom chat_height "chat"
+  chat_frame @= frame
+  y = scroll_ychat
+  local start_y = y
   
   w = frame.width
-  loop (window_height // ih).clamp(0,len + 1) (
-    count ++
+  for count len (
     msg @= cur_msgs[count]
+    
     loc 999 2 0 y
     if msg[4] == true (
       square w 20 0 : c#625228
     ) else (
       square w 20 0 0 1
     )
-    msg_data = msg[6]
+    msg_data @= msg[6]
     author @= msg_data.author
     hover = mouse_touching
     if hover and msg_data.content != "" (
@@ -602,7 +603,7 @@ def "draw_chat" "cur_msgs" (
     )
     
     loc 2 2 40 y
-    local txt = msg[2].trimText(w / 10 - 2)
+    local txt = msg[2]
     c msg_c
     if msg[3] == "reply" (
       change -5 -25
@@ -620,7 +621,8 @@ def "draw_chat" "cur_msgs" (
       rightclick user_menu author.id
     ) else (
       change_x 20
-      if msg[2].isType("Array") (
+      local oy = y_position
+      if msg[2].isType("array") (
         local txt = msg[2]
         each i txt (
           if i[1] == "<" (
@@ -639,7 +641,7 @@ def "draw_chat" "cur_msgs" (
                 change_x 10
                 i = i.trim(3,-2)
                 
-                image doProxy("https://media.discordapp.net/emojis/" ++ i.trim(i.index(":") + 1,-1) ++ ".png?size=64&quality=lossless") 20 20
+                drawemoji i.trim(i.index(":") + 1,-1) 20
                 change_x 10
                 break
             )
@@ -648,8 +650,40 @@ def "draw_chat" "cur_msgs" (
           )
         )
       ) else (
-        text txt 10
+        text txt.wrapText(frame.width / 10 - 7) 10
       )
+      
+      local reactions @= msg_data.reactions
+      if reactions.len > 0 (
+        set_x frame.left + 60 : chy#-30
+        for react_i reactions.len (
+          local cur @= reactions[react_i]
+          local react_w = 30 + (cur.count.len * 10) / 2
+          
+          c prim
+          change_x react_w
+          square react_w * 2 20 10
+          change_x -react_w
+          
+          c txtc
+          if cur.emoji.id != null (
+            change_x 10
+            drawemoji cur.emoji.id 20
+            change_x 10
+          ) else (
+            text cur.emoji.name 20
+          )
+          text cur.count 10 : chx#10
+          change_x 20
+          if x_position > frame.right - 20 (
+            set_x frame.left + 60 : chy#-30
+          )
+        )
+        change_y -20
+      )
+      
+      y += y_position - oy
+      
       if msg[5].isType("object") (
         att @= msg[5]
         file_type = att.filetype
@@ -689,6 +723,10 @@ def "draw_chat" "cur_msgs" (
     y -= ih
   )
   frame "clear"
+  chat_height = start_y - y
+  if chat_height > 3000 (
+    void cur_msgs.shift()
+  )
 )
 
 def "draw_members" "cur_mem" (
@@ -841,11 +879,11 @@ def "setup" (
   object stickers = {}
   object guilds_last_channels = {}
 
-  string current_attachment = ""
   string current_reply = ""
   number attachment_offset = 40
   current_guild = ""
   current_channel = ""
+  current_attachment = ""
   
   object shown = {
     "sidebar": true,
@@ -1115,6 +1153,8 @@ if discord.wsHasnew() (
       )
       break
     case "MESSAGE_REACTION_ADD"
+      log dat
+      log all_messages_by_id[dat.message_id].reactions
       break
     case "CHANNEL_UNREAD_UPDATE"
       each this.channel dat.channel_unread_updates (
@@ -1335,9 +1375,8 @@ w = chat_frame.width - 25
 
 total_typing = current_typing.len
 if total_typing > 0 (
-  goto x window.bottom + 55
-  square w 20 10 : c#prim
-  change_x w / -2 + 20
+  goto x window.bottom + 15
+  change_x w / -2 + 10
   c txtc
   if total_typing < 4 (
     each i cur current_typing (
@@ -1354,32 +1393,43 @@ if total_typing > 0 (
   text total_typing == 1 ? " Is Typing" " Are Typing" 8
 )
 
-goto x window.bottom + 25
-c prim
-square w 30 10
-input w 30 "message"
+if typeof(inputs.message) != "array" (
+  inputs.message @= [inputs.message]
+)
+
+local h = inputs.message.len + 1 * 23
+
+goto x window.bottom + 34 + (h / 2)
+
+attachment_offset += h
+
+textbox w h "message" 10 {
+  line_numbers: false,
+  bg_colour: prim
+}
+
 import "win-buttons"
 
-if "enter".isKeyDown() and input_message != "" (
-  send = inputs.message
+send = inputs.message.join("\n")
+if "enter".isKeyDown() and "shift".isKeyDown().not() and send != null (
   spl = send.split(" ")
   if send.startsWith(".eval") (
-    this.func = def() -> ()
+    local func = def() -> ()
     
     data = send.trim(7,-1)
-    this.func.code = ("return " ++ data).oslCompile()
+    func.code = ("return " ++ data).oslCompile()
     
-    async_msg data ++ " -> " ++ this.func() current_channel
+    async_msg data ++ " -> " ++ func() current_channel
     inputs.message = ""
     exit
   )
   if send.startsWith(".version") (
-    async_msg "originCord v5.5" current_channel
+    async_msg "originCord v5.6" current_channel
     inputs.message = ""
     exit
   )
-  if current_attachment == "" (
-    if current_reply == "" (
+  if current_attachment == null (
+    if current_reply == null (
       async_msg send current_channel
     ) else (
       link = "https://apps.mistium.com/discord-send-reply?token=" ++ token ++ "&channelid=" ++ current_channel ++ "&content=" ++ encodeURIComponent(send.toStr()) ++ "&messageid=" ++ current_reply.id ++ "&user_account=" ++ discord_isUser
@@ -1387,13 +1437,13 @@ if "enter".isKeyDown() and input_message != "" (
       current_reply = ""
     )
     if current_guild == "@me" (
-      this.result = discord_dms.getKeys("id").index(current_channel)
-      this.channel = discord_dms[this.result]
-      discord_dms.delete(this.result)
-      discord_dms.insert(1,this.channel)
+      local result = discord_dms.getKeys("id").index(current_channel)
+      local channel = discord_dms[result]
+      discord_dms.delete(result)
+      discord_dms.insert(1, channel)
     )
   ) else (
     send_file send current_channel current_attachment[3] current_attachment[2]
-    current_attachment = ""
+    current_attachment = null
   )
   inputs.message = ""
