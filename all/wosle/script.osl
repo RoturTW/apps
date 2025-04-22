@@ -1,0 +1,253 @@
+// to cut down on a few kilobytes of file space, extra letters
+// are cut and restored via a function below.
+wordlist = ["aback", "ft", "se", "te", "bey", "ot", "hor", "ide", "ler", "ode", "ut", "ve", "use", "yss", "ched", "s", "ids", "orn", "res", "id", "ted", "or", "ute", "dage", "pt", "ded", "r", "ept", "ieu", "mit", "obe", "pt", "re", "n", "ult", "egis", "ons", "ffix", "ire", "oot", "ter", "gain", "pe", "te", "ent", "ile", "ng", "low", "ony", "ree", "head", "ided", "s", "led", "med", "red", "sle", "larm", "bum", "der", "ert", "ias", "bi", "en", "ke", "ve", "lay", "ey", "ot", "w", "y", "oes", "ft", "ne", "g", "of", "ud", "pha", "tar", "er", "os", "mass", "ze", "ber", "le", "end", "igo", "ss", "ty", "ong", "ur", "ple", "y", "use", "ngel", "r", "le", "ry", "st", "ime", "kle", "nex", "oy", "ul", "tes", "ic", "vil", "pace", "rt", "ing", "pal", "le", "y", "ron", "tly", "reas", "na", "gue", "ise", "med", "oma", "se", "ray", "ow", "son", "shen", "s", "ide", "ked", "w", "pen", "say", "es", "t", "ter", "ir", "tlas", "oll", "ms", "ne", "tar", "ic", "udio", "t", "ger", "ht", "ur", "nts", "ras", "tos", "vail", "ers", "t", "oid", "ws", "wait", "ke", "rd", "e", "ful", "oke", "xiom", "les", "zure", "babel", "s", "cks", "on", "dge", "ly", "ggy", "its", "ze", "ked", "r", "les", "ls", "my", "nal", "ds", "y", "gs", "jo", "ks", "ns", "rbs", "ds", "ed", "ge", "ks", "ns", "on", "sal", "ed", "r", "s", "ic", "l", "n", "s", "so", "te", "tch", "ed", "he", "s", "on", "you", "each", "ds", "y", "ks", "ms", "ns", "rd", "s", "st", "ux", "ech", "ts", "fit", "gan", "t", "et", "in", "ot", "un", "ing", "lie", "le", "s", "y", "ow", "ts", "nch", "ds", "rgs", "ry", "th", "yl", "set", "om", "vel", "ible", "ded", "s", "ght", "ot", "lge", "ls", "y", "nds", "ped", "rch", "ds", "th", "son", "tch", "es", "lack", "de", "me", "nd", "k", "re", "st", "ze", "eak", "t", "ed", "nd", "t", "ss", "t", "ind", "k", "ss", "ock", "s", "nd", "od", "m", "ts", "wn", "s", "uer", "s", "ff", "nt", "rt", "sh", "oard", "s", "st", "ts", "ded", "s", "ggy", "us", "ils", "les", "ts", "mbs", "nds", "ed", "s", "ny", "us", "oby", "ks", "ms", "ns", "rs", "st", "th", "s", "y", "ze", "rax", "ed", "s", "ne", "som", "ugh", "nd", "ts", "wed", "l", "r", "ls", "xed", "r", "s", "race", "gs", "id", "n", "ke", "nd", "ss", "ts", "ve", "o", "wl", "n", "ead", "k", "ed", "iar", "be", "ck", "de", "ef", "r", "gs", "ms", "ne", "g", "k", "y", "sk", "oad", "il", "ke", "od", "k", "m", "th", "wn", "s", "uin", "nt", "sh", "te", "ucks", "dge", "ggy", "le", "ild", "t", "lbs", "ge", "ks", "y", "ls", "y", "mps", "nch", "ks", "oys", "rly", "ns", "t", "ro", "s", "st", "shy", "ts", "tte", "s", "xom", "yer", "cabal", "by", "in", "le", "cao", "he", "det", "re", "ged", "s", "irn", "ked", "s", "lls", "ms", "yx", "mel", "o", "ps", "nal", "dy", "es", "ny", "oe", "n", "to", "per", "s", "on", "rds", "ed", "s", "go", "ol", "ry", "ts", "ve", "sed", "s", "ks", "te", "s", "tch", "er", "use", "ved", "s", "il", "ease", "dar", "ed", "lls", "nts", "hafe", "f", "in", "r", "lk", "mp", "nt", "os", "ps", "rm", "t", "y", "se", "m", "ts", "eap", "t", "ck", "ek", "r", "fs", "ss", "t", "ick", "de", "ef", "ld", "l", "me", "na", "k", "s", "ps", "rp", "oir", "ke", "ps", "rd", "se", "uck", "mp", "s", "nk", "rl", "n", "te", "ider", "gar", "nch", "rca", "ted", "s", "vet", "ic", "l", "lack", "im", "mp", "s", "ng", "k", "s", "ps", "sh", "p", "s", "ws", "ean", "r", "fs", "t", "rk", "ws", "ick", "ff", "mb", "e", "ng", "k", "ps", "oak", "ck", "ds", "gs", "se", "th", "ud", "t", "ve", "wn", "ubs", "ck", "es", "mp", "ng", "oach", "ls", "st", "ts", "bra", "cks", "oa", "des", "ils", "ns", "lds", "ic", "on", "ts", "mbs", "er", "s", "t", "ic", "ma", "nch", "es", "ic", "oed", "ks", "ls", "pra", "se", "ral", "ds", "es", "ks", "ns", "ps", "sts", "tes", "uch", "gh", "ld", "nt", "pe", "s", "rt", "ver", "s", "t", "y", "wed", "r", "yly", "zen", "rabs", "ck", "ft", "gs", "mp", "ne", "k", "pe", "sh", "s", "te", "ve", "wl", "ze", "y", "eak", "m", "do", "ed", "k", "p", "pe", "t", "ss", "t", "ws", "ibs", "ck", "ed", "r", "s", "me", "p", "sp", "oak", "ck", "ne", "y", "ok", "ps", "ss", "up", "wd", "n", "s", "ude", "el", "mb", "sh", "t", "ypt", "ubes", "ic", "t", "ffs", "lts", "rds", "ed", "s", "ls", "y", "ry", "se", "t", "ve", "ycle", "nic", "daddy", "ily", "ry", "sy", "les", "ly", "mes", "ps", "nce", "dy", "red", "s", "ts", "ted", "s", "um", "ubs", "nt", "wns", "zed", "eals", "t", "ns", "rs", "th", "bar", "it", "ts", "ut", "cay", "ks", "oy", "ry", "eds", "ms", "ps", "fer", "ign", "ty", "lay", "ls", "ta", "ve", "mon", "ur", "nse", "ts", "pot", "th", "rby", "sks", "ter", "uce", "vil", "iary", "ced", "s", "ta", "ets", "git", "kes", "mes", "ly", "ned", "r", "s", "gy", "rge", "ty", "scs", "ks", "tch", "to", "y", "van", "ed", "r", "s", "zzy", "ocks", "dge", "ers", "gma", "ing", "led", "ls", "med", "s", "nor", "oms", "rs", "sed", "s", "ted", "s", "ubt", "gh", "ves", "wdy", "ns", "y", "ry", "zed", "n", "raft", "gs", "in", "ke", "ma", "s", "nk", "pe", "wl", "n", "s", "ys", "ead", "m", "gs", "ss", "ied", "r", "s", "ft", "ll", "y", "nk", "ps", "ve", "oll", "ne", "op", "ps", "ss", "ve", "wn", "ugs", "ms", "nk", "yly", "ucal", "t", "hy", "ks", "ts", "els", "ts", "kes", "lly", "mmy", "ps", "y", "nce", "es", "no", "ped", "s", "sky", "ty", "warf", "ell", "t", "ying", "kes", "eager", "le", "rls", "y", "ns", "th", "sed", "l", "s", "ten", "r", "ves", "bbed", "ony", "dged", "s", "ict", "fy", "erie", "gged", "ight", "ject", "late", "bow", "der", "ect", "gy", "fin", "ite", "ope", "ude", "ves", "mail", "its", "pty", "nact", "ded", "ow", "emy", "joy", "nui", "rol", "sue", "ter", "ry", "voy", "pics", "och", "qual", "ip", "rase", "ect", "red", "or", "ssay", "ther", "ic", "vade", "ent", "ry", "ils", "oke", "xact", "lt", "cel", "ert", "ile", "st", "ts", "pel", "tol", "ra", "ult", "ying", "rie", "fable", "ced", "s", "ts", "ded", "s", "ils", "nt", "rs", "y", "th", "kir", "lls", "se", "med", "ncy", "gs", "rce", "ed", "s", "ms", "sts", "tal", "ed", "s", "ty", "ult", "na", "s", "wns", "ears", "st", "ts", "eds", "ls", "ign", "nt", "lls", "on", "nce", "ral", "ns", "ry", "tch", "ed", "id", "us", "uds", "ver", "wer", "iche", "efs", "ld", "nd", "ry", "fes", "th", "y", "ght", "lch", "ed", "s", "t", "ls", "y", "ms", "y", "th", "nal", "ch", "ds", "ed", "r", "s", "is", "ny", "ord", "red", "s", "ms", "st", "shy", "ts", "tly", "ves", "xed", "r", "s", "jord", "lags", "il", "r", "ke", "y", "me", "nk", "ps", "re", "sh", "k", "ts", "ws", "eas", "ck", "es", "t", "sh", "ick", "er", "s", "ng", "t", "rt", "ts", "oat", "ck", "es", "od", "r", "ra", "ss", "ur", "t", "wn", "s", "ues", "ff", "id", "ke", "me", "ng", "sh", "te", "yer", "oams", "y", "cal", "us", "ggy", "ils", "st", "lds", "io", "ks", "ly", "ods", "ls", "ray", "ce", "ds", "ge", "o", "ks", "ms", "te", "h", "s", "y", "um", "und", "t", "rs", "wls", "xes", "yer", "rail", "me", "nc", "k", "ud", "eak", "ed", "r", "s", "sh", "ts", "iar", "ed", "ll", "sk", "ock", "gs", "nd", "t", "st", "th", "wn", "ze", "uit", "udge", "els", "gue", "lly", "med", "s", "nds", "gi", "ny", "rry", "ze", "sed", "s", "sy", "zzy", "gable", "ily", "ns", "les", "ls", "mes", "in", "ma", "ut", "ngs", "ped", "s", "ses", "ps", "tes", "udy", "ge", "nt", "ze", "y", "vel", "wky", "yer", "ly", "zed", "r", "s", "ears", "ese", "nie", "i", "re", "ts", "us", "rms", "host", "iant", "bes", "ddy", "fts", "lds", "ls", "mme", "psy", "rds", "ls", "th", "ven", "s", "lade", "nd", "re", "ss", "ze", "eam", "n", "ns", "ide", "nt", "oat", "be", "om", "ry", "ss", "ve", "ws", "ued", "nash", "ts", "ws", "ome", "oads", "ls", "ts", "dly", "ing", "lly", "ngs", "na", "ods", "y", "se", "red", "ge", "se", "tta", "uge", "rd", "ty", "wns", "rabs", "ce", "de", "ft", "in", "ms", "nd", "t", "pe", "h", "sp", "s", "te", "ve", "y", "ze", "eat", "ed", "n", "t", "ys", "ief", "ll", "me", "y", "nd", "s", "pe", "s", "st", "oan", "in", "om", "pe", "ss", "up", "ve", "wl", "n", "s", "ubs", "el", "ff", "nt", "uano", "rd", "ess", "t", "ide", "ld", "e", "t", "se", "lch", "fs", "ls", "y", "mmy", "sto", "s", "y", "ypsy", "habit", "cks", "ils", "rs", "y", "led", "ls", "ts", "ve", "nds", "y", "gs", "ppy", "rdy", "em", "s", "ms", "ps", "y", "ry", "sh", "ts", "ste", "y", "tch", "ed", "r", "uls", "ven", "oc", "wks", "zel", "eads", "y", "ls", "ps", "rd", "s", "t", "th", "s", "ve", "y", "dge", "eds", "ls", "irs", "lix", "lo", "ms", "ps", "nce", "rbs", "ds", "on", "s", "wed", "ides", "lls", "y", "ts", "nds", "ge", "ts", "red", "s", "tch", "ves", "oard", "y", "bby", "ist", "lds", "es", "ly", "mes", "ney", "ods", "fs", "ks", "ps", "ts", "ped", "s", "rde", "ns", "y", "se", "sts", "tel", "ly", "und", "rs", "se", "vel", "r", "wls", "ulks", "ls", "man", "id", "ps", "us", "nch", "ts", "rls", "ry", "ts", "sks", "y", "sy", "ydra", "ena", "mns", "icily", "ng", "deal", "s", "iom", "t", "led", "r", "ols", "yll", "gloo", "mage", "bue", "pel", "ly", "nane", "cur", "dex", "ept", "rt", "fer", "got", "let", "ner", "ter", "ure", "rate", "ked", "ons", "y", "sles", "t", "sue", "tems", "vory", "jacks", "ded", "ils", "unt", "eans", "ers", "lly", "rks", "y", "sts", "tty", "wel", "iffy", "oins", "t", "ked", "r", "s", "lly", "ust", "yed", "udge", "ice", "y", "mps", "nks", "ta", "ror", "karma", "eels", "ps", "tch", "yed", "haki", "icks", "lls", "nda", "s", "gs", "osk", "tes", "nack", "ve", "ead", "el", "s", "ll", "t", "ife", "ts", "obs", "ck", "ll", "ts", "wn", "s", "label", "ced", "s", "ks", "den", "le", "ger", "irs", "ty", "kes", "mbs", "ed", "s", "ps", "nce", "ds", "es", "ky", "pel", "se", "rch", "ge", "o", "ks", "va", "sso", "ts", "tch", "er", "he", "s", "ugh", "wns", "yer", "eads", "fy", "ks", "y", "ns", "ps", "t", "rn", "se", "h", "t", "ve", "dge", "ech", "ks", "gal", "mme", "on", "nds", "per", "vee", "l", "r", "iars", "bel", "cks", "ege", "ns", "fts", "ght", "ked", "n", "r", "s", "lac", "mbo", "s", "es", "it", "ned", "n", "r", "s", "go", "ks", "ons", "sts", "the", "ved", "r", "s", "id", "lama", "oads", "my", "ns", "th", "bby", "es", "cal", "ks", "us", "dge", "fty", "ges", "ic", "n", "ins", "ngs", "oks", "ms", "ns", "ps", "se", "rds", "ser", "s", "tus", "use", "y", "ved", "r", "s", "wed", "r", "ly", "yal", "ucid", "ky", "lls", "mps", "y", "nar", "ch", "ge", "s", "rch", "ed", "s", "id", "ks", "sts", "y", "tes", "ying", "mph", "nch", "ric", "maces", "dam", "ly", "gic", "ids", "ls", "ns", "ze", "jor", "ker", "s", "les", "mma", "nes", "ga", "e", "o", "y", "ia", "ly", "na", "or", "se", "ple", "rch", "es", "ks", "ry", "sh", "ts", "sks", "on", "ts", "tch", "ed", "s", "uve", "xim", "ybe", "or", "zes", "eals", "y", "ns", "t", "ts", "dal", "ia", "ets", "lon", "ts", "mes", "nds", "us", "rcy", "es", "ge", "it", "ry", "sas", "tal", "ed", "r", "wed", "idst", "ens", "ght", "lch", "es", "ky", "ls", "mes", "ic", "nce", "ds", "ed", "r", "s", "or", "ts", "us", "rth", "ser", "ts", "tes", "xed", "s", "oans", "ts", "cks", "del", "m", "s", "ist", "lar", "es", "mma", "ney", "ks", "th", "ods", "y", "ns", "rs", "se", "ped", "ral", "es", "ssy", "tes", "hs", "if", "or", "to", "und", "t", "rn", "se", "th", "ved", "r", "s", "ie", "wed", "r", "ucus", "ddy", "les", "ti", "mmy", "ps", "nch", "ral", "ky", "sed", "s", "ic", "ky", "ty", "ted", "s", "yrrh", "ths", "nabob", "ils", "ve", "ked", "med", "s", "sal", "ty", "tal", "ty", "val", "el", "s", "ears", "cks", "eds", "y", "igh", "rve", "sts", "ver", "wer", "ly", "icer", "he", "ece", "ght", "nny", "oble", "y", "ise", "y", "mad", "nce", "oks", "se", "rth", "sed", "s", "tch", "ed", "s", "uns", "vel", "udge", "rse", "ymph", "oaken", "um", "ses", "is", "ten", "hs", "bese", "ys", "ccur", "ean", "hre", "dder", "ly", "ium", "ffal", "er", "ten", "iled", "lden", "r", "mens", "its", "nion", "set", "ozed", "s", "pals", "ens", "ra", "ine", "um", "tic", "rbit", "der", "gan", "sier", "ther", "ter", "ught", "nce", "tdo", "er", "vals", "ry", "ens", "rt", "wing", "ned", "r", "xide", "zone", "paces", "ks", "ddy", "re", "ean", "gan", "es", "ils", "ns", "t", "rs", "led", "r", "s", "ms", "y", "sy", "nel", "s", "gs", "ic", "sy", "ts", "pal", "s", "er", "red", "ka", "s", "ry", "se", "ts", "y", "sha", "te", "y", "tch", "es", "hs", "io", "use", "ved", "wed", "ns", "yed", "r", "eace", "h", "ks", "ls", "rl", "s", "se", "cks", "dal", "eps", "rs", "lts", "nal", "ce", "is", "ny", "ons", "rch", "il", "sky", "os", "ts", "tal", "ty", "hase", "ial", "one", "to", "iano", "cks", "ece", "rs", "ty", "gmy", "kes", "led", "s", "ls", "ot", "nch", "ed", "s", "ks", "to", "s", "ous", "ped", "r", "s", "que", "tch", "hy", "vot", "lace", "id", "n", "t", "ne", "k", "s", "t", "te", "ys", "za", "ead", "s", "ied", "s", "ots", "uck", "gs", "mb", "e", "s", "sh", "odia", "ems", "sy", "ts", "int", "se", "ked", "r", "s", "lar", "es", "ka", "ls", "nds", "ols", "pes", "pa", "y", "rch", "ed", "s", "ts", "sed", "r", "s", "se", "ts", "uch", "nd", "rs", "wer", "rank", "te", "ys", "ess", "ys", "ice", "k", "de", "ed", "s", "me", "nt", "or", "sm", "vy", "ze", "obe", "ne", "of", "ps", "se", "y", "ud", "ve", "wl", "s", "xy", "ude", "ne", "salm", "haw", "udgy", "ffs", "y", "lls", "py", "se", "mps", "nch", "pil", "py", "ree", "r", "ge", "se", "ssy", "tty", "quack", "ff", "il", "ke", "lm", "rt", "si", "ys", "een", "r", "ll", "ry", "st", "ue", "ick", "et", "ll", "t", "ps", "re", "te", "s", "ota", "e", "h", "rabbi", "id", "ced", "r", "s", "ks", "dii", "o", "fts", "ged", "s", "ids", "ls", "ns", "y", "se", "jah", "ked", "s", "lly", "nch", "ge", "ks", "pid", "rer", "s", "ted", "s", "io", "ved", "n", "s", "yon", "zed", "or", "each", "t", "ds", "y", "lm", "s", "ms", "ps", "rs", "bel", "us", "t", "cur", "eds", "y", "fs", "ks", "ls", "ve", "fer", "it", "gal", "ign", "ns", "lax", "y", "ic", "mit", "nds", "ew", "ts", "pay", "el", "ly", "set", "in", "ts", "vel", "ue", "heum", "yme", "icks", "der", "s", "ge", "fle", "ts", "ght", "id", "led", "ls", "mes", "ngs", "se", "ots", "pen", "r", "sen", "r", "s", "ks", "y", "tes", "val", "en", "r", "t", "oads", "ms", "rs", "st", "bed", "s", "in", "cks", "y", "gue", "les", "ls", "man", "ofs", "ks", "ms", "y", "st", "ts", "ped", "s", "ses", "in", "uge", "h", "nd", "se", "te", "s", "ved", "r", "wdy", "ed", "yal", "uder", "ffs", "ins", "led", "r", "s", "nes", "gs", "pee", "ral", "ses", "sable", "re", "cks", "dly", "fer", "gas", "es", "hib", "ils", "nt", "th", "lad", "es", "ly", "on", "sa", "ts", "y", "ve", "o", "nds", "y", "er", "ted", "in", "yr", "uce", "y", "ved", "s", "wed", "cald", "e", "p", "y", "mp", "ns", "t", "re", "f", "s", "ene", "t", "ion", "off", "ld", "op", "pe", "re", "n", "ur", "t", "wl", "rap", "ew", "ip", "ub", "ull", "eals", "ms", "y", "ts", "cts", "dan", "ge", "eds", "y", "ks", "ms", "rs", "ize", "lls", "men", "nds", "se", "rfs", "ge", "um", "ve", "ven", "r", "wed", "r", "xes", "hack", "de", "y", "ft", "ke", "y", "le", "l", "t", "me", "s", "nk", "pe", "re", "k", "p", "ve", "wl", "eaf", "r", "ds", "en", "p", "r", "t", "ik", "lf", "l", "ied", "ft", "ne", "s", "y", "ps", "re", "k", "t", "oal", "ck", "es", "ne", "ok", "n", "t", "ps", "re", "n", "t", "ts", "ut", "ve", "wn", "s", "y", "red", "w", "ub", "g", "uns", "ts", "yly", "ibyl", "ded", "s", "ege", "ve", "ghs", "t", "ma", "ns", "lks", "y", "ls", "y", "nce", "ew", "ge", "s", "ks", "ren", "s", "tes", "xes", "th", "y", "zed", "s", "kate", "ein", "ies", "ff", "ll", "ms", "ns", "ps", "rt", "ulk", "l", "nk", "labs", "ck", "gs", "in", "ke", "ng", "t", "ps", "sh", "te", "s", "ve", "ys", "eds", "ek", "p", "t", "pt", "ice", "k", "de", "ly", "me", "y", "ng", "k", "ps", "ts", "oop", "pe", "s", "th", "ugs", "mp", "s", "ng", "k", "sh", "yly", "mack", "ll", "rt", "sh", "ear", "ll", "t", "ile", "rk", "te", "h", "ock", "ke", "y", "te", "nack", "gs", "il", "ke", "y", "ps", "re", "l", "eak", "er", "iff", "pe", "obs", "re", "t", "ut", "ws", "y", "uff", "oapy", "rs", "ber", "cks", "fas", "ggy", "ils", "lar", "es", "id", "os", "ve", "ngs", "ny", "oth", "y", "res", "ry", "ts", "ugh", "ls", "nd", "ps", "se", "th", "wed", "r", "pace", "de", "ke", "nk", "s", "re", "k", "s", "sm", "wn", "eak", "r", "ck", "ed", "ll", "t", "nd", "t", "rm", "ice", "y", "ed", "s", "ke", "ll", "t", "ne", "s", "y", "re", "te", "s", "lit", "oil", "ke", "ok", "l", "n", "r", "re", "t", "ts", "ut", "ray", "ee", "ig", "unk", "rn", "s", "t", "quad", "t", "w", "tabs", "ck", "ff", "ge", "s", "id", "n", "r", "ke", "le", "k", "l", "mp", "nd", "k", "re", "k", "s", "t", "te", "ve", "ys", "ead", "k", "l", "m", "ed", "l", "p", "r", "ms", "ps", "rn", "ws", "ick", "ff", "le", "l", "ng", "k", "t", "rs", "ock", "ic", "le", "ne", "y", "od", "l", "p", "ps", "re", "k", "m", "y", "ut", "ve", "rap", "w", "y", "ew", "ip", "ut", "uck", "ds", "y", "ff", "mp", "ng", "t", "yle", "uave", "cks", "gar", "ing", "te", "s", "lks", "y", "ly", "nny", "per", "rer", "ge", "ly", "wain", "mp", "ns", "rd", "m", "ys", "ear", "t", "ep", "t", "ll", "pt", "ift", "ll", "ms", "ne", "g", "rl", "sh", "oon", "p", "rd", "e", "n", "ung", "ynod", "rup", "tabby", "le", "oo", "cit", "ks", "ils", "nt", "ken", "s", "les", "ks", "ly", "on", "med", "r", "nks", "per", "s", "rdy", "es", "ry", "ts", "sks", "te", "y", "unt", "wny", "xed", "s", "each", "ms", "rs", "se", "ems", "ns", "th", "lls", "mpi", "o", "s", "nds", "et", "or", "se", "th", "s", "pee", "id", "rms", "se", "sts", "y", "xts", "hank", "eft", "ir", "me", "re", "se", "ick", "ef", "gh", "ne", "g", "k", "rd", "ong", "rn", "se", "ree", "w", "ob", "e", "w", "umb", "p", "yme", "iara", "bia", "cks", "dal", "es", "ers", "ger", "ht", "lde", "ed", "s", "ls", "ts", "med", "s", "id", "nge", "ts", "psy", "red", "s", "the", "le", "oads", "st", "day", "dy", "ils", "ken", "lls", "mbs", "es", "ned", "s", "gs", "ic", "ols", "th", "paz", "ic", "que", "rch", "so", "ts", "tal", "em", "uch", "gh", "rs", "wed", "l", "r", "ns", "xic", "yed", "race", "k", "t", "de", "il", "n", "t", "mp", "s", "ps", "sh", "ys", "ead", "t", "ed", "s", "nd", "ss", "iad", "l", "be", "ce", "k", "ed", "s", "ll", "pe", "s", "te", "oll", "op", "th", "s", "ut", "uce", "k", "er", "ly", "mp", "nk", "ss", "t", "th", "yst", "ubes", "fts", "lip", "le", "ned", "s", "ic", "rns", "sks", "tor", "wain", "ng", "eed", "ice", "gs", "ne", "s", "rl", "st", "ying", "ped", "s", "udder", "lcer", "tra", "ncle", "ut", "der", "id", "ue", "fit", "ion", "te", "s", "y", "say", "tie", "l", "pper", "set", "rban", "ged", "s", "ine", "sage", "ers", "her", "ing", "ual", "rp", "y", "tter", "vague", "les", "t", "id", "ue", "ve", "nes", "pid", "ses", "ult", "nt", "eils", "ns", "ldt", "nal", "om", "ts", "ue", "rbs", "ge", "se", "ve", "sts", "xed", "s", "ials", "car", "es", "deo", "ews", "gil", "ler", "la", "nes", "ola", "per", "rus", "sit", "or", "ta", "tal", "vid", "xen", "zor", "ocal", "dka", "gue", "ice", "le", "lts", "mit", "ted", "r", "s", "uch", "wed", "l", "ying", "waded", "fer", "ts", "ged", "r", "s", "on", "ifs", "ls", "st", "ts", "ve", "ked", "n", "s", "lks", "ls", "tz", "nds", "ed", "s", "ts", "rds", "es", "ms", "ns", "ts", "sps", "te", "tch", "er", "ved", "r", "s", "xed", "n", "s", "ears", "y", "ve", "dge", "eds", "y", "ks", "ps", "igh", "rd", "lch", "ls", "nch", "hack", "le", "rf", "eat", "el", "lp", "re", "ich", "ff", "le", "ms", "ne", "ps", "rl", "r", "sk", "t", "te", "ole", "op", "re", "se", "icks", "den", "r", "ow", "th", "eld", "ght", "lds", "es", "ls", "nce", "h", "ds", "y", "es", "gs", "ks", "ped", "s", "red", "s", "ser", "ps", "tch", "ty", "ves", "oman", "en", "ods", "y", "ed", "r", "rds", "y", "ks", "ld", "ms", "ry", "se", "t", "th", "uld", "nd", "rack", "ps", "t", "th", "eak", "ck", "st", "ing", "st", "te", "s", "ong", "te", "h", "yacht", "rds", "ns", "wns", "earn", "s", "st", "lls", "ps", "ield", "oked", "s", "lks", "ung", "rs", "th", "zebra", "ones"]
+
+window "resizable" false
+window "dimensions" 260 450
+
+ctext = user.theme.text
+cprim = user.theme.primary
+csec = user.theme.secondary
+ctri = user.theme.tertiary
+cbg = user.theme.background
+
+// function for splitting a guess into an array and comparing
+// that array to the hidden word.
+def checkguess() (
+  if input_guess.len === 5 (
+    guess = input_guess.toLower()
+    input_guess = null
+    guessarray = guess.split("")
+    comparray = word.split("")
+    checkarray = (1 to 5).fill("wrong")
+    // first passthrough is for finding all correct letters,
+    // since those take precedent over incorrect placements.
+    for index 5 (
+      if guessarray[index] === wordarray[index] (
+        checkarray[index] = "right"
+        comparray.delete(comparray.index(guessarray[index]))
+      )
+    )
+    // now we use the modified comparray to look for incorrect placements.
+    for index 5 (
+      if comparray.contains(guessarray[index]) and checkarray[index] != "right" (
+        checkarray[index] = "sorta"
+        comparray.delete(comparray.index(guessarray[index]))
+      )
+    )
+    lettergrid.append(guessarray)
+    checkgrid.append(checkarray)
+    guesses ++
+    // check for win/lose conditions
+    if guessarray == wordarray (
+      gamestate = "win"
+    ) else if guesses === 6 (
+      gamestate = "lose"
+    )
+  )
+)
+
+// a function to decode the "compressed" wordlist above.
+// most items do not have all 5 letters; in that case,
+// this script references previous items to fill in the gaps.
+def decodeword(index) (
+  output = wordlist[index]
+  indexb = index
+  until output.len === 5 or indexb < 0 (
+    indexb --
+    if wordlist[indexb].len > output.len (
+      newstring = wordlist[indexb]
+      output.prepend(newstring.left(newstring.len - output.len))
+    )
+  )
+  return output
+)
+
+// access daily word from the real wordle
+def accessdaily() (
+  date = timestamp.timestamp("to-date")
+  // for some reason the self-hosted proxy doesn't play nice
+  // with the nyt api. if used, it swaps to the cloudflare one instead.
+  if user.proxy === "https://apps.mistium.com/cors?url=" (
+    url = ["https://proxy.mistium.com/?url=", "https://www.nytimes.com/svc/wordle/v2/", date, ".json"].join("")
+  ) else (
+    url = proxy(["https://www.nytimes.com/svc/wordle/v2/", date, ".json"].join(""))
+  )
+  content = url.http("GET",{},{})
+  content.JsonParse()
+  if content.getKeys().contains("error") (
+    return "unavailable"
+  ) else (
+    return content.solution
+  )
+)
+
+dailyword = accessdaily()
+
+def initialize(mode) (
+  gamestate = "play"
+  title = mode
+  guesses = 0
+  lettergrid = []
+  checkgrid = []
+  if mode === "daily" (
+    word = dailyword
+  ) else (
+    word = decodeword(random(1, wordlist.len))
+  )
+  wordarray = word.split("")
+)
+
+gamestate = menu
+
+mainloop:
+// render background
+goto 0 0
+c cbg
+square 260 450
+
+if gamestate === "menu" (
+
+  goto -75 120
+  c ctext
+  text "wosle" 30
+  goto -92 85
+  text "legally distinct wordle" 8
+  
+  // render the "daily" button
+  if dailyword === "unavailable" (
+    goto 0 40
+    square 230 27.5 10 : c#777
+    change_x -50
+    c ctext
+    text "unavailable" 10
+  ) else (
+    goto 0 40
+    c ctri
+    square 230 27.5 10
+    if onclick (
+      initialize("daily")
+    )
+    if mouse_touching (
+      cursor "pointer"
+    )
+    change_x -50
+    c ctext
+    text "daily" 20
+  )
+  
+  // render the "freeplay" button
+  goto 0 -10
+  c ctri
+  square 230 27.5 10
+  if onclick (
+    initialize("freeplay")
+  )
+  if mouse_touching (
+    cursor "pointer"
+  )
+  change_x -80
+  c ctext
+  text "freeplay" 20
+  
+) else (
+  // render title text
+  goto -120 203
+  c ctext
+  text title 15
+
+  // render a 5x6 grid of letters and squares.
+  set_y 160
+  for y 6 (
+    set_x -100
+    for x 5 (
+      if y <= guesses (
+        switch checkgrid[y][x] (
+          case "wrong"
+            c csec
+            break
+          case "right"
+            c #8b6
+            break
+          case "sorta"
+            c #dc6
+            break
+        )
+        square 40 40 2
+        c ctext
+        change_x -10
+        text lettergrid[y][x] 20
+        change_x 40
+      ) else (
+        c cprim
+        square 40 40 2
+        change_x 50
+      )
+    )
+    change_y -50
+  )
+  if gamestate === "lose" (
+    change_y 50
+    set_x -100
+    for x 5 (
+      c #b65
+      square 40 40 2
+      c ctext
+      change_x -10
+      text wordarray[x] 20
+      change_x 40
+    )
+  )
+
+  if gamestate === "play" (
+    // render the "submit" button
+    goto 0 -145
+    c ctri
+    square 230 27.5 10
+    if onclick or "Enter".onKeyDown() (
+      checkguess()
+    )
+    if mouse_touching (
+      cursor "pointer"
+    )
+    change_x -60
+    c ctext
+    text "submit" 20
+  
+    // render the text input
+    goto 0 -190
+    c cprim
+    input 230 55 "guess" "type here..." 10 ctext
+  
+  ) else (
+    // render the "retry" button
+    goto 0 -145
+    c ctri
+    square 230 27.5 10
+    if onclick or "Enter".onKeyDown() (
+      initialize("freeplay")
+    )
+    if mouse_touching (
+      cursor "pointer"
+    )
+    change_x -50
+    c ctext
+    text "retry" 20
+    
+    // render the "menu" button
+    goto 0 -190
+    c ctri
+    square 230 27.5 10
+    if onclick (
+      gamestate = "menu"
+    )
+    if mouse_touching (
+      cursor "pointer"
+    )
+    change_x -40
+    c ctext
+    text "menu" 20
+  )
+)
+
+import "win-buttons"
