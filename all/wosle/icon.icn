@@ -1,0 +1,13 @@
+c #8b6
+w 10
+square 0 0 5 5
+c #111
+w 8
+square 0 0 5 5
+dot 0 0
+w 1.5
+c #8b6
+line -5 5 -2.5 -5
+cont 0 0
+cont 2.5 -5
+cont 5 5
