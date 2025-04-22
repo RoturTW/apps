@@ -175,6 +175,12 @@ if dead (
   goto -200 0
   if contr (
   text "Press A to restart" 15
+
+  void gamepads[1].haptic({
+    duration: 200,
+    weakMagnitude: 1.0,
+    strongMagnitude: 1.0
+  })
   ) else (
   text "Press Space to restart" 15
   )
@@ -191,12 +197,7 @@ if dead (
     ready = false
     cooldown = 0
   )
-  
-   void gamepads[1].haptic({
-    duration: 200,
-    weakMagnitude: 1.0,
-    strongMagnitude: 1.0
-  })
+
 )
 
 skibX -= speed
