@@ -298,6 +298,7 @@ def "handle_message" "msg, ping" (
           "",
           msg
         ])
+        messages[channel] @= msg_cha
       )
     )
     each att attachments (
@@ -313,7 +314,6 @@ def "handle_message" "msg, ping" (
       msg_cha ++= addAttachment(att,3)
     )
     all_messages_by_id[msg.id] @= msg
-    messages[channel] @= msg_cha
   )
 )
 
@@ -591,7 +591,8 @@ def "draw_chat" "cur_msgs" (
     ) else (
       square w 20 0 0 1
     )
-    msg_data @= msg[6]
+    msg_data @= all_messages_by_id[msg[6].id]
+    
     author @= msg_data.author
     hover = mouse_touching
     if hover and msg_data.content != "" (
@@ -1153,8 +1154,29 @@ if discord.wsHasnew() (
       )
       break
     case "MESSAGE_REACTION_ADD"
-      log dat
-      log all_messages_by_id[dat.message_id].reactions
+      local msg @= all_messages_by_id[dat.message_id]
+      msg.reactions ??= []
+      local key = dat.emoji.id == null ? "name" "id"
+      local idx = msg.reactions.getKeys("emoji").getKeys(key).index(dat.emoji[key])
+      if idx > 0 (
+        msg.reactions[idx].count ++
+      ) else (
+        void msg.reactions.append({
+          emoji: dat["emoji"],
+          count: 1
+        })
+      )
+      break
+    case "MESSAGE_REACTION_REMOVE"
+      local msg @= all_messages_by_id[dat.message_id]
+      local key = dat.emoji.id == null ? "name" "id"
+      local idx = msg.reactions.getKeys("emoji").getKeys(key).index(dat.emoji[key])
+      if idx > 0 (
+        msg.reactions[idx].count --
+        if msg.reactions[idx].count < 1 (
+          void msg.reactions.delete(idx)
+        )
+      )
       break
     case "CHANNEL_UNREAD_UPDATE"
       each this.channel dat.channel_unread_updates (
@@ -1424,7 +1446,7 @@ if "enter".isKeyDown() and "shift".isKeyDown().not() and send != null (
     exit
   )
   if send.startsWith(".version") (
-    async_msg "originCord v5.6" current_channel
+    async_msg "originCord v5.7" current_channel
     inputs.message = ""
     exit
   )
