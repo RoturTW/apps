@@ -1,0 +1,115 @@
+
+def setup() (
+  window.setResizable(false)
+
+  window_colour = #fff
+
+  platforms = []
+
+  player = {
+    x: -300,
+    y: 150,
+    xv: 0,
+    yv: 0,
+    icn: "c #000 w 5 square 0 0 7 10 w 19 dot 0 0 w 5 line 7 -10 7 -20 line -7 -10 -7 -20 c #fff line 7 3 0 3",
+    dead: false,
+    score: 0,
+  }
+
+  platforms = [
+    {
+      x: -250,
+      y: 80
+    },
+    {x: 150,y: 0}
+  ]
+
+  platform = {
+    new: def() -> (
+      local me = self.clone()
+      me.y = random(window.bottom + 50, window.top - 150)
+      void platforms.append(me)
+    ),
+    icn: "c #000 w 5 square 0 0 30 5 c #fff w 4 square 0 0 30 5 c #000 w 3 square 0 0 30 5 w 7 square 0 0 26 3",
+    x: window.width,
+    y: 0,
+  }
+
+  last = timer
+)
+
+setup()
+
+mainloop:
+
+if player.dead (
+  goto 0 window.bottom + 50
+  centext "You died, press space to play again" 10 : c#000
+  
+  if "space".onKeyDown() (
+    player.dead = false
+  )
+) else (
+  if timer > last (
+    last = timer + random(1, 2.5)
+    void platform.new()
+  )
+
+  if "space".onKeyDown() (
+    if player.grounded or player.double (
+      player.double = player.grounded
+      player.grounded = false
+      player.yv = 13
+    )
+  )
+  if "a".isKeyDown() (
+    player.xv -= 1
+  )
+  if "d".isKeyDown() (
+    player.xv += 1
+  )
+)
+goto player.x player.y
+icon player.icn 2
+player.x += player.xv
+player.y += player.yv
+player.xv *= 0.9
+player.yv -= 0.4
+
+for i platforms.len (
+  cur @= platforms[i]
+  goto cur.x cur.y
+  if player.dead.not() (
+    cur.x -= 3 + (player.score / 10)
+  )
+  icon platform.icn 3
+  
+  if abs(player.x - cur.x) < 100 and player.y - cur.y < 70 and player.y > cur.y - 20 (
+    if player.y < cur.y + 50 (
+      if player.y < cur.y (
+        player.yv = -5
+      ) else if abs(player.x - cur.x) > 95 (
+        player.x = cur.x + (player.x - cur.x < 0 ? -101 101)
+      )
+    ) else (
+      player.yv = 0
+      if abs(player.x - cur.x) < 100 and player.y > cur.y (
+        if player.grounded.not() (
+          player.score ++
+        )
+        player.grounded = true
+        player.y = cur.y + 70
+      )
+    )
+  )
+)
+
+goto 0 window.top - 40
+centext "Score: " ++ player.score 10 : c#000
+
+if player.x < window.left or player.y < window.bottom or player.x > window.right (
+  setup()
+  player.dead = true
+)
+
+import "win-buttons"

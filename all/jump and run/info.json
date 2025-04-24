@@ -1,0 +1,10 @@
+{
+  "title": "Jump and Run",
+  "description": "A simple endless runner where you jump from platform to platform and gain points",
+  "author": "Mist",
+  "version": "1.0",
+  "genre": "Arcade",
+  "game_modes": ["Single-player"],
+  "permissions": [],
+  "supports":["originOS"]
+}
