@@ -5,6 +5,6 @@
   "version": "1.0",
   "genre": "System",
   "permissions": ["terminal"],
-  "screenshots": ["Main OFT Window"],
+  "screenshots": ["oft.png"],
   "supports":["originOS"]
 }
