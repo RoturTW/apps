@@ -11,7 +11,17 @@
     "permissions": [],
     "supports": [
       "originOS"
-    ]
+    ],
+    "icon": "image https://raw.githubusercontent.com/Mistium/Origin-OS/main/OSL%20Programs/apps/games/assets/2048.png 25\n",
+    "size": {
+      "bytes": 4053,
+      "kilobytes": "3.96",
+      "megabytes": "0.00"
+    },
+    "script": {
+      "scriptSize": 3145,
+      "scriptLines": 194
+    }
   },
   "ceslum": {
     "title": "Ceslum",
@@ -26,7 +36,17 @@
     "supports": [
       "originOS"
     ],
-    "screenshots": []
+    "screenshots": [],
+    "icon": "c #fff\nw 10\nsquare 0 0 5 5\nc #111\nw 8\nsquare 0 0 5 5\ndot 0 0\nw 10\nc #eba134\ndot 0 0\nw 2.25\nc #383838\nsquare 0 0 5 5\nc #fff\nline 7.5 0 0 7.5\ncont -7.5 0\ncont 0 -7.5\ncont 7.5 0",
+    "size": {
+      "bytes": 1830,
+      "kilobytes": "1.79",
+      "megabytes": "0.00"
+    },
+    "script": {
+      "scriptSize": 1210,
+      "scriptLines": 46
+    }
   },
   "claw": {
     "title": "Claw",
@@ -49,7 +69,17 @@
     ],
     "changelogs": [
       "Log v1.md"
-    ]
+    ],
+    "icon": "w 10 c #353b64 square 0 0 5 5 w 8 c #111 square 0 0 5 5 dot 0 0 c #fff w 1.5 cutcircle 3 -6.4 9 -3.5 45 w 3 cutcircle 3 -6.4 9 -2 35 w 4 cutcircle 3 -6.4 9 0 15",
+    "size": {
+      "bytes": 205656,
+      "kilobytes": "200.84",
+      "megabytes": "0.20"
+    },
+    "script": {
+      "scriptSize": 11071,
+      "scriptLines": 488
+    }
   },
   "crl": {
     "title": "CRL",
@@ -64,7 +94,17 @@
     "supports": [
       "originOS"
     ],
-    "screenshots": []
+    "screenshots": [],
+    "icon": "c #d98b0d w 6 square 0 -2 5 6 square -2 3 3 5 dot 0 -3 w 3 c #966412 line 2 9.5 6.5 5 cont 2 5 cont 2 9.5  c #fff w 1.5 cutcircle 2 -2 3 0 180 cutcircle -2 -5 3 0 180",
+    "size": {
+      "bytes": 1427,
+      "kilobytes": "1.39",
+      "megabytes": "0.00"
+    },
+    "script": {
+      "scriptSize": 907,
+      "scriptLines": 30
+    }
   },
   "dock themer": {
     "title": "Dock Themer",
@@ -80,7 +120,17 @@
     ],
     "supports": [
       "originOS"
-    ]
+    ],
+    "icon": "w 12 c #39f square 0 0 7 7 w 10 c #222 square 0 0 7 7 w 20 dot 0 0 w 3 c #666 cutcircle 0 0 8 -4 140 line 8 -1.5 0 -1.5 cont 0 -8 w 10 line 4 2 0 4 cont -4 2 cont -3.5 -3 w 3 c #222 dot 5.5 1 dot 2.5 4.5 dot -2.5 4.5 dot -5.5 1\n",
+    "size": {
+      "bytes": 1484,
+      "kilobytes": "1.45",
+      "megabytes": "0.00"
+    },
+    "script": {
+      "scriptSize": 916,
+      "scriptLines": 43
+    }
   },
   "flappy bird": {
     "title": "Flappy Bird",
@@ -94,7 +144,17 @@
     "permissions": [],
     "supports": [
       "originOS"
-    ]
+    ],
+    "icon": "w 20 c #4EBAC4 dot 0 0 image https://raw.githubusercontent.com/Mistium/Origin-OS/main/OSL%20Programs/apps/games/assets/flapper.png 20\n",
+    "size": {
+      "bytes": 239833,
+      "kilobytes": "234.21",
+      "megabytes": "0.23"
+    },
+    "script": {
+      "scriptSize": 2768,
+      "scriptLines": 137
+    }
   },
   "fluficord": {
     "title": "Fluficord",
@@ -108,7 +168,22 @@
     "permissions": [],
     "supports": [
       "originOS"
-    ]
+    ],
+    "screenshots": [
+      "fluficord1.png",
+      "fluficord2.png",
+      "fluficord3.png"
+    ],
+    "icon": "w 23 c #7600ba dot 0 0 w 3 c #fff line -7 -3 -4 4 line -7 -3 -5.25 -4.5 line -5.25 -4.5 -3 -5 line -3 -5 0 -2 line 7 -3 4 4 line 7 -3 5.25 -4.5 line 5.25 -4.5 3 -5 line 3 -5 0 -2 cutcircle -2.3 1.9 2.75 1 45 cutcircle 2.3 1.9 2.75 -1 45 w 5 line -4 -1 -2 1 line 4 -1 2 1 w 2 c #7600ba dot -2.75 2.5 dot 2.75 2.5 cutcircle -2.1 0 -2.25 -.2 70 cutcircle 2.1 0 -2.25 .2 70\n",
+    "size": {
+      "bytes": 1545747,
+      "kilobytes": "1509.52",
+      "megabytes": "1.47"
+    },
+    "script": {
+      "scriptSize": 21827,
+      "scriptLines": 734
+    }
   },
   "focuser": {
     "title": "Focuser",
@@ -119,7 +194,17 @@
     "permissions": [],
     "supports": [
       "originOS"
-    ]
+    ],
+    "icon": "w 4 c #111 square 0 0 8 3 line -5 0 5 0 c #fff icn origin-logo 0.3 -5.5 0 c #fff w 1.5 line 0 0 5 0 line 5 3 8 0 cont 5 -3\n",
+    "size": {
+      "bytes": 762,
+      "kilobytes": "0.74",
+      "megabytes": "0.00"
+    },
+    "script": {
+      "scriptSize": 426,
+      "scriptLines": 18
+    }
   },
   "fortnite skibidi 2024": {
     "title": "Fortnite Skibidi 2024",
@@ -136,7 +221,17 @@
     ],
     "screenshots": [
       "Screenshot%202024-08-18%20at%2019.52.38.png"
-    ]
+    ],
+    "icon": "image https://raw.githubusercontent.com/RattusDong/apps/main/all/fortnite%20skibidi%202024/assets/unnamed.png 20\n",
+    "size": {
+      "bytes": 3530995,
+      "kilobytes": "3448.24",
+      "megabytes": "3.37"
+    },
+    "script": {
+      "scriptSize": 4773,
+      "scriptLines": 214
+    }
   },
   "goose": {
     "title": "Goose",
@@ -150,7 +245,17 @@
     "permissions": [],
     "supports": [
       "originOS"
-    ]
+    ],
+    "icon": "c #ffa200 w 3 dot -2.5 -4 dot 1.5 -6 c #fff w 8 line 5 0 -5 0 w 7 cont -7 6 w 8 cont -7 6 w 3 cont -9 6 c #ffa200 cont -10 6 c #000 w 2 dot -9 8 dot -6 8\n",
+    "size": {
+      "bytes": 2533,
+      "kilobytes": "2.47",
+      "megabytes": "0.00"
+    },
+    "script": {
+      "scriptSize": 2141,
+      "scriptLines": 94
+    }
   },
   "im rich": {
     "title": "im rich",
@@ -164,7 +269,17 @@
     "permissions": [],
     "supports": [
       "originOS"
-    ]
+    ],
+    "icon": "c #DAF0F2 w 3 line 3 5 -3 5 cont -6 2 cont 0 -5 cont 6 2 cont 3 5 w 9.5 dot 0 0\n",
+    "size": {
+      "bytes": 928,
+      "kilobytes": "0.91",
+      "megabytes": "0.00"
+    },
+    "script": {
+      "scriptSize": 452,
+      "scriptLines": 27
+    }
   },
   "jump and run": {
     "title": "Jump and Run",
@@ -178,7 +293,17 @@
     "permissions": [],
     "supports": [
       "originOS"
-    ]
+    ],
+    "icon": "w 23 c #fff dot 0 0 c #000 w 2.5 square 0 2 3.5 5 w 9.5 dot 0 2 w 2.5 line 3.5 -3 3.5 -8 line -3.5 -3 -3.5 -8 c #fff line 3.5 3.5 0 3.5",
+    "size": {
+      "bytes": 2784,
+      "kilobytes": "2.72",
+      "megabytes": "0.00"
+    },
+    "script": {
+      "scriptSize": 2364,
+      "scriptLines": 116
+    }
   },
   "lights out": {
     "title": "Lights Out",
@@ -192,7 +317,17 @@
     "permissions": [],
     "supports": [
       "originOS"
-    ]
+    ],
+    "icon": "w 5 c #000 square 0 0 12 12 w 20 square 0 0 4 4 c #64b342 w 4 square 0 9 2 2 square 9 9 2 2 square 9 0 2 2 square -9 0 2 2 c #b34242 square 0 0 2 2 square 9 -9 2 2 square 0 -9 2 2 square -9 -9 2 2 square -9 9 2 2\n",
+    "size": {
+      "bytes": 1973,
+      "kilobytes": "1.93",
+      "megabytes": "0.00"
+    },
+    "script": {
+      "scriptSize": 1112,
+      "scriptLines": 71
+    }
   },
   "mallet": {
     "title": "Mallet",
@@ -205,7 +340,17 @@
     ],
     "supports": [
       "originOS"
-    ]
+    ],
+    "icon": "w 20 c #d23a3a dot 0 0 w 2 c #2b2b2b line 6 -6 0 0 line 5 -7 7 -5 line 5 -7 2 -4 cont 2.5 -3.5 cont -1.5 0.5 line 7 -5 4 -2 cont 3.5 -2.5 cont -0.5 1.5 w 2 line -4.5 -1.5 1.5 4.5 line -4.5 -1.5 -7.5 1.5 line 1.5 4.5 -1.5 7.5 line -7.5 1.5 -1.5 7.5 w 3 line -5 1 -1 5\n",
+    "size": {
+      "bytes": 30602,
+      "kilobytes": "29.88",
+      "megabytes": "0.03"
+    },
+    "script": {
+      "scriptSize": 29981,
+      "scriptLines": 1114
+    }
   },
   "oft": {
     "title": "oft",
@@ -221,7 +366,17 @@
     ],
     "supports": [
       "originOS"
-    ]
+    ],
+    "icon": "c #111 w 10 square 0 0 5 5 c #0F0 w 8 square 0 0 5 5 dot 0 0 w 3 c #000 line -4 -4 -4 4 line -4 4 4 4 line -4 0 4 0\n",
+    "size": {
+      "bytes": 1757201,
+      "kilobytes": "1716.02",
+      "megabytes": "1.68"
+    },
+    "script": {
+      "scriptSize": 865,
+      "scriptLines": 41
+    }
   },
   "origincord": {
     "title": "OriginCord",
@@ -237,7 +392,17 @@
     ],
     "supports": [
       "originOS"
-    ]
+    ],
+    "icon": "c #5865f2 w 20 dot 0 0 c #fff w 3 line 3 2 5 -2 cont 3 -3 cont 2 -2 cont -2 -2 cont -3 -3 cont -5 -2 cont -3 2.5 cont -2 2.5 cont -1 1.7 cont 1 1.7 cont 2 2.5 cont 3 2.5 cont 5 -2 w 4.5 line -2 0 2 0 c #5865f2 w 2.5 dot 2 -1 dot -2 -1\n",
+    "size": {
+      "bytes": 54659,
+      "kilobytes": "53.38",
+      "megabytes": "0.05"
+    },
+    "script": {
+      "scriptSize": 37606,
+      "scriptLines": 1471
+    }
   },
   "originkill": {
     "title": "OriginKill",
@@ -256,7 +421,17 @@
       "originkill1.png",
       "originkill2.png",
       "originkill3.png"
-    ]
+    ],
+    "icon": "w 10 c #fff square 0 0 5 5 c #111 w 8 square 0 0 5 5 dot 0 0 c #fff w 1.75 cutcircle 0 0 5 0 180\n",
+    "size": {
+      "bytes": 4099831,
+      "kilobytes": "4003.74",
+      "megabytes": "3.91"
+    },
+    "script": {
+      "scriptSize": 40837,
+      "scriptLines": 1438
+    }
   },
   "ping pong": {
     "title": "Ping Pong",
@@ -270,7 +445,17 @@
     "permissions": [],
     "supports": [
       "originOS"
-    ]
+    ],
+    "icon": "w 4 c #000 square 0 0 10 10 w 24 dot 0 0 c #fff w 4 line 8 8 8 -8 line -8 8 -8 -8 dot 0 0\n",
+    "size": {
+      "bytes": 2038,
+      "kilobytes": "1.99",
+      "megabytes": "0.00"
+    },
+    "script": {
+      "scriptSize": 1735,
+      "scriptLines": 100
+    }
   },
   "slider": {
     "title": "Slider",
@@ -284,7 +469,17 @@
     "permissions": [],
     "supports": [
       "originOS"
-    ]
+    ],
+    "icon": "image https://raw.githubusercontent.com/Mistium/apps/main/all/slider/assets/app_icon.png 20",
+    "size": {
+      "bytes": 4441,
+      "kilobytes": "4.34",
+      "megabytes": "0.00"
+    },
+    "script": {
+      "scriptSize": 2201,
+      "scriptLines": 86
+    }
   },
   "snake": {
     "title": "Snake",
@@ -298,7 +493,17 @@
     "permissions": [],
     "supports": [
       "originOS"
-    ]
+    ],
+    "icon": "w 20 c #000 dot 0 0 w 3 c #416f3b dot -4.5 -1.5 dot -1.5 -4.5 dot 1.5 -1.5 c #65ad5b dot -4.5 -4.5 dot 1.5 -4.5 c #cd0000 dot 4.5 -1.5 dot 1.5 4.5\n",
+    "size": {
+      "bytes": 3114,
+      "kilobytes": "3.04",
+      "megabytes": "0.00"
+    },
+    "script": {
+      "scriptSize": 2225,
+      "scriptLines": 124
+    }
   },
   "super slime bros": {
     "title": "super slime bros",
@@ -317,7 +522,17 @@
       "Screenshot 2024-08-21 at 20.20.53.png",
       "Screenshot 2024-08-21 at 20.21.51.png",
       "Screenshot 2024-08-21 at 20.22.16.png"
-    ]
+    ],
+    "icon": "image https://raw.githubusercontent.com/Mistium/Super-Slime-Bros/main/assets/icon.png 20\n",
+    "size": {
+      "bytes": 898765,
+      "kilobytes": "877.70",
+      "megabytes": "0.86"
+    },
+    "script": {
+      "scriptSize": 22766,
+      "scriptLines": 895
+    }
   },
   "timer": {
     "title": "Timer",
@@ -328,7 +543,17 @@
     "permissions": [],
     "supports": [
       "originOS"
-    ]
+    ],
+    "icon": "w 5 c #111 square 0 0 10 10 w 23 dot 0 0 c #fff icn clock 0.6\n",
+    "size": {
+      "bytes": 742,
+      "kilobytes": "0.72",
+      "megabytes": "0.00"
+    },
+    "script": {
+      "scriptSize": 463,
+      "scriptLines": 28
+    }
   },
   "todo": {
     "title": "Todo",
@@ -344,7 +569,17 @@
     ],
     "supports": [
       "originOS"
-    ]
+    ],
+    "icon": "w 5 c #242526 square 0 0 10 10 w 24 dot 0 0 c #4B77BE w 4 line -6 -2 -2 -6 cont 7 6\n",
+    "size": {
+      "bytes": 1593,
+      "kilobytes": "1.56",
+      "megabytes": "0.00"
+    },
+    "script": {
+      "scriptSize": 1166,
+      "scriptLines": 54
+    }
   },
   "wosle": {
     "title": "wosle",
@@ -363,7 +598,17 @@
       "wosle1.png",
       "wosle2.png",
       "wosle3.png"
-    ]
+    ],
+    "icon": "c #8b6\nw 10\nsquare 0 0 5 5\nc #111\nw 8\nsquare 0 0 5 5\ndot 0 0\nw 1.5\nc #8b6\nline -5 5 -2.5 -5\ncont 0 0\ncont 2.5 -5\ncont 5 5",
+    "size": {
+      "bytes": 3133311,
+      "kilobytes": "3059.87",
+      "megabytes": "2.99"
+    },
+    "script": {
+      "scriptSize": 24916,
+      "scriptLines": 254
+    }
   },
   "youtube": {
     "title": "Youtube",
@@ -377,6 +622,16 @@
     "permissions": [],
     "supports": [
       "originOS"
-    ]
+    ],
+    "icon": "c #F00 w 10 square 0 0 5 5 c #622 w 8 square 0 0 5 5 dot 0 0 w 3 c #FFF line 3 0 -2.5 3 cont -2.5 -3 cont 3 0 dot 0 0\n",
+    "size": {
+      "bytes": 3812,
+      "kilobytes": "3.72",
+      "megabytes": "0.00"
+    },
+    "script": {
+      "scriptSize": 3423,
+      "scriptLines": 123
+    }
   }
 }
