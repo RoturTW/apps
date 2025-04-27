@@ -1,0 +1,70 @@
+name: Collect Info JSON Files
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'all/*/info.json'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'all/*/info.json'
+  workflow_dispatch:
+
+jobs:
+  collect-info-jsons:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          
+      - name: Collect info.json files
+        run: |
+          echo "Creating consolidated JSON file..."
+          
+          # Create a Node.js script to gather and process the info.json files
+          cat > collect-info.js << 'EOF'
+          const fs = require('fs');
+          const path = require('path');
+          
+          const allDir = path.join(__dirname, 'all');
+          const directories = fs.readdirSync(allDir, { withFileTypes: true })
+            .filter(dirent => dirent.isDirectory())
+            .map(dirent => dirent.name);
+          
+          const consolidatedData = {};
+          
+          directories.forEach(dirName => {
+            const infoPath = path.join(allDir, dirName, 'info.json');
+            
+            if (fs.existsSync(infoPath)) {
+              try {
+                const infoContent = fs.readFileSync(infoPath, 'utf8');
+                const infoJson = JSON.parse(infoContent);
+                consolidatedData[dirName] = infoJson;
+              } catch (err) {
+                console.error(`Error processing ${infoPath}:`, err);
+              }
+            }
+          });
+          
+          fs.writeFileSync('all-info.json', JSON.stringify(consolidatedData, null, 2));
+          console.log('all-info.json created successfully.');
+          EOF
+          
+          # Execute the script
+          node collect-info.js
+      
+      - name: Commit and push changes
+        run: |
+          git config --global user.name 'GitHub Action'
+          git config --global user.email 'action@github.com'
+          git add consolidated-info.json
+          git diff --staged --quiet || git commit -m "Update consolidated-info.json"
+          git push 
