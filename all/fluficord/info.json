@@ -6,5 +6,6 @@
   "genre": "Social",
   "game_modes": ["Single-player"],
   "permissions": [],
-  "supports":["originOS"]
+  "supports":["originOS"],
+  "screenshots": ["fluficord1.png","fluficord2.png","fluficord3.png"]
 }
