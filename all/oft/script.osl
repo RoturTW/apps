@@ -1,0 +1,40 @@
+import "window_tools" as "wt"
+oft_icon = "c #111 w 10 square 0 0 5 5 c #0F0 w 8 square 0 0 5 5 dot 0 0 w 3 c #000 line -4 -4 -4 4 line -4 4 4 4 line -4 0 4 0"
+
+def applyFPS(frames) (
+  log frames
+  permission "request" "terminal"
+  cmd = "system runtime fps_limit" + frames
+  terminal cmd
+)
+
+mainloop:
+wt:load_theme
+wt:seticon oft_icon
+
+goto (window.width - (window.width * 1.5) + 8) (window.height - (window.height / 2) - 26)
+text "OriginOS FPS Tool" 12
+
+goto 0 0
+slider 256 20 "fpsSlider"
+
+goto 0 64
+chosenFPS = (251 * slider_fpsSlider)
+chosenFPS = round(chosenFPS)
+centext "Current FPS: " ++ round(fps) 12
+
+c #FFF
+goto 0 32
+centext "Chosen FPS: " ++ chosenFPS 12
+
+goto 0 -64
+  square 72 48 1 : c#prim hover_c#seco
+  if mouse_touching (
+    cursor "pointer"
+    if onclick (
+      applyFPS(chosenFPS)
+    )
+  )
+  centext "Apply" 10 : c#txtc
+
+import "win-buttons"
