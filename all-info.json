@@ -1,0 +1,382 @@
+{
+  "2048": {
+    "title": "2048",
+    "description": "A popular single-player puzzle game where the objective is to slide numbered tiles on a grid to combine them and create a tile with the number 2048. The game starts with two tiles, typically with a value of 2 or 4, and the player can move the tiles in four directions—up, down, left, and right. When two tiles with the same number collide, they merge into one, doubling the value. The game continues until the player achieves the 2048 tile or can no longer make any valid moves, resulting in a game over. It requires strategic planning, spatial awareness, and quick thinking to reach the highest score possible.",
+    "author": "Mist",
+    "version": "1.2",
+    "genre": "Puzzle",
+    "game_modes": [
+      "Single-player"
+    ],
+    "permissions": [],
+    "supports": [
+      "originOS"
+    ]
+  },
+  "ceslum": {
+    "title": "Ceslum",
+    "description": "Ceslum is a real internet browser for Rotur! It can be used to browse sites like the OSL / CRL Docs, Handy while coding!",
+    "author": "Constellinux",
+    "version": "1.0",
+    "genre": "Online",
+    "game_modes": [
+      "Single-PLayer"
+    ],
+    "permissions": [],
+    "supports": [
+      "originOS"
+    ],
+    "screenshots": []
+  },
+  "claw": {
+    "title": "Claw",
+    "description": "Claw is a rotur-based and easy to use social platform! Post small messages on your account! No algorithms here, just browse the latest posts by people on rotur.",
+    "author": "Mist",
+    "version": "1.9",
+    "genre": "Social",
+    "game_modes": [
+      "Single-PLayer"
+    ],
+    "permissions": [
+      "rotur token"
+    ],
+    "supports": [
+      "originOS",
+      "ConstellinuxProject"
+    ],
+    "screenshots": [
+      "Screenshot 2024-11-12 at 10.44.57.png"
+    ],
+    "changelogs": [
+      "Log v1.md"
+    ]
+  },
+  "crl": {
+    "title": "CRL",
+    "description": "A Sandboxing Program for Constellinux CRL Code. Uses the embed system; ROTUR is disabled within, and files are not accessible by either.",
+    "author": "ThatBeaverDev",
+    "version": "1.0",
+    "genre": "Developer",
+    "game_modes": [
+      "Single-PLayer"
+    ],
+    "permissions": [],
+    "supports": [
+      "originOS"
+    ],
+    "screenshots": []
+  },
+  "dock themer": {
+    "title": "Dock Themer",
+    "description": "A simple application that lets you edit and replace the icons of apps and files on your dock, to help you theme it exactly how you want!",
+    "author": "Mist",
+    "version": "1.0",
+    "genre": "Tool",
+    "game_modes": [
+      "Single-player"
+    ],
+    "permissions": [
+      "file admin"
+    ],
+    "supports": [
+      "originOS"
+    ]
+  },
+  "flappy bird": {
+    "title": "Flappy Bird",
+    "description": "Bird does jump :D",
+    "author": "Mist, Ashime",
+    "version": "1.2",
+    "genre": "Arcade",
+    "game_modes": [
+      "Single-player"
+    ],
+    "permissions": [],
+    "supports": [
+      "originOS"
+    ]
+  },
+  "fluficord": {
+    "title": "Fluficord",
+    "description": "A funny silly communication app (inspired by discord as you could probably tell) :P",
+    "author": "Flufi",
+    "version": "0.4a",
+    "genre": "Social",
+    "game_modes": [
+      "Single-player"
+    ],
+    "permissions": [],
+    "supports": [
+      "originOS"
+    ]
+  },
+  "focuser": {
+    "title": "Focuser",
+    "description": "Sets the tab's name to the current focused window.",
+    "author": "Mist, Flufi",
+    "version": "1.0",
+    "genre": "Utility",
+    "permissions": [],
+    "supports": [
+      "originOS"
+    ]
+  },
+  "fortnite skibidi 2024": {
+    "title": "Fortnite Skibidi 2024",
+    "description": "fortnite defend from villanous skibidi in fast pace action simulator now with vbucks reward hi score download free 2023",
+    "author": "RattusDoong",
+    "version": "1.4",
+    "genre": "romance, visual novel",
+    "game_modes": [
+      "Online Multiplayer"
+    ],
+    "permissions": [],
+    "supports": [
+      "originOS"
+    ],
+    "screenshots": [
+      "Screenshot%202024-08-18%20at%2019.52.38.png"
+    ]
+  },
+  "goose": {
+    "title": "Goose",
+    "description": "A funny goose that walks around your desktop.",
+    "author": "Mist",
+    "version": "1.6",
+    "genre": "Desktop Pet",
+    "game_modes": [
+      "Single-player"
+    ],
+    "permissions": [],
+    "supports": [
+      "originOS"
+    ]
+  },
+  "im rich": {
+    "title": "im rich",
+    "description": "Do you ever feel like you have too many Rotur Credits? No...? Oh. Well if you *were actually rich* this would be the perfect app for you to show off how rich you are by purchasing a completely useless item!",
+    "author": "Mist",
+    "version": "1.0",
+    "genre": "Puzzle",
+    "game_modes": [
+      "Single-player"
+    ],
+    "permissions": [],
+    "supports": [
+      "originOS"
+    ]
+  },
+  "jump and run": {
+    "title": "Jump and Run",
+    "description": "A simple endless runner where you jump from platform to platform and gain points",
+    "author": "Mist",
+    "version": "1.1",
+    "genre": "Arcade",
+    "game_modes": [
+      "Single-player"
+    ],
+    "permissions": [],
+    "supports": [
+      "originOS"
+    ]
+  },
+  "lights out": {
+    "title": "Lights Out",
+    "description": "Lights Out is a challenging puzzle game where the player is presented with a grid of lights, some of which are on and some off. The goal is to turn off all the lights on the grid. Toggling a light also toggles the adjacent lights. The catch is that toggling a light affects its neighbors, making it a strategic challenge to find the correct sequence of moves to turn off all the lights. The game tests logic, problem-solving skills, and spatial reasoning.",
+    "author": "Mist",
+    "version": "1.1",
+    "genre": "Puzzle",
+    "game_modes": [
+      "Single-player"
+    ],
+    "permissions": [],
+    "supports": [
+      "originOS"
+    ]
+  },
+  "mallet": {
+    "title": "Mallet",
+    "description": "Full map editor for creating games with, including brushes (boxes) and entities (objects) with a custom .map format (which can just be read as json) plus a fully modular addon system!",
+    "author": "Flufi",
+    "version": "1.9.4",
+    "genre": "Utility",
+    "permissions": [
+      "file viewer"
+    ],
+    "supports": [
+      "originOS"
+    ]
+  },
+  "oft": {
+    "title": "oft",
+    "description": "Control your refresh rate in OriginOS at last!",
+    "author": "0Stormy",
+    "version": "1.0",
+    "genre": "System",
+    "permissions": [
+      "terminal"
+    ],
+    "screenshots": [
+      "oft.png"
+    ],
+    "supports": [
+      "originOS"
+    ]
+  },
+  "origincord": {
+    "title": "OriginCord",
+    "description": "An osl based discord client",
+    "author": "Mist",
+    "version": "5.7",
+    "genre": "Social",
+    "game_modes": [
+      "Single-player"
+    ],
+    "permissions": [
+      "notifications"
+    ],
+    "supports": [
+      "originOS"
+    ]
+  },
+  "originkill": {
+    "title": "OriginKill",
+    "description": "(almost perfect) recreation of windowkill but on origin",
+    "author": "Flufi",
+    "version": "1.2a",
+    "genre": "Shooter",
+    "game_modes": [
+      "singleplayer"
+    ],
+    "permissions": [],
+    "supports": [
+      "originOS"
+    ],
+    "screenshots": [
+      "originkill1.png",
+      "originkill2.png",
+      "originkill3.png"
+    ]
+  },
+  "ping pong": {
+    "title": "Ping Pong",
+    "description": "Kill your time",
+    "author": "rhel202",
+    "version": "1.0",
+    "genre": "Arcade",
+    "game_modes": [
+      "Local-multiplayer"
+    ],
+    "permissions": [],
+    "supports": [
+      "originOS"
+    ]
+  },
+  "slider": {
+    "title": "Slider",
+    "description": "A simple game where you slide the tiles to make them all in order, while trying to do so in the shortest time possible",
+    "author": "Mist",
+    "version": "1.0",
+    "genre": "Puzzle",
+    "game_modes": [
+      "Single-player"
+    ],
+    "permissions": [],
+    "supports": [
+      "originOS"
+    ]
+  },
+  "snake": {
+    "title": "Snake",
+    "description": "Snake is a classic single-player arcade game where the player controls a snake that moves around a bounded area, collecting food items represented by dots. As the snake consumes food, it grows longer. The objective is to navigate the snake around the playfield without colliding with itself or the boundaries. The game ends if the snake collides with itself or the boundaries. It requires reflexes, spatial awareness, and strategic planning to achieve the highest score possible.\nRecently fixed for v5.5.7 due to an issue with a deprecated method in osl",
+    "author": "Mist",
+    "version": "1.2",
+    "genre": "Arcade",
+    "game_modes": [
+      "Single-player"
+    ],
+    "permissions": [],
+    "supports": [
+      "originOS"
+    ]
+  },
+  "super slime bros": {
+    "title": "super slime bros",
+    "description": "Super Slime Bros is a remake of the core systems inside the game \"super smash bros\" written entirely in osl (origin scripting language)\n\nSSB is a video game tailored towards more competitive players who want to fight their friends in a complex games environment with many different play styles, there is no specific story that actually affects the gameplay, instead, the most popular version of the game is where you fight against other players using one of many different characters.\n\nIn SSB you can select characters and each character has a set of unique moves that it can use in order to deal damage to other players. Damage in this game doesn’t work in the traditional sense, instead of dying when you hit a certain threshold, you get knocked further, the more damage you’ve taken, when you are hit by attacks from players.",
+    "author": "Mist",
+    "version": "2.8",
+    "genre": "Social",
+    "game_modes": [
+      "local-multi-player"
+    ],
+    "permissions": [],
+    "supports": [
+      "originOS"
+    ],
+    "screenshots": [
+      "Screenshot 2024-08-21 at 20.20.53.png",
+      "Screenshot 2024-08-21 at 20.21.51.png",
+      "Screenshot 2024-08-21 at 20.22.16.png"
+    ]
+  },
+  "timer": {
+    "title": "Timer",
+    "description": "Timer is a small widget for origin that shows an analogue clock",
+    "author": "Mist",
+    "version": "1.1",
+    "genre": "Utility",
+    "permissions": [],
+    "supports": [
+      "originOS"
+    ]
+  },
+  "todo": {
+    "title": "Todo",
+    "description": "Todo is a simple utility application that lets you save things that you need to do to a small list and remove them when you have completed them!",
+    "author": "Mist",
+    "version": "1.1",
+    "genre": "Utility",
+    "game_modes": [
+      "Single-player"
+    ],
+    "permissions": [
+      "Save Data"
+    ],
+    "supports": [
+      "originOS"
+    ]
+  },
+  "wosle": {
+    "title": "wosle",
+    "description": "Wosle is a simple remake of \"Wordle\" with a freeplay mode, as well as daily puzzles.",
+    "author": "nameless",
+    "version": "1.0",
+    "genre": "Puzzle",
+    "game_modes": [
+      "Single-player"
+    ],
+    "permissions": [],
+    "supports": [
+      "originOS"
+    ],
+    "screenshots": [
+      "wosle1.png",
+      "wosle2.png",
+      "wosle3.png"
+    ]
+  },
+  "youtube": {
+    "title": "Youtube",
+    "description": "A simple youtube client that lets you search for and watch youtube videos",
+    "author": "Shima",
+    "version": "1.2",
+    "genre": "Entertainment",
+    "game_modes": [
+      "Single-player"
+    ],
+    "permissions": [],
+    "supports": [
+      "originOS"
+    ]
+  }
+}
