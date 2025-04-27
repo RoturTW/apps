@@ -5,10 +5,14 @@ on:
     branches: [ main ]
     paths:
       - 'all/*/info.json'
+      - 'all/*/icon.icn'
+      - 'all/*/script.osl'
   pull_request:
     branches: [ main ]
     paths:
       - 'all/*/info.json'
+      - 'all/*/icon.icn'
+      - 'all/*/script.osl'
   workflow_dispatch:
 
 jobs:
@@ -37,6 +41,58 @@ jobs:
           const fs = require('fs');
           const path = require('path');
           
+          // Function to calculate directory size in bytes
+          function calculateDirSize(dirPath) {
+            let totalSize = 0;
+            
+            try {
+              const items = fs.readdirSync(dirPath);
+              
+              for (const item of items) {
+                const itemPath = path.join(dirPath, item);
+                const stats = fs.statSync(itemPath);
+                
+                if (stats.isFile()) {
+                  totalSize += stats.size;
+                } else if (stats.isDirectory()) {
+                  totalSize += calculateDirSize(itemPath);
+                }
+              }
+            } catch (err) {
+              console.error(`Error calculating size for ${dirPath}:`, err);
+            }
+            
+            return totalSize;
+          }
+          
+          // Function to extract information from script.osl
+          function extractScriptInfo(scriptPath) {
+            const info = {};
+            
+            try {
+              if (fs.existsSync(scriptPath)) {
+                const content = fs.readFileSync(scriptPath, 'utf8');
+                
+                // Try to find commit-related information
+                const commitRegex = /commit[:\s]+([a-f0-9]+)/i;
+                const commitMatch = content.match(commitRegex);
+                if (commitMatch && commitMatch[1]) {
+                  info.commitId = commitMatch[1];
+                }
+                
+                // Get script size
+                info.scriptSize = fs.statSync(scriptPath).size;
+                
+                // Get script lines count
+                info.scriptLines = content.split('\n').length;
+              }
+            } catch (err) {
+              console.error(`Error extracting info from ${scriptPath}:`, err);
+            }
+            
+            return info;
+          }
+          
           const allDir = path.join(__dirname, 'all');
           const directories = fs.readdirSync(allDir, { withFileTypes: true })
             .filter(dirent => dirent.isDirectory())
@@ -45,13 +101,43 @@ jobs:
           const consolidatedData = {};
           
           directories.forEach(dirName => {
-            const infoPath = path.join(allDir, dirName, 'info.json');
+            const dirPath = path.join(allDir, dirName);
+            const infoPath = path.join(dirPath, 'info.json');
+            const iconPath = path.join(dirPath, 'icon.icn');
+            const scriptPath = path.join(dirPath, 'script.osl');
             
             if (fs.existsSync(infoPath)) {
               try {
                 const infoContent = fs.readFileSync(infoPath, 'utf8');
                 const infoJson = JSON.parse(infoContent);
+                
+                // Initialize the entry with the info.json contents
                 consolidatedData[dirName] = infoJson;
+                
+                // Add the icon.icn contents if the file exists
+                if (fs.existsSync(iconPath)) {
+                  try {
+                    const iconContent = fs.readFileSync(iconPath, 'utf8');
+                    consolidatedData[dirName].icon = iconContent;
+                  } catch (iconErr) {
+                    console.error(`Error reading ${iconPath}:`, iconErr);
+                  }
+                }
+                
+                // Add directory size information
+                const dirSize = calculateDirSize(dirPath);
+                consolidatedData[dirName].size = {
+                  bytes: dirSize,
+                  kilobytes: (dirSize / 1024).toFixed(2),
+                  megabytes: (dirSize / (1024 * 1024)).toFixed(2)
+                };
+                
+                // Add script information
+                const scriptInfo = extractScriptInfo(scriptPath);
+                if (Object.keys(scriptInfo).length > 0) {
+                  consolidatedData[dirName].script = scriptInfo;
+                }
+                
               } catch (err) {
                 console.error(`Error processing ${infoPath}:`, err);
               }
