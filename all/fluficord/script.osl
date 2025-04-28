@@ -15,7 +15,7 @@ portName = ("social:" ++ OuidNew())
 
 portName.roturConnect()
 
-window "min_size" 225 300
+window "min_size" 175 300
 
 window.width = 900
 window.height = 500
@@ -102,6 +102,7 @@ class Net (
   )
   def update() (
     if new_network_data (
+      //log "get" packet["data"]
       Net.handlePacket(packet)
       new_network_data = false
     )
@@ -112,7 +113,7 @@ class Net (
   )
   def handlePacket(p) (
     local data = p["data"]
-    log "get" data
+    //log "get" data
     if data.getKeys().contains("cmd") (
       switch data["cmd"] (
         case "ping"
@@ -247,6 +248,13 @@ class UI (
   
   def drawText(text, size, color) (
     text text size : c#color
+  )
+  def getUnFormattedText(text) (
+  
+  )
+  
+  def textHeight() (
+    return 2
   )
   
   class channel_list (
@@ -410,7 +418,7 @@ class UI (
               "reply": {
                 "icon": "w 4 line 0 8 -8 0 cont 0 -8 line -8 0 -2 0 cutcircle 0 -8 8 4.5 45" + (UI.replying_message == msg ? "w 7 c" + prim + "line -9 -9 9 9 9 -9 -9 9 c" + txtc + "w 4 line -9 -9 9 9 line 9 -9 -9 9 c" ""),
                 "code": def(msg) -> (
-                  if UI.replying_message == null (
+                  if UI.replying_message != msg (
                     UI.replying_message = msg
                   ) else (
                     UI.replying_message = null
@@ -420,7 +428,7 @@ class UI (
               "react": {
                 "icon": "w 2.5 cutcircle 0 0 9 0 180 dot -3 1.5 dot 3 1.5 cutcircle 0 2.5 6 18 30",
                 "code": def(msg) -> (
-                  UI.emote_menu.open = UI.emote_menu.open.not()
+                  UI.emote_menu.open = (UI.emote_menu.open and UI.emote_menu.message == msg).not()
                   UI.emote_menu.x = UI.mouse_x
                   UI.emote_menu.y = UI.mouse_y
                   UI.emote_menu.message = msg
@@ -454,7 +462,7 @@ class UI (
             )
             image "https://avatars.rotur.dev/" ++ (replyMessage.user ?? "_") 18 18 : chx#17.5 chy#0
             text "@" ++ (replyMessage.user ?? "?") self.messageSize * .8 : chx#18 c#txtc chx#-6.25
-            UI.drawText(replyMessage.content, self.messageSize * .8,txtc, frame.width) : chx#5
+            UI.drawText(replyMessage.content.trimText(frame.width / (self.messageSize * .8) - 16), self.messageSize * .8, txtc) : chx#5
             y -= 20
           )
           
@@ -580,7 +588,7 @@ class UI (
               
               local back = "c" + prim + "w 32 dot 0 0"
               if Net.onlineUsers == null (
-                text "?" 5 : c#txtc
+                text "?" 8 : c#txtc
               ) else if Net.onlineUsers.contains(user) (
                 icon back + "c #03c200 w 20 dot 0 0" .5
               ) else (
@@ -690,6 +698,7 @@ mainloop:
       )
     ) else if Net.channelUsers.getKeys().contains(channel).not() (
       if Net.getCooldown <= 0 (
+        //log channel Net.channelUsers Net.channelUsers.getKeys()
         Net.getChannelUsers(channel)
       )
     ) else (
