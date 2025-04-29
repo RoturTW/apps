@@ -3,7 +3,7 @@
   "description": "Ceslum is a real internet browser for Rotur! It can be used to browse sites like the OSL / CRL Docs, Handy while coding!",
   "author": "Constellinux",
   "version": "1.0",
-  "genre": "Online",
+  "genre": "Browser",
   "game_modes": ["Single-PLayer"],
   "permissions": [],
   "supports":["originOS"],

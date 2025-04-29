@@ -3,7 +3,7 @@
     "description": "(almost perfect) recreation of windowkill but on origin",
     "author": "Flufi",
     "version": "1.2a",
-    "genre": "Shooter",
+    "genre": "Game",
     "game_modes": ["singleplayer"],
     "permissions": [],
     "supports":["originOS"],

@@ -3,7 +3,7 @@
   "description": "Control your refresh rate in OriginOS at last!",
   "author": "0Stormy",
   "version": "1.0",
-  "genre": "System",
+  "genre": "Utility",
   "permissions": ["terminal"],
   "screenshots": ["oft.png"],
   "supports":["originOS"]
