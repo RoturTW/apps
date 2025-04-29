@@ -127,9 +127,9 @@ if player.dead (
   if jump (
     if player.grounded or player.double (
       if player.grounded (
-        io.haptic(jump1)
+        io.haptic("jump1")
       ) else (
-        io.haptic(jump2)
+        io.haptic("jump2")
       )
       player.double = player.grounded
       player.grounded = false
@@ -174,7 +174,7 @@ for i platforms.len (
       if abs(player.x - cur.x) < 100 and player.y > cur.y (
         if player.grounded.not() (
           player.score ++
-          io.haptic(land)
+          io.haptic("land")
         )
         player.grounded = true
         player.y = cur.y + 70
@@ -187,7 +187,7 @@ centext "Score: " ++ player.score 10 : c#000
 
 if player.x < window.left - 40 or player.y < window.bottom or player.x > window.right + 40 (
   setup()
-  io.haptic(dead)
+  io.haptic("dead")
   player.dead = true
 )
 
