@@ -5,9 +5,9 @@ def setup() (
   window_colour = #fff
 
   platforms = []
-
+  
   player = {
-    x: -300,
+    x: -200,
     y: 150,
     xv: 0,
     yv: 0,
@@ -37,16 +37,85 @@ def setup() (
 
   last = timer
 )
+jumpheld = false
+jump = false
+left = false
+rigth = false
+def setjump() (
+  if gamepad.buttons[1]["pressed"] or gamepad.buttons[2]["pressed"] or "space".isKeyDown() (
+    if jumpheld (
+      jump = false
+    ) else (
+      jump = true
+    )
+    jumpheld = true
+  ) else (
+    jumpheld = false
+  )
+)
+def setleft() (
+  if gamepad.axes[1].x < -0.2 or gamepad.buttons[15]["pressed"] or "a".isKeyDown() (
+    left = true
+  ) else (
+    left = false
+  )
+)
+
+def setright() (
+  if gamepad.axes[1].x > 0.2 or gamepad.buttons[16]["pressed"] or "d".isKeyDown() (
+    right = true
+  ) else (
+    right = false
+  )
+)
+object io = {
+  haptic: def(option) -> (
+    local configs = {
+      jump1: {
+        duration: 200,
+        weakMagnitude: 0.075,
+        strongMagnitude: 0.04,
+      },
+      jump2: {
+        duration: 170,
+        weakMagnitude: 0.05,
+        strongMagnitude: 0.02,
+      },
+      land: {
+        duration: 100,
+        weakMagnitude: 0.2,
+        strongMagnitude: 0.3,
+      },
+      dead: {
+        duration: 300,
+        weakMagnitude: 0.7,
+        strongMagnitude: 0.7
+      }
+    }
+    
+    if gamepads.len > 0 (
+      void gamepad.haptic(configs[option])
+    )
+  )
+}
 
 setup()
+player.dead = true
 
 mainloop:
-
+array gamepads = getGamepads()
+if gamepads.len > 0 (
+  gamepad @= gamepads[1]
+)
+log gamepad.axes[1].x
+setjump()
+setleft()
+setright()
 if player.dead (
   goto 0 window.bottom + 50
   centext "You died, press space to play again" 10 : c#000
   
-  if "space".onKeyDown() (
+  if jump (
     player.dead = false
   )
 ) else (
@@ -55,17 +124,22 @@ if player.dead (
     void platform.new()
   )
 
-  if "space".onKeyDown() (
+  if jump (
     if player.grounded or player.double (
+      if player.grounded (
+        io.haptic(jump1)
+      ) else (
+        io.haptic(jump2)
+      )
       player.double = player.grounded
       player.grounded = false
       player.yv = 13
     )
   )
-  if "a".isKeyDown() (
+  if left (
     player.xv -= 1
   )
-  if "d".isKeyDown() (
+  if right (
     player.xv += 1
   )
 )
@@ -75,6 +149,10 @@ player.x += player.xv
 player.y += player.yv
 player.xv *= 0.9
 player.yv -= 0.4
+
+if player.dead.not() and player.grounded (
+  player.x -= 3 + (player.score / 10)
+)
 
 for i platforms.len (
   cur @= platforms[i]
@@ -96,6 +174,7 @@ for i platforms.len (
       if abs(player.x - cur.x) < 100 and player.y > cur.y (
         if player.grounded.not() (
           player.score ++
+          io.haptic(land)
         )
         player.grounded = true
         player.y = cur.y + 70
@@ -103,12 +182,12 @@ for i platforms.len (
     )
   )
 )
-
 goto 0 window.top - 40
 centext "Score: " ++ player.score 10 : c#000
 
-if player.x < window.left or player.y < window.bottom or player.x > window.right (
+if player.x < window.left - 40 or player.y < window.bottom or player.x > window.right + 40 (
   setup()
+  io.haptic(dead)
   player.dead = true
 )
 
