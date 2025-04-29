@@ -28,7 +28,7 @@
     "description": "Ceslum is a real internet browser for Rotur! It can be used to browse sites like the OSL / CRL Docs, Handy while coding!",
     "author": "Constellinux",
     "version": "1.0",
-    "genre": "Online",
+    "genre": "Browser",
     "game_modes": [
       "Single-PLayer"
     ],
@@ -39,7 +39,7 @@
     "screenshots": [],
     "icon": "c #fff\nw 10\nsquare 0 0 5 5\nc #111\nw 8\nsquare 0 0 5 5\ndot 0 0\nw 10\nc #eba134\ndot 0 0\nw 2.25\nc #383838\nsquare 0 0 5 5\nc #fff\nline 7.5 0 0 7.5\ncont -7.5 0\ncont 0 -7.5\ncont 7.5 0",
     "size": {
-      "bytes": 1830,
+      "bytes": 1831,
       "kilobytes": "1.79",
       "megabytes": "0.00"
     },
@@ -111,7 +111,7 @@
     "description": "A simple application that lets you edit and replace the icons of apps and files on your dock, to help you theme it exactly how you want!",
     "author": "Mist",
     "version": "1.0",
-    "genre": "Tool",
+    "genre": "Utility",
     "game_modes": [
       "Single-player"
     ],
@@ -123,7 +123,7 @@
     ],
     "icon": "w 12 c #39f square 0 0 7 7 w 10 c #222 square 0 0 7 7 w 20 dot 0 0 w 3 c #666 cutcircle 0 0 8 -4 140 line 8 -1.5 0 -1.5 cont 0 -8 w 10 line 4 2 0 4 cont -4 2 cont -3.5 -3 w 3 c #222 dot 5.5 1 dot 2.5 4.5 dot -2.5 4.5 dot -5.5 1\n",
     "size": {
-      "bytes": 1484,
+      "bytes": 1487,
       "kilobytes": "1.45",
       "megabytes": "0.00"
     },
@@ -357,7 +357,7 @@
     "description": "Control your refresh rate in OriginOS at last!",
     "author": "0Stormy",
     "version": "1.0",
-    "genre": "System",
+    "genre": "Utility",
     "permissions": [
       "terminal"
     ],
@@ -369,7 +369,7 @@
     ],
     "icon": "c #111 w 10 square 0 0 5 5 c #0F0 w 8 square 0 0 5 5 dot 0 0 w 3 c #000 line -4 -4 -4 4 line -4 4 4 4 line -4 0 4 0\n",
     "size": {
-      "bytes": 1757201,
+      "bytes": 1757202,
       "kilobytes": "1716.02",
       "megabytes": "1.68"
     },
@@ -409,7 +409,7 @@
     "description": "(almost perfect) recreation of windowkill but on origin",
     "author": "Flufi",
     "version": "1.2a",
-    "genre": "Shooter",
+    "genre": "Game",
     "game_modes": [
       "singleplayer"
     ],
@@ -424,7 +424,7 @@
     ],
     "icon": "w 10 c #fff square 0 0 5 5 c #111 w 8 square 0 0 5 5 dot 0 0 c #fff w 1.75 cutcircle 0 0 5 0 180\n",
     "size": {
-      "bytes": 4099831,
+      "bytes": 4099828,
       "kilobytes": "4003.74",
       "megabytes": "3.91"
     },
@@ -510,7 +510,7 @@
     "description": "Super Slime Bros is a remake of the core systems inside the game \"super smash bros\" written entirely in osl (origin scripting language)\n\nSSB is a video game tailored towards more competitive players who want to fight their friends in a complex games environment with many different play styles, there is no specific story that actually affects the gameplay, instead, the most popular version of the game is where you fight against other players using one of many different characters.\n\nIn SSB you can select characters and each character has a set of unique moves that it can use in order to deal damage to other players. Damage in this game doesn’t work in the traditional sense, instead of dying when you hit a certain threshold, you get knocked further, the more damage you’ve taken, when you are hit by attacks from players.",
     "author": "Mist",
     "version": "2.8",
-    "genre": "Social",
+    "genre": "Game",
     "game_modes": [
       "local-multi-player"
     ],
@@ -525,7 +525,7 @@
     ],
     "icon": "image https://raw.githubusercontent.com/Mistium/Super-Slime-Bros/main/assets/icon.png 20\n",
     "size": {
-      "bytes": 898765,
+      "bytes": 898763,
       "kilobytes": "877.70",
       "megabytes": "0.86"
     },
