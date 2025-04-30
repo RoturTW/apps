@@ -26,6 +26,10 @@ window "set_dragbox" [[2,2,30,0],[-2,2,-100,-40]]
 window "dimensions" 1200 700
 window "min_size" 800 700
 
+def getAvatar(username) (
+  return "https://avatars.rotur.dev/" ++ username ++ "?radius=256px"
+)
+
 def "send_post" "this.content, this.attachment" (
   local url = "https://claw.rotur.dev/post?os=originOS&auth=" ++ token
   local url ++= "&content=" ++ encodeURIComponent(content)
@@ -84,7 +88,7 @@ def "render_post" "w, h, post, offset_y, reply" (
   
 
   loc 2 2 33 y + offset_y
-  image "https://avatars.rotur.dev/" ++ user 40 40
+  image getAvatar(user) 40 40
   text post.user 10 : c#txtc chx#30
   if onclick (
     load_profile user
