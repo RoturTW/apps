@@ -26,6 +26,8 @@ last_timer = timer
 game_timer = timer
 
 object io = {
+  x_vel: 0,
+  y_vel: 0,
   ability: def() -> (
     // left trigger
     return "space".onKeyDown() or gamepad.buttons[7]["pressed"]
@@ -35,10 +37,18 @@ object io = {
     return gamepads.len > 0 ? gamepad.buttons[8]["pressed"] mouse_down
   ),
   x: def() -> (
-    return gamepads.len > 0 ? (gamepad.axes[2].x * window.width / 4) mouse_x
+    if gamepads.len > 0 (
+      self.x_vel += gamepad.axes[2].x * window.width / 4 - self.x_vel / 10
+      return self.x_vel
+    )
+    return mouse_x
   ),
   y: def() -> (
-    return gamepads.len > 0 ? (gamepad.axes[2].y * window.height / 4) mouse_y
+    if gamepads.len > 0 (
+      self.y_vel += gamepad.axes[2].y * window.width / 4 - self.y_vel / 10
+      return self.y_vel
+    )
+    return mouse_y
   ),
   move_x: def(speed) -> (
     return (gamepads.len > 0 ? gamepad.axes[1].x ("d".isKeyDown() - "a".isKeyDown())) * speed
@@ -48,6 +58,11 @@ object io = {
   ),
   haptic: def(option) -> (
     local configs = {
+      weakest: {
+        duration: 100,
+        weakMagnitude: 0.05,
+        strongMagnitude: 0.05,
+      },
       weaker: {
         duration: 100,
         weakMagnitude: 0.1,
@@ -546,9 +561,9 @@ if paused.not() (
       icon per == 1 ? arrow_charged arrow_main 8 * s
     )
     arrow_charging = true
-    void io.haptic("weaker")
   ) else (
     if per * 11 > 8 (
+      void io.haptic("weak")
       create_arrow player.x player.y direction per * 33
     )
     per = 0
