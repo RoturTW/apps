@@ -4,7 +4,7 @@
     "description": "A popular single-player puzzle game where the objective is to slide numbered tiles on a grid to combine them and create a tile with the number 2048. The game starts with two tiles, typically with a value of 2 or 4, and the player can move the tiles in four directions—up, down, left, and right. When two tiles with the same number collide, they merge into one, doubling the value. The game continues until the player achieves the 2048 tile or can no longer make any valid moves, resulting in a game over. It requires strategic planning, spatial awareness, and quick thinking to reach the highest score possible.",
     "author": "Mist",
     "version": "1.2",
-    "genre": "Puzzle",
+    "genre": "Puzzle, Strategy, Brain Teaser",
     "game_modes": [
       "Single-player"
     ],
@@ -14,14 +14,14 @@
     ],
     "icon": "image https://raw.githubusercontent.com/Mistium/Origin-OS/main/OSL%20Programs/apps/games/assets/2048.png 25\n",
     "size": {
-      "bytes": 4053,
-      "kilobytes": "3.96",
+      "bytes": 4077,
+      "kilobytes": "3.98",
       "megabytes": "0.00"
     },
     "script": {
       "scriptSize": 3145,
       "scriptLines": 194,
-      "lastModified": 1746027018563
+      "lastModified": 1746028773697
     }
   },
   "ceslum": {
@@ -29,7 +29,7 @@
     "description": "Ceslum is a real internet browser for Rotur! It can be used to browse sites like the OSL / CRL Docs, Handy while coding!",
     "author": "Constellinux",
     "version": "1.0",
-    "genre": "Browser",
+    "genre": "Browser, Internet, Developer",
     "game_modes": [
       "Single-PLayer"
     ],
@@ -40,14 +40,14 @@
     "screenshots": [],
     "icon": "c #fff\nw 10\nsquare 0 0 5 5\nc #111\nw 8\nsquare 0 0 5 5\ndot 0 0\nw 10\nc #eba134\ndot 0 0\nw 2.25\nc #383838\nsquare 0 0 5 5\nc #fff\nline 7.5 0 0 7.5\ncont -7.5 0\ncont 0 -7.5\ncont 7.5 0",
     "size": {
-      "bytes": 1831,
-      "kilobytes": "1.79",
+      "bytes": 1852,
+      "kilobytes": "1.81",
       "megabytes": "0.00"
     },
     "script": {
       "scriptSize": 1210,
       "scriptLines": 46,
-      "lastModified": 1746027018565
+      "lastModified": 1746028773698
     }
   },
   "claw": {
@@ -55,7 +55,7 @@
     "description": "Claw is a rotur-based and easy to use social platform! Post small messages on your account! No algorithms here, just browse the latest posts by people on rotur.",
     "author": "Mist",
     "version": "1.9",
-    "genre": "Social",
+    "genre": "Social, Communication, Networking",
     "game_modes": [
       "Single-PLayer"
     ],
@@ -74,14 +74,14 @@
     ],
     "icon": "w 10 c #353b64 square 0 0 5 5 w 8 c #111 square 0 0 5 5 dot 0 0 c #fff w 1.5 cutcircle 3 -6.4 9 -3.5 45 w 3 cutcircle 3 -6.4 9 -2 35 w 4 cutcircle 3 -6.4 9 0 15",
     "size": {
-      "bytes": 205656,
-      "kilobytes": "200.84",
+      "bytes": 205683,
+      "kilobytes": "200.86",
       "megabytes": "0.20"
     },
     "script": {
       "scriptSize": 11071,
       "scriptLines": 488,
-      "lastModified": 1746027018566
+      "lastModified": 1746028773700
     }
   },
   "crl": {
@@ -89,7 +89,7 @@
     "description": "A Sandboxing Program for Constellinux CRL Code. Uses the embed system; ROTUR is disabled within, and files are not accessible by either.",
     "author": "ThatBeaverDev",
     "version": "1.0",
-    "genre": "Developer",
+    "genre": "Developer, Programming, Utility",
     "game_modes": [
       "Single-PLayer"
     ],
@@ -100,14 +100,14 @@
     "screenshots": [],
     "icon": "c #d98b0d w 6 square 0 -2 5 6 square -2 3 3 5 dot 0 -3 w 3 c #966412 line 2 9.5 6.5 5 cont 2 5 cont 2 9.5  c #fff w 1.5 cutcircle 2 -2 3 0 180 cutcircle -2 -5 3 0 180",
     "size": {
-      "bytes": 1427,
-      "kilobytes": "1.39",
+      "bytes": 1449,
+      "kilobytes": "1.42",
       "megabytes": "0.00"
     },
     "script": {
       "scriptSize": 907,
       "scriptLines": 30,
-      "lastModified": 1746027018566
+      "lastModified": 1746028773700
     }
   },
   "dock themer": {
@@ -115,7 +115,7 @@
     "description": "A simple application that lets you edit and replace the icons of apps and files on your dock, to help you theme it exactly how you want!",
     "author": "Mist",
     "version": "1.0",
-    "genre": "Utility",
+    "genre": "Utility, Customization, Productivity",
     "game_modes": [
       "Single-player"
     ],
@@ -127,14 +127,14 @@
     ],
     "icon": "w 12 c #39f square 0 0 7 7 w 10 c #222 square 0 0 7 7 w 20 dot 0 0 w 3 c #666 cutcircle 0 0 8 -4 140 line 8 -1.5 0 -1.5 cont 0 -8 w 10 line 4 2 0 4 cont -4 2 cont -3.5 -3 w 3 c #222 dot 5.5 1 dot 2.5 4.5 dot -2.5 4.5 dot -5.5 1\n",
     "size": {
-      "bytes": 1487,
-      "kilobytes": "1.45",
+      "bytes": 1516,
+      "kilobytes": "1.48",
       "megabytes": "0.00"
     },
     "script": {
       "scriptSize": 916,
       "scriptLines": 43,
-      "lastModified": 1746027018567
+      "lastModified": 1746028773700
     }
   },
   "flappy bird": {
@@ -142,7 +142,7 @@
     "description": "Bird does jump :D",
     "author": "Mist, Ashime",
     "version": "1.2",
-    "genre": "Arcade",
+    "genre": "Arcade, Casual, Action",
     "game_modes": [
       "Single-player"
     ],
@@ -152,14 +152,14 @@
     ],
     "icon": "w 20 c #4EBAC4 dot 0 0 image https://raw.githubusercontent.com/Mistium/Origin-OS/main/OSL%20Programs/apps/games/assets/flapper.png 20\n",
     "size": {
-      "bytes": 239833,
-      "kilobytes": "234.21",
+      "bytes": 239849,
+      "kilobytes": "234.23",
       "megabytes": "0.23"
     },
     "script": {
       "scriptSize": 2768,
       "scriptLines": 137,
-      "lastModified": 1746027018567
+      "lastModified": 1746028773701
     }
   },
   "fluficord": {
@@ -167,7 +167,7 @@
     "description": "A funny silly communication app (inspired by discord as you could probably tell) :P",
     "author": "Flufi",
     "version": "0.4b",
-    "genre": "Social",
+    "genre": "Social, Communication, Messaging",
     "game_modes": [
       "Single-player"
     ],
@@ -182,14 +182,14 @@
     ],
     "icon": "w 23 c #7600ba dot 0 0 w 3 c #fff line -7 -3 -4 4 line -7 -3 -5.25 -4.5 line -5.25 -4.5 -3 -5 line -3 -5 0 -2 line 7 -3 4 4 line 7 -3 5.25 -4.5 line 5.25 -4.5 3 -5 line 3 -5 0 -2 cutcircle -2.3 1.9 2.75 1 45 cutcircle 2.3 1.9 2.75 -1 45 w 5 line -4 -1 -2 1 line 4 -1 2 1 w 2 c #7600ba dot -2.75 2.5 dot 2.75 2.5 cutcircle -2.1 0 -2.25 -.2 70 cutcircle 2.1 0 -2.25 .2 70\n",
     "size": {
-      "bytes": 3444424,
-      "kilobytes": "3363.70",
+      "bytes": 3444450,
+      "kilobytes": "3363.72",
       "megabytes": "3.28"
     },
     "script": {
       "scriptSize": 22084,
       "scriptLines": 743,
-      "lastModified": 1746027018584
+      "lastModified": 1746028773718
     }
   },
   "focuser": {
@@ -197,21 +197,21 @@
     "description": "Sets the tab's name to the current focused window.",
     "author": "Mist, Flufi",
     "version": "1.0",
-    "genre": "Utility",
+    "genre": "Utility, System, Customization",
     "permissions": [],
     "supports": [
       "originOS"
     ],
     "icon": "w 4 c #111 square 0 0 8 3 line -5 0 5 0 c #fff icn origin-logo 0.3 -5.5 0 c #fff w 1.5 line 0 0 5 0 line 5 3 8 0 cont 5 -3\n",
     "size": {
-      "bytes": 762,
-      "kilobytes": "0.74",
+      "bytes": 785,
+      "kilobytes": "0.77",
       "megabytes": "0.00"
     },
     "script": {
       "scriptSize": 426,
       "scriptLines": 18,
-      "lastModified": 1746027018584
+      "lastModified": 1746028773718
     }
   },
   "fortnite skibidi 2024": {
@@ -239,7 +239,7 @@
     "script": {
       "scriptSize": 4773,
       "scriptLines": 214,
-      "lastModified": 1746027018592
+      "lastModified": 1746028773725
     }
   },
   "goose": {
@@ -247,7 +247,7 @@
     "description": "A funny goose that walks around your desktop.",
     "author": "Mist",
     "version": "1.6",
-    "genre": "Desktop Pet",
+    "genre": "Desktop Pet, Casual, Simulation",
     "game_modes": [
       "Single-player"
     ],
@@ -257,14 +257,14 @@
     ],
     "icon": "c #ffa200 w 3 dot -2.5 -4 dot 1.5 -6 c #fff w 8 line 5 0 -5 0 w 7 cont -7 6 w 8 cont -7 6 w 3 cont -9 6 c #ffa200 cont -10 6 c #000 w 2 dot -9 8 dot -6 8\n",
     "size": {
-      "bytes": 2533,
-      "kilobytes": "2.47",
+      "bytes": 2553,
+      "kilobytes": "2.49",
       "megabytes": "0.00"
     },
     "script": {
       "scriptSize": 2141,
       "scriptLines": 94,
-      "lastModified": 1746027018595
+      "lastModified": 1746028773728
     }
   },
   "im rich": {
@@ -272,7 +272,7 @@
     "description": "Do you ever feel like you have too many Rotur Credits? No...? Oh. Well if you *were actually rich* this would be the perfect app for you to show off how rich you are by purchasing a completely useless item!",
     "author": "Mist",
     "version": "1.0",
-    "genre": "Puzzle",
+    "genre": "Entertainment, Novelty, Humor",
     "game_modes": [
       "Single-player"
     ],
@@ -282,14 +282,14 @@
     ],
     "icon": "c #DAF0F2 w 3 line 3 5 -3 5 cont -6 2 cont 0 -5 cont 6 2 cont 3 5 w 9.5 dot 0 0\n",
     "size": {
-      "bytes": 928,
-      "kilobytes": "0.91",
+      "bytes": 951,
+      "kilobytes": "0.93",
       "megabytes": "0.00"
     },
     "script": {
       "scriptSize": 452,
       "scriptLines": 27,
-      "lastModified": 1746027018595
+      "lastModified": 1746028773728
     }
   },
   "jump and run": {
@@ -297,7 +297,7 @@
     "description": "A simple endless runner where you jump from platform to platform and gain points",
     "author": "Mist, RattusDong",
     "version": "1.1",
-    "genre": "Arcade",
+    "genre": "Arcade, Platformer, Action",
     "game_modes": [
       "Single-player"
     ],
@@ -307,14 +307,14 @@
     ],
     "icon": "w 23 c #fff dot 0 0 c #000 w 2.5 square 0 2 3.5 5 w 9.5 dot 0 2 w 2.5 line 3.5 -3 3.5 -8 line -3.5 -3 -3.5 -8 c #fff line 3.5 3.5 0 3.5",
     "size": {
-      "bytes": 4401,
-      "kilobytes": "4.30",
+      "bytes": 4421,
+      "kilobytes": "4.32",
       "megabytes": "0.00"
     },
     "script": {
       "scriptSize": 3969,
       "scriptLines": 195,
-      "lastModified": 1746027018595
+      "lastModified": 1746028773729
     }
   },
   "lights out": {
@@ -322,7 +322,7 @@
     "description": "Lights Out is a challenging puzzle game where the player is presented with a grid of lights, some of which are on and some off. The goal is to turn off all the lights on the grid. Toggling a light also toggles the adjacent lights. The catch is that toggling a light affects its neighbors, making it a strategic challenge to find the correct sequence of moves to turn off all the lights. The game tests logic, problem-solving skills, and spatial reasoning.",
     "author": "Mist",
     "version": "1.1",
-    "genre": "Puzzle",
+    "genre": "Puzzle, Strategy, Brain Teaser",
     "game_modes": [
       "Single-player"
     ],
@@ -332,14 +332,14 @@
     ],
     "icon": "w 5 c #000 square 0 0 12 12 w 20 square 0 0 4 4 c #64b342 w 4 square 0 9 2 2 square 9 9 2 2 square 9 0 2 2 square -9 0 2 2 c #b34242 square 0 0 2 2 square 9 -9 2 2 square 0 -9 2 2 square -9 -9 2 2 square -9 9 2 2\n",
     "size": {
-      "bytes": 1973,
-      "kilobytes": "1.93",
+      "bytes": 1997,
+      "kilobytes": "1.95",
       "megabytes": "0.00"
     },
     "script": {
       "scriptSize": 1112,
       "scriptLines": 71,
-      "lastModified": 1746027018595
+      "lastModified": 1746028773729
     }
   },
   "mallet": {
@@ -347,7 +347,7 @@
     "description": "Full map editor for creating games with, including brushes (boxes) and entities (objects) with a custom .map format (which can just be read as json) plus a fully modular addon system!",
     "author": "Flufi",
     "version": "1.9.4",
-    "genre": "Utility",
+    "genre": "Utility, Game Development, Creation",
     "permissions": [
       "file viewer"
     ],
@@ -356,14 +356,14 @@
     ],
     "icon": "w 20 c #d23a3a dot 0 0 w 2 c #2b2b2b line 6 -6 0 0 line 5 -7 7 -5 line 5 -7 2 -4 cont 2.5 -3.5 cont -1.5 0.5 line 7 -5 4 -2 cont 3.5 -2.5 cont -0.5 1.5 w 2 line -4.5 -1.5 1.5 4.5 line -4.5 -1.5 -7.5 1.5 line 1.5 4.5 -1.5 7.5 line -7.5 1.5 -1.5 7.5 w 3 line -5 1 -1 5\n",
     "size": {
-      "bytes": 30602,
-      "kilobytes": "29.88",
+      "bytes": 30630,
+      "kilobytes": "29.91",
       "megabytes": "0.03"
     },
     "script": {
       "scriptSize": 29981,
       "scriptLines": 1114,
-      "lastModified": 1746027018595
+      "lastModified": 1746028773729
     }
   },
   "oft": {
@@ -371,7 +371,7 @@
     "description": "Control your refresh rate in OriginOS at last!",
     "author": "0Stormy",
     "version": "1.0",
-    "genre": "Utility",
+    "genre": "Utility, System, Performance",
     "permissions": [
       "terminal"
     ],
@@ -383,14 +383,14 @@
     ],
     "icon": "c #111 w 10 square 0 0 5 5 c #0F0 w 8 square 0 0 5 5 dot 0 0 w 3 c #000 line -4 -4 -4 4 line -4 4 4 4 line -4 0 4 0\n",
     "size": {
-      "bytes": 1757202,
-      "kilobytes": "1716.02",
+      "bytes": 1757223,
+      "kilobytes": "1716.04",
       "megabytes": "1.68"
     },
     "script": {
       "scriptSize": 865,
       "scriptLines": 41,
-      "lastModified": 1746027018602
+      "lastModified": 1746028773735
     }
   },
   "origincord": {
@@ -398,7 +398,7 @@
     "description": "An osl based discord client",
     "author": "Mist",
     "version": "5.7",
-    "genre": "Social",
+    "genre": "Social, Communication, Messaging",
     "game_modes": [
       "Single-player"
     ],
@@ -410,14 +410,14 @@
     ],
     "icon": "c #5865f2 w 20 dot 0 0 c #fff w 3 line 3 2 5 -2 cont 3 -3 cont 2 -2 cont -2 -2 cont -3 -3 cont -5 -2 cont -3 2.5 cont -2 2.5 cont -1 1.7 cont 1 1.7 cont 2 2.5 cont 3 2.5 cont 5 -2 w 4.5 line -2 0 2 0 c #5865f2 w 2.5 dot 2 -1 dot -2 -1\n",
     "size": {
-      "bytes": 54659,
-      "kilobytes": "53.38",
+      "bytes": 54685,
+      "kilobytes": "53.40",
       "megabytes": "0.05"
     },
     "script": {
       "scriptSize": 37606,
       "scriptLines": 1471,
-      "lastModified": 1746027018602
+      "lastModified": 1746028773736
     }
   },
   "originkill": {
@@ -425,7 +425,7 @@
     "description": "(almost perfect) recreation of windowkill but on origin",
     "author": "Flufi",
     "version": "1.2a",
-    "genre": "Game",
+    "genre": "Action, Arcade, Shooter",
     "game_modes": [
       "singleplayer"
     ],
@@ -440,14 +440,14 @@
     ],
     "icon": "w 10 c #fff square 0 0 5 5 c #111 w 8 square 0 0 5 5 dot 0 0 c #fff w 1.75 cutcircle 0 0 5 0 180\n",
     "size": {
-      "bytes": 4099828,
-      "kilobytes": "4003.74",
+      "bytes": 4099847,
+      "kilobytes": "4003.76",
       "megabytes": "3.91"
     },
     "script": {
       "scriptSize": 40837,
       "scriptLines": 1438,
-      "lastModified": 1746027018620
+      "lastModified": 1746028773754
     }
   },
   "ping pong": {
@@ -455,7 +455,7 @@
     "description": "Kill your time",
     "author": "rhel202",
     "version": "1.0",
-    "genre": "Arcade",
+    "genre": "Arcade, Sports, Multiplayer",
     "game_modes": [
       "Local-multiplayer"
     ],
@@ -465,14 +465,14 @@
     ],
     "icon": "w 4 c #000 square 0 0 10 10 w 24 dot 0 0 c #fff w 4 line 8 8 8 -8 line -8 8 -8 -8 dot 0 0\n",
     "size": {
-      "bytes": 2038,
-      "kilobytes": "1.99",
+      "bytes": 2059,
+      "kilobytes": "2.01",
       "megabytes": "0.00"
     },
     "script": {
       "scriptSize": 1735,
       "scriptLines": 100,
-      "lastModified": 1746027018620
+      "lastModified": 1746028773754
     }
   },
   "slider": {
@@ -480,7 +480,7 @@
     "description": "A simple game where you slide the tiles to make them all in order, while trying to do so in the shortest time possible",
     "author": "Mist",
     "version": "1.0",
-    "genre": "Puzzle",
+    "genre": "Puzzle, Brain Teaser, Logic",
     "game_modes": [
       "Single-player"
     ],
@@ -490,14 +490,14 @@
     ],
     "icon": "image https://raw.githubusercontent.com/Mistium/apps/main/all/slider/assets/app_icon.png 20",
     "size": {
-      "bytes": 4441,
-      "kilobytes": "4.34",
+      "bytes": 4462,
+      "kilobytes": "4.36",
       "megabytes": "0.00"
     },
     "script": {
       "scriptSize": 2201,
       "scriptLines": 86,
-      "lastModified": 1746027018620
+      "lastModified": 1746028773754
     }
   },
   "snake": {
@@ -505,7 +505,7 @@
     "description": "Snake is a classic single-player arcade game where the player controls a snake that moves around a bounded area, collecting food items represented by dots. As the snake consumes food, it grows longer. The objective is to navigate the snake around the playfield without colliding with itself or the boundaries. The game ends if the snake collides with itself or the boundaries. It requires reflexes, spatial awareness, and strategic planning to achieve the highest score possible.\nRecently fixed for v5.5.7 due to an issue with a deprecated method in osl",
     "author": "Mist",
     "version": "1.2",
-    "genre": "Arcade",
+    "genre": "Arcade, Casual, Strategy",
     "game_modes": [
       "Single-player"
     ],
@@ -515,22 +515,22 @@
     ],
     "icon": "w 20 c #000 dot 0 0 w 3 c #416f3b dot -4.5 -1.5 dot -1.5 -4.5 dot 1.5 -1.5 c #65ad5b dot -4.5 -4.5 dot 1.5 -4.5 c #cd0000 dot 4.5 -1.5 dot 1.5 4.5\n",
     "size": {
-      "bytes": 3114,
-      "kilobytes": "3.04",
+      "bytes": 3132,
+      "kilobytes": "3.06",
       "megabytes": "0.00"
     },
     "script": {
       "scriptSize": 2225,
       "scriptLines": 124,
-      "lastModified": 1746027018620
+      "lastModified": 1746028773754
     }
   },
   "super slime bros": {
     "title": "super slime bros",
-    "description": "Super Slime Bros is a remake of the core systems inside the game \"super smash bros\" written entirely in osl (origin scripting language)\n\nSSB is a video game tailored towards more competitive players who want to fight their friends in a complex games environment with many different play styles, there is no specific story that actually affects the gameplay, instead, the most popular version of the game is where you fight against other players using one of many different characters.\n\nIn SSB you can select characters and each character has a set of unique moves that it can use in order to deal damage to other players. Damage in this game doesn’t work in the traditional sense, instead of dying when you hit a certain threshold, you get knocked further, the more damage you’ve taken, when you are hit by attacks from players.",
+    "description": "Super Slime Bros is a remake of the core systems inside the game \"super smash bros\" written entirely in osl (origin scripting language)\n\nSSB is a video game tailored towards more competitive players who want to fight their friends in a complex games environment with many different play styles, there is no specific story that actually affects the gameplay, instead, the most popular version of the game is where you fight against other players using one of many different characters.\n\nIn SSB you can select characters and each character has a set of unique moves that it can use in order to deal damage to other players. Damage in this game doesn't work in the traditional sense, instead of dying when you hit a certain threshold, you get knocked further, the more damage you've taken, when you are hit by attacks from players.",
     "author": "Mist",
     "version": "2.8",
-    "genre": "Game",
+    "genre": "Fighting, Action, Multiplayer",
     "game_modes": [
       "local-multi-player"
     ],
@@ -545,14 +545,14 @@
     ],
     "icon": "image https://raw.githubusercontent.com/Mistium/Super-Slime-Bros/main/assets/icon.png 20\n",
     "size": {
-      "bytes": 898763,
-      "kilobytes": "877.70",
+      "bytes": 898784,
+      "kilobytes": "877.72",
       "megabytes": "0.86"
     },
     "script": {
       "scriptSize": 22766,
       "scriptLines": 895,
-      "lastModified": 1746027018624
+      "lastModified": 1746028773758
     }
   },
   "timer": {
@@ -560,21 +560,21 @@
     "description": "Timer is a small widget for origin that shows an analogue clock",
     "author": "Mist",
     "version": "1.1",
-    "genre": "Utility",
+    "genre": "Utility, Productivity, Time Management",
     "permissions": [],
     "supports": [
       "originOS"
     ],
     "icon": "w 5 c #111 square 0 0 10 10 w 23 dot 0 0 c #fff icn clock 0.6\n",
     "size": {
-      "bytes": 742,
-      "kilobytes": "0.72",
+      "bytes": 773,
+      "kilobytes": "0.75",
       "megabytes": "0.00"
     },
     "script": {
       "scriptSize": 463,
       "scriptLines": 28,
-      "lastModified": 1746027018624
+      "lastModified": 1746028773758
     }
   },
   "todo": {
@@ -582,7 +582,7 @@
     "description": "Todo is a simple utility application that lets you save things that you need to do to a small list and remove them when you have completed them!",
     "author": "Mist",
     "version": "1.1",
-    "genre": "Utility",
+    "genre": "Utility, Productivity, Organization",
     "game_modes": [
       "Single-player"
     ],
@@ -594,14 +594,14 @@
     ],
     "icon": "w 5 c #242526 square 0 0 10 10 w 24 dot 0 0 c #4B77BE w 4 line -6 -2 -2 -6 cont 7 6\n",
     "size": {
-      "bytes": 1593,
-      "kilobytes": "1.56",
+      "bytes": 1621,
+      "kilobytes": "1.58",
       "megabytes": "0.00"
     },
     "script": {
       "scriptSize": 1166,
       "scriptLines": 54,
-      "lastModified": 1746027018625
+      "lastModified": 1746028773758
     }
   },
   "wosle": {
@@ -609,7 +609,7 @@
     "description": "Wosle is a simple remake of \"Wordle\" with a freeplay mode, as well as daily puzzles.",
     "author": "nameless",
     "version": "1.0",
-    "genre": "Puzzle",
+    "genre": "Puzzle, Word Game, Brain Teaser",
     "game_modes": [
       "Single-player"
     ],
@@ -624,14 +624,14 @@
     ],
     "icon": "c #8b6\nw 10\nsquare 0 0 5 5\nc #111\nw 8\nsquare 0 0 5 5\ndot 0 0\nw 1.5\nc #8b6\nline -5 5 -2.5 -5\ncont 0 0\ncont 2.5 -5\ncont 5 5",
     "size": {
-      "bytes": 3133311,
-      "kilobytes": "3059.87",
+      "bytes": 3133336,
+      "kilobytes": "3059.90",
       "megabytes": "2.99"
     },
     "script": {
       "scriptSize": 24916,
       "scriptLines": 254,
-      "lastModified": 1746027018629
+      "lastModified": 1746028773763
     }
   },
   "youtube": {
@@ -639,7 +639,7 @@
     "description": "A simple youtube client that lets you search for and watch youtube videos",
     "author": "Shima",
     "version": "1.2",
-    "genre": "Entertainment",
+    "genre": "Entertainment, Media, Streaming",
     "game_modes": [
       "Single-player"
     ],
@@ -649,14 +649,14 @@
     ],
     "icon": "c #F00 w 10 square 0 0 5 5 c #622 w 8 square 0 0 5 5 dot 0 0 w 3 c #FFF line 3 0 -2.5 3 cont -2.5 -3 cont 3 0 dot 0 0\n",
     "size": {
-      "bytes": 3812,
-      "kilobytes": "3.72",
+      "bytes": 3830,
+      "kilobytes": "3.74",
       "megabytes": "0.00"
     },
     "script": {
       "scriptSize": 3423,
       "scriptLines": 123,
-      "lastModified": 1746027018629
+      "lastModified": 1746028773763
     }
   }
 }
