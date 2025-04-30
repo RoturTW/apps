@@ -3,7 +3,7 @@
   "description": "Sets the tab's name to the current focused window.",
   "author": "Mist, Flufi",
   "version": "1.0",
-  "genre": "Utility",
+  "genre": "Utility, System, Customization",
   "permissions": [],
   "supports":["originOS"]
 }

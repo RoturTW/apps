@@ -3,7 +3,7 @@
   "description": "Wosle is a simple remake of \"Wordle\" with a freeplay mode, as well as daily puzzles.",
   "author": "nameless",
   "version": "1.0",
-  "genre": "Puzzle",
+  "genre": "Puzzle, Word Game, Brain Teaser",
   "game_modes": ["Single-player"],
   "permissions": [],
   "supports": ["originOS"],

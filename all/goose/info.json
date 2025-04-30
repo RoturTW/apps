@@ -3,7 +3,7 @@
   "description": "A funny goose that walks around your desktop.",
   "author": "Mist",
   "version": "1.6",
-  "genre": "Desktop Pet",
+  "genre": "Desktop Pet, Casual, Simulation",
   "game_modes": ["Single-player"],
   "permissions": [],
   "supports":["originOS"]

@@ -3,7 +3,7 @@
   "description": "A simple youtube client that lets you search for and watch youtube videos",
   "author": "Shima",
   "version": "1.2",
-  "genre": "Entertainment",
+  "genre": "Entertainment, Media, Streaming",
   "game_modes": ["Single-player"],
   "permissions": [],
   "supports":["originOS"]

@@ -3,7 +3,7 @@
   "description": "An osl based discord client",
   "author": "Mist",
   "version": "5.7",
-  "genre": "Social",
+  "genre": "Social, Communication, Messaging",
   "game_modes": ["Single-player"],
   "permissions": ["notifications"],
   "supports":["originOS"]

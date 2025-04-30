@@ -3,7 +3,7 @@
   "description": "Bird does jump :D",
   "author": "Mist, Ashime",
   "version": "1.2",
-  "genre": "Arcade",
+  "genre": "Arcade, Casual, Action",
   "game_modes": ["Single-player"],
   "permissions": [],
   "supports":["originOS"]

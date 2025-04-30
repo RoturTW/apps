@@ -3,7 +3,7 @@
   "description": "A Sandboxing Program for Constellinux CRL Code. Uses the embed system; ROTUR is disabled within, and files are not accessible by either.",
   "author": "ThatBeaverDev",
   "version": "1.0",
-  "genre": "Developer",
+  "genre": "Developer, Programming, Utility",
   "game_modes": ["Single-PLayer"],
   "permissions": [],
   "supports":["originOS"],
