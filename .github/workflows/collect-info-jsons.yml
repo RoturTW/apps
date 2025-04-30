@@ -85,6 +85,10 @@ jobs:
                 
                 // Get script lines count
                 info.scriptLines = content.split('\n').length;
+                
+                // Add last modified timestamp in Date.now() format
+                const stats = fs.statSync(scriptPath);
+                info.lastModified = stats.mtime.getTime();
               }
             } catch (err) {
               console.error(`Error extracting info from ${scriptPath}:`, err);
