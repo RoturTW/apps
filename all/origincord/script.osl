@@ -117,23 +117,23 @@ def "heartbeat" (
   )
 )
 
-def "send_file" "this.content, this.channel, this.file_name, this.file_content" (
-  this.obj = {
-    "channelid": this.channel,
-    "content": this.content,
-    "filename": this.file_name,
+def "send_file" "content, channel, file_name, file_content" (
+  local obj = {
+    "channelid": channel,
+    "content": content,
+    "filename": file_name,
     "token": token
   }
-  this.obj.dataURI = this.file_content.startsWith("data:") ? this.file_content this.file_content.makeUrl("text/plain")
+  local obj.dataURI = file_content.startsWith("data:") ? file_content file_content.makeUrl("text/plain")
   
-  this.out = ("https://apps.mistium.com/upload-discord-file?user_account=" ++ discord_isUser).http("POST",this.obj,{"Content-Type":"application/json"})
+  void ("https://apps.mistium.com/upload-discord-file?user_account=" ++ discord_isUser).http("POST", obj, {"Content-Type":"application/json"})
 )
 
 import as "window_tools"
 import as "glass" from "packages"
 
 round_pfp = "w 2 line 11 11 11 -11 cont -11 -11 cont -11 11 cont 11 11 cutcircle 9 9 2 4. 45 cutcircle 9 -9 2 13.5 40 cutcircle -9 9 2 -4.5 45 cutcircle -9 -9 2 -13.5 45"
-circle_pfp = "@dynamic s = 20 d = 17 -d = -17 w 3 cutcircle 0 0 17 0 180 w 3.5 cutcircle 0 0 @s 4.5 10 cutcircle 0 0 @s 13.5 10 cutcircle 0 0 @s 22.5 10 cutcircle 0 0 @s 31.5 10 line @d @d @d @-d cont @-d @-d cont @-d @d cont @d @d"
+circle_pfp = "w 3 cutcircle 0 0 17 0 180 w 3.5 cutcircle 0 0 20 4.5 10 cutcircle 0 0 20 13.5 10 cutcircle 0 0 20 22.5 10 cutcircle 0 0 20 31.5 10 line 17 17 17 -17 cont -17 -17 cont -17 17 cont 17 17"
 
 window_tools:seticon origincord_logo
 permission "request" "notifications"
@@ -240,7 +240,6 @@ def "handle_message" "msg, ping" (
     msg_cha @= messages[channel]
     
     content = msg.content
-    attachments @= msg.attachments
     local authid = msg.author.id ++ "/" ++ msg.author.username
     local isreply = type == 19
     
@@ -259,7 +258,8 @@ def "handle_message" "msg, ping" (
 
       authid = ""
     )
-    if previous_author[channel] != authid or isreply (
+    local date_diff = msg_cha.last().timestamp.timestamp("to-date").trim(1,-4) != msg_data.timestamp.timestamp("to-date").trim(1,-4)
+    if previous_author[channel] != authid or isreply or date_diff (
       msg_cha.append("")
       previous_author[channel] = authid
       message = []
@@ -268,50 +268,38 @@ def "handle_message" "msg, ping" (
       ) else (
         message.append(name)
       )
-      message.append("")
-      message.append("")
-      message.append(false)
-      message.append(member.user.colour ?? txtc)
-      message.append(msg)
+      void message
+        .append("")
+        .append("")
+        .append(false)
+        .append(member.user.colour ?? txtc)
+        .append(msg)
       
       msg_cha.append(message)
     )
     if content.len > 0 (
       emoji_match = content.toStr().strip().match("/^<a?:[^:]+:(\d+)>$/")
       if emoji_match.len > 0 (
-        att = {
+        msg_cha = addAttachment({
           url: "https://media.discordapp.net/emojis/" ++ emoji_match[2] ++ ".png?size=128&quality=lossless",
           filetype: "image"
-        }
-        msg_cha = addAttachment(att,1)
+        },1)
       ) else (
         local cur_content = content.match("/<[^ >]+>|[^<>\[\]()]+|./gm")
         if cur_content.len == 1 and cur_content[1].startsWith("<").not() (
           local cur_content = cur_content[1]
         )
           
-        msg_cha.append([
-          "",
-          cur_content,
-          "",
-          ping,
-          "",
-          msg
-        ])
+        msg_cha.append(["",cur_content,"",ping,"",msg])
         messages[channel] @= msg_cha
       )
     )
-    each att attachments (
-      att.filetype = att.content_type.split("/").first()
-      msg_cha ++= addAttachment(att,5)
-    )
     local stickers = msg.sticker_items
     if stickers.len > 0 (
-      att = {
+      msg_cha ++= addAttachment({
         "url": makeSticker(stickers[1].id),
         "filetype": "image"
-      }
-      msg_cha ++= addAttachment(att,3)
+      },3)
     )
     all_messages_by_id[msg.id] @= msg
   )
@@ -480,7 +468,7 @@ def "draw_channels" (
       if chnl.istype("object").not() (
         chnl = {}
       )
-      y -= this.ih
+      y -= ih
       loc 999 2 0 y
    
       id = chnl.id
@@ -504,9 +492,7 @@ def "draw_channels" (
             focusChannel id
           )
           if typing[id].len > 0 (
-            local pos @= def(x) -> (
-              return (timer + x * 300).sin() * 10
-            )
+            local pos @= x -> ((timer + x * 300).sin() * 10)
             loc -2 2 -20 y + pos(0)
             icon "w 4 dot 0 0" 1 : c#txtc
             loc -2 2 -30 y + pos(5)
@@ -619,6 +605,15 @@ def "draw_chat" "cur_msgs" (
         author.colour = txtc
       )
       text author.name 10 : c#author.colour
+      local time = msg_data.timestamp
+      change_x 20
+      c global_accent
+      if date == time.timestamp("to-date") (
+        text time.timestamp("to-time") 9
+      ) else (
+        text time.timestamp("to-full") 9
+      )
+      
       rightclick user_menu author.id
     ) else (
       change_x 20
@@ -654,6 +649,48 @@ def "draw_chat" "cur_msgs" (
         text txt.wrapText(frame.width / 10 - 7) 10
       )
       
+      local embeds @= msg_data.embeds
+      if embeds.len > 0 (
+        set_x frame.left + 60 : chy#-30
+        for embed_i embeds.len (
+          local cur @= embeds[embed_i]
+          if cur.provider.name == "Tenor" (
+            local url = cur.video.proxy_url
+            local aspect_ratio = url.videoinfo("width") / url.videoinfo("height")
+            local h = cur.video.height * 2
+            local w = h * aspect_ratio
+            if w > frame.width - 90 (
+              w = frame.width - 90
+              h = w / aspect_ratio
+            )
+            change w / 2 h / -2
+            if url.videoinfo("loaded") and url.videoinfo("playing").not() (
+              video url "play"
+            )
+            video url w h
+            change w / -2 h / -2
+          ) else (
+            switch cur["type"] (
+              case "image"
+                local url = cur.thumbnail.proxy_url
+                if ["png","jpg","jpeg"].contains(url.split(".").last()) (
+                  local aspect_ratio = url.imageinfo("width") / url.imageinfo("height")
+                  local h = cur.thumbnail.height * 2
+                  local w = h * aspect_ratio
+                  if w > frame.width - 90 (
+                    w = frame.width - 90
+                    h = w / aspect_ratio
+                  )
+                  change w / 2 h / -2
+                  image url h * aspect_ratio h
+                  change w / -2 h / -2
+                )
+                break
+            )
+          )
+        )
+      )
+      
       local reactions @= msg_data.reactions
       if reactions.len > 0 (
         set_x frame.left + 60 : chy#-30
@@ -685,22 +722,25 @@ def "draw_chat" "cur_msgs" (
       
       y += y_position - oy
       
-      if msg[5].isType("object") (
-        att @= msg[5]
-        file_type = att.filetype
-        local h = ih * att.content_height * 2 + 10
+      local attachments = msg_data.attachments
+      if attachments.len > 0 (
+        att @= attachments[1]
+        file_type = att.content_type.split("/")[1]
+        local h = att.content_height * 2
         url = att.url
         switch file_type (
           case "image"
             local aspect_ratio = url.imageinfo("width") / url.imageinfo("height")
-            loc 2 2 60 + (aspect_ratio * h / 2) y
-            image url h * aspect_ratio h
+            local w = h * aspect_ratio
+            change w / 2 h / -2
+            image url w h
+            change w / -2 h / -2
             break
           case "video"
             local aspect_ratio = url.videoinfo("width") / url.videoinfo("height")
             local h -= 20
             local w = h * aspect_ratio
-            loc 2 2 60 + (w / 2) y + 10
+            change w / 2 h / -2
             video url w h
             change_y h / -2 - 20
             square w - 10 20 10 : c#prim
@@ -755,7 +795,7 @@ def "draw_members" "cur_mem" (
     local presence @= mem.presence
 
     loc 999 2 0 y
-    square w 20 10 : c#window_colour
+    square w 35 0 : c#window_colour
     rightclick user_menu mem.id
     
     mem.user.nick = mem.nick
@@ -766,7 +806,7 @@ def "draw_members" "cur_mem" (
     icon circle_pfp 0.9 : c#window_colour
     change 10 -10
     c status_colours[presence.status]
-    square 5 5 5
+    square 0 0 10
     change -10 10
     c mem.colour ?? txtc
     if presence.activities > 0 (
@@ -795,31 +835,31 @@ def "draw_members" "cur_mem" (
 )
 
 def "draw_stickers" "cur_stickers" (
-  this.ih = 100
+  local ih = 100
   sidebar_ih = 100
   cur_stickers @= cur_stickers[current_guild[4]]
   
   len = cur_stickers.len
   sidebar_len = len
-  count = scroll_ystickers // this.ih
-  y = scroll_ystickers % this.ih - (this.ih / 2)
+  count = floor(scroll_ystickers / ih)
+  y = scroll_ystickers % ih - (ih / 2)
   
   w = frame.width
-  loop (window_height // this.ih).clamp(0,len) (
+  loop floor(window_height / ih).clamp(0,len) (
     count ++
-    this.stk @= cur_stickers[count]
+    local stk @= cur_stickers[count]
     loc 999 2 0 y
     square w 100 10 : c#window_colour
     if mouse_touching (
       square w 100 10 : c#prim
       if onclick (
-        send_sticker this.stk.id current_channel
+        send_sticker stk.id current_channel
       )
     )
     loc 2 2 60 y
-    image makeSticker(this.stk.id) 100 100
-    text this.stk.name 10 : c#txtc chx#55
-    y -= this.ih
+    image makeSticker(stk.id) 100 100
+    text stk.name 10 : c#txtc chx#55
+    y -= ih
   )
 )
 
@@ -829,7 +869,7 @@ def "draw_sidebar" (
     return
   )
 
-  w = window
+  w @= window
   local user_profile = current_guild == "@me" and current_member_ids.len == 2
   
   frame w.right - (shown.sidebar ? 300 30) w.top - 40 w.right w.top - 80 (
@@ -1002,6 +1042,8 @@ if loaded_cord.not() (
   exit
 )
 
+date = timestamp.timestamp("to-date")
+
 heartbeat
 if discord.wsOpen().not() (
   loaded_cord = false
@@ -1108,6 +1150,9 @@ if discord.wsHasnew() (
       break
     case "MESSAGE_DELETE"
       deleted_messages.append(dat.id)
+      break
+    case "MESSAGE_UPDATE"
+      all_messages_by_id[dat.message_id] @= dat
       break
     case "MESSAGE_ACK"
       new_messages[dat.channel_id] = false
@@ -1421,19 +1466,25 @@ if typeof(inputs.message) != "array" (
 
 local h = inputs.message.len + 1 * 23
 
+import "win-buttons"
+
 goto x window.bottom + 34 + (h / 2)
 
 attachment_offset += h
+square w h 10 : c#prim
 
-textbox w h "message" 10 {
+change_x -20
+
+textbox w - 40 h "message" 10 {
   line_numbers: false,
   bg_colour: prim
 }
 
-import "win-buttons"
+change_x w / 2
+icon "send" 0.8 : c#txtc
 
 send = inputs.message.join("\n")
-if "enter".isKeyDown() and "shift".isKeyDown().not() and send != null (
+if "enter".isKeyDown() or onclick and "shift".isKeyDown().not() and send != null (
   spl = send.split(" ")
   if send.startsWith(".eval") (
     local func = def() -> ()
@@ -1446,7 +1497,7 @@ if "enter".isKeyDown() and "shift".isKeyDown().not() and send != null (
     exit
   )
   if send.startsWith(".version") (
-    async_msg "originCord v5.7" current_channel
+    async_msg "originCord v5.6" current_channel
     inputs.message = ""
     exit
   )
@@ -1469,3 +1520,4 @@ if "enter".isKeyDown() and "shift".isKeyDown().not() and send != null (
     current_attachment = null
   )
   inputs.message = ""
+)
