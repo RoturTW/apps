@@ -2,7 +2,7 @@
   "title": "Jump and Run",
   "description": "A simple endless runner where you jump from platform to platform and gain points",
   "author": "Mist, RattusDong",
-  "version": "1.1",
+  "version": "1.2",
   "genre": "Arcade, Platformer, Action",
   "game_modes": ["Single-player"],
   "permissions": [],
