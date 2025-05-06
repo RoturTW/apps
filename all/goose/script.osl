@@ -30,7 +30,7 @@ square 50 50 10 1 1
 if clicked (
   held = true
 ) else (
-  if held and mouse_down.not (
+  if held and mouse_down.not() (
     held = false
   )
 )
@@ -40,8 +40,8 @@ if held (
 )
 target_dir += random(-20,20) * speed / 250
 dir += target_dir - dir / 10
-duck_x += dir.sin * speed * delta_time
-duck_y += dir.cos * speed * delta_time
+duck_x += dir.sin() * speed * delta_time * 10
+duck_y += dir.cos() * speed * delta_time * 10
 if duck_x - 40 > (screensize_x / 2) (
   duck_x = (screensize_x / -2) - 40
 )
@@ -55,14 +55,14 @@ if duck_y + 40 < (screensize_y / -2) (
   duck_y = (screensize_y / 2) + 40
 )
 
-ds = dir.sin
-dc = dir.cos
+ds = dir.sin()
+dc = dir.cos()
 ds7 = ds * 7
 fd = dir + 90
-duck_feet[4] = fd.sin * -2.5
-duck_feet[5] = fd.cos * -2.5 - 4
-duck_feet[7] = fd.sin * 2.5
-duck_feet[8] = fd.cos * 2.5 - 4
+duck_feet[4] = fd.sin() * -2.5
+duck_feet[5] = fd.cos() * -2.5 - 4
+duck_feet[7] = fd.sin() * 2.5
+duck_feet[8] = fd.cos() * 2.5 - 4
 duck_body[4] = ds * -5
 duck_body[5] = dc * -5
 duck_body[6] = ds * 5
@@ -75,10 +75,10 @@ duck_body[21] = ds * 7.5
 duck_body[22] = dc * 7.5 + 6
 duck_body[26] = ds * 10
 duck_body[27] = dc * 10 + 6
-duck_body[33] = ds7 + ((dir + 90).sin * 2)
-duck_body[34] = dc * 6 + 6 + ((dir + 90).cos * 2)
-duck_body[36] = ds7 + ((dir + 90).sin * -2)
-duck_body[37] = dc * 6 + 6 + ((dir + 90).cos * -2)
+duck_body[33] = ds7 + ((dir + 90).sin() * 2)
+duck_body[34] = dc * 6 + 6 + ((dir + 90).cos() * 2)
+duck_body[36] = ds7 + ((dir + 90).sin() * -2)
+duck_body[37] = dc * 6 + 6 + ((dir + 90).cos() * -2)
 direction 90
 goto 0 0
 c #ffa200
