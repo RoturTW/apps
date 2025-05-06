@@ -54,7 +54,7 @@ def setjump() (
   )
 )
 def setleft() (
-  if gamepad.axes[1].x < -0.2 or gamepad.buttons[15]["pressed"] or "a".isKeyDown() (
+  if gamepad.axes[1].x ?? 0 < -0.2 or gamepad.buttons[15]["pressed"] or "a".isKeyDown() (
     left = true
   ) else (
     left = false
@@ -62,7 +62,7 @@ def setleft() (
 )
 
 def setright() (
-  if gamepad.axes[1].x > 0.2 or gamepad.buttons[16]["pressed"] or "d".isKeyDown() (
+  if gamepad.axes[1].x ?? 0 > 0.2 or gamepad.buttons[16]["pressed"] or "d".isKeyDown() (
     right = true
   ) else (
     right = false
@@ -107,7 +107,6 @@ array gamepads = getGamepads()
 if gamepads.len > 0 (
   gamepad @= gamepads[1]
 )
-log gamepad.axes[1].x
 setjump()
 setleft()
 setright()
