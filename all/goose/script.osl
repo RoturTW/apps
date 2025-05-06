@@ -7,7 +7,7 @@ window "responsive" true
 window "resizable" false
 duck_x = 0
 duck_y = 0
-window "dimensions" 100 100
+window "dimensions" 150 150
 speed = 200
 rand = 1
 held = false
@@ -90,4 +90,6 @@ if clicked (
   last = timer
   rand = 10
 )
-icon duck_head 3
+if floor(speed) == 0 (
+  icon "w 3 c #176bc6 line 3 10 10 10 cont 3 0 cont 10 0 w 2 line -4 3 0 3 cont -4 -5 cont 0 -5 w 1.5 line -10 -5 -7 -5 cont -10 -10 cont -7 -10" 2
+)
