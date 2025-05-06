@@ -21,7 +21,7 @@
     "script": {
       "scriptSize": 3145,
       "scriptLines": 194,
-      "lastModified": 1746500955121
+      "lastModified": 1746501007068
     }
   },
   "ceslum": {
@@ -47,7 +47,7 @@
     "script": {
       "scriptSize": 1210,
       "scriptLines": 46,
-      "lastModified": 1746500955123
+      "lastModified": 1746501007070
     }
   },
   "claw": {
@@ -81,7 +81,7 @@
     "script": {
       "scriptSize": 11186,
       "scriptLines": 491,
-      "lastModified": 1746500955124
+      "lastModified": 1746501007071
     }
   },
   "crl": {
@@ -107,7 +107,7 @@
     "script": {
       "scriptSize": 907,
       "scriptLines": 30,
-      "lastModified": 1746500955124
+      "lastModified": 1746501007071
     }
   },
   "dock themer": {
@@ -134,7 +134,7 @@
     "script": {
       "scriptSize": 916,
       "scriptLines": 43,
-      "lastModified": 1746500955124
+      "lastModified": 1746501007072
     }
   },
   "flappy bird": {
@@ -159,7 +159,7 @@
     "script": {
       "scriptSize": 2768,
       "scriptLines": 137,
-      "lastModified": 1746500955125
+      "lastModified": 1746501007072
     }
   },
   "fluficord": {
@@ -189,7 +189,7 @@
     "script": {
       "scriptSize": 22084,
       "scriptLines": 743,
-      "lastModified": 1746500955142
+      "lastModified": 1746501007089
     }
   },
   "focuser": {
@@ -211,7 +211,7 @@
     "script": {
       "scriptSize": 426,
       "scriptLines": 18,
-      "lastModified": 1746500955142
+      "lastModified": 1746501007089
     }
   },
   "fortnite skibidi 2024": {
@@ -239,7 +239,7 @@
     "script": {
       "scriptSize": 4773,
       "scriptLines": 214,
-      "lastModified": 1746500955150
+      "lastModified": 1746501007097
     }
   },
   "goose": {
@@ -264,7 +264,7 @@
     "script": {
       "scriptSize": 2141,
       "scriptLines": 94,
-      "lastModified": 1746500955153
+      "lastModified": 1746501007100
     }
   },
   "im rich": {
@@ -289,14 +289,14 @@
     "script": {
       "scriptSize": 452,
       "scriptLines": 27,
-      "lastModified": 1746500955153
+      "lastModified": 1746501007100
     }
   },
   "jump and run": {
     "title": "Jump and Run",
     "description": "A simple endless runner where you jump from platform to platform and gain points",
     "author": "Mist, RattusDong",
-    "version": "1.1",
+    "version": "1.2",
     "genre": "Arcade, Platformer, Action",
     "game_modes": [
       "Single-player"
@@ -314,7 +314,7 @@
     "script": {
       "scriptSize": 3956,
       "scriptLines": 194,
-      "lastModified": 1746500955153
+      "lastModified": 1746501007100
     }
   },
   "lights out": {
@@ -339,7 +339,7 @@
     "script": {
       "scriptSize": 1112,
       "scriptLines": 71,
-      "lastModified": 1746500955153
+      "lastModified": 1746501007100
     }
   },
   "mallet": {
@@ -363,7 +363,7 @@
     "script": {
       "scriptSize": 29981,
       "scriptLines": 1114,
-      "lastModified": 1746500955153
+      "lastModified": 1746501007100
     }
   },
   "oft": {
@@ -390,7 +390,7 @@
     "script": {
       "scriptSize": 865,
       "scriptLines": 41,
-      "lastModified": 1746500955160
+      "lastModified": 1746501007107
     }
   },
   "origincord": {
@@ -417,7 +417,7 @@
     "script": {
       "scriptSize": 39373,
       "scriptLines": 1524,
-      "lastModified": 1746500955160
+      "lastModified": 1746501007107
     }
   },
   "originkill": {
@@ -447,7 +447,7 @@
     "script": {
       "scriptSize": 40837,
       "scriptLines": 1438,
-      "lastModified": 1746500955178
+      "lastModified": 1746501007125
     }
   },
   "ping pong": {
@@ -472,7 +472,7 @@
     "script": {
       "scriptSize": 1735,
       "scriptLines": 100,
-      "lastModified": 1746500955178
+      "lastModified": 1746501007125
     }
   },
   "slider": {
@@ -497,7 +497,7 @@
     "script": {
       "scriptSize": 2201,
       "scriptLines": 86,
-      "lastModified": 1746500955178
+      "lastModified": 1746501007125
     }
   },
   "snake": {
@@ -522,7 +522,7 @@
     "script": {
       "scriptSize": 2225,
       "scriptLines": 124,
-      "lastModified": 1746500955178
+      "lastModified": 1746501007126
     }
   },
   "super slime bros": {
@@ -552,7 +552,7 @@
     "script": {
       "scriptSize": 22766,
       "scriptLines": 895,
-      "lastModified": 1746500955182
+      "lastModified": 1746501007130
     }
   },
   "timer": {
@@ -574,7 +574,7 @@
     "script": {
       "scriptSize": 463,
       "scriptLines": 28,
-      "lastModified": 1746500955183
+      "lastModified": 1746501007130
     }
   },
   "todo": {
@@ -601,7 +601,7 @@
     "script": {
       "scriptSize": 1166,
       "scriptLines": 54,
-      "lastModified": 1746500955183
+      "lastModified": 1746501007130
     }
   },
   "wosle": {
@@ -631,7 +631,7 @@
     "script": {
       "scriptSize": 24916,
       "scriptLines": 254,
-      "lastModified": 1746500955187
+      "lastModified": 1746501007134
     }
   },
   "youtube": {
@@ -656,7 +656,7 @@
     "script": {
       "scriptSize": 3423,
       "scriptLines": 123,
-      "lastModified": 1746500955187
+      "lastModified": 1746501007134
     }
   }
 }
