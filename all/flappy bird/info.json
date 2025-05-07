@@ -1,8 +1,8 @@
 {
   "title": "Flappy Bird",
   "description": "Bird does jump :D",
-  "author": "Mist, Ashime",
-  "version": "1.2",
+  "author": "Mist, Ashime, Nameless",
+  "version": "1.3",
   "genre": "Arcade, Casual, Action",
   "game_modes": ["Single-player"],
   "permissions": [],
