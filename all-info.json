@@ -21,7 +21,7 @@
     "script": {
       "scriptSize": 3145,
       "scriptLines": 194,
-      "lastModified": 1746536575288
+      "lastModified": 1746587528165
     }
   },
   "ceslum": {
@@ -47,7 +47,7 @@
     "script": {
       "scriptSize": 1210,
       "scriptLines": 46,
-      "lastModified": 1746536575290
+      "lastModified": 1746587528167
     }
   },
   "claw": {
@@ -81,7 +81,7 @@
     "script": {
       "scriptSize": 11186,
       "scriptLines": 491,
-      "lastModified": 1746536575291
+      "lastModified": 1746587528168
     }
   },
   "crl": {
@@ -107,7 +107,7 @@
     "script": {
       "scriptSize": 907,
       "scriptLines": 30,
-      "lastModified": 1746536575291
+      "lastModified": 1746587528168
     }
   },
   "dock themer": {
@@ -134,14 +134,14 @@
     "script": {
       "scriptSize": 916,
       "scriptLines": 43,
-      "lastModified": 1746536575291
+      "lastModified": 1746587528168
     }
   },
   "flappy bird": {
     "title": "Flappy Bird",
     "description": "Bird does jump :D",
-    "author": "Mist, Ashime",
-    "version": "1.2",
+    "author": "Mist, Ashime, Nameless",
+    "version": "1.3",
     "genre": "Arcade, Casual, Action",
     "game_modes": [
       "Single-player"
@@ -152,14 +152,14 @@
     ],
     "icon": "w 20 c #4EBAC4 dot 0 0 image https://raw.githubusercontent.com/Mistium/Origin-OS/main/OSL%20Programs/apps/games/assets/flapper.png 20\n",
     "size": {
-      "bytes": 239849,
-      "kilobytes": "234.23",
+      "bytes": 240051,
+      "kilobytes": "234.42",
       "megabytes": "0.23"
     },
     "script": {
-      "scriptSize": 2768,
-      "scriptLines": 137,
-      "lastModified": 1746536575292
+      "scriptSize": 2960,
+      "scriptLines": 146,
+      "lastModified": 1746587528169
     }
   },
   "fluficord": {
@@ -189,7 +189,7 @@
     "script": {
       "scriptSize": 22084,
       "scriptLines": 743,
-      "lastModified": 1746536575310
+      "lastModified": 1746587528186
     }
   },
   "focuser": {
@@ -211,7 +211,7 @@
     "script": {
       "scriptSize": 426,
       "scriptLines": 18,
-      "lastModified": 1746536575310
+      "lastModified": 1746587528186
     }
   },
   "fortnite skibidi 2024": {
@@ -239,7 +239,7 @@
     "script": {
       "scriptSize": 4773,
       "scriptLines": 214,
-      "lastModified": 1746536575318
+      "lastModified": 1746587528194
     }
   },
   "goose": {
@@ -264,7 +264,7 @@
     "script": {
       "scriptSize": 2332,
       "scriptLines": 95,
-      "lastModified": 1746536575320
+      "lastModified": 1746587528197
     }
   },
   "im rich": {
@@ -289,7 +289,7 @@
     "script": {
       "scriptSize": 452,
       "scriptLines": 27,
-      "lastModified": 1746536575321
+      "lastModified": 1746587528197
     }
   },
   "jump and run": {
@@ -314,7 +314,7 @@
     "script": {
       "scriptSize": 3956,
       "scriptLines": 194,
-      "lastModified": 1746536575321
+      "lastModified": 1746587528197
     }
   },
   "lights out": {
@@ -339,7 +339,7 @@
     "script": {
       "scriptSize": 1112,
       "scriptLines": 71,
-      "lastModified": 1746536575321
+      "lastModified": 1746587528197
     }
   },
   "mallet": {
@@ -363,7 +363,7 @@
     "script": {
       "scriptSize": 29981,
       "scriptLines": 1114,
-      "lastModified": 1746536575321
+      "lastModified": 1746587528197
     }
   },
   "oft": {
@@ -390,7 +390,7 @@
     "script": {
       "scriptSize": 865,
       "scriptLines": 41,
-      "lastModified": 1746536575328
+      "lastModified": 1746587528204
     }
   },
   "origincord": {
@@ -417,7 +417,7 @@
     "script": {
       "scriptSize": 39373,
       "scriptLines": 1524,
-      "lastModified": 1746536575328
+      "lastModified": 1746587528204
     }
   },
   "originkill": {
@@ -447,7 +447,7 @@
     "script": {
       "scriptSize": 40837,
       "scriptLines": 1438,
-      "lastModified": 1746536575346
+      "lastModified": 1746587528222
     }
   },
   "ping pong": {
@@ -472,7 +472,7 @@
     "script": {
       "scriptSize": 1735,
       "scriptLines": 100,
-      "lastModified": 1746536575346
+      "lastModified": 1746587528222
     }
   },
   "slider": {
@@ -497,7 +497,7 @@
     "script": {
       "scriptSize": 2201,
       "scriptLines": 86,
-      "lastModified": 1746536575346
+      "lastModified": 1746587528223
     }
   },
   "snake": {
@@ -522,7 +522,7 @@
     "script": {
       "scriptSize": 2225,
       "scriptLines": 124,
-      "lastModified": 1746536575347
+      "lastModified": 1746587528223
     }
   },
   "super slime bros": {
@@ -552,7 +552,7 @@
     "script": {
       "scriptSize": 22766,
       "scriptLines": 895,
-      "lastModified": 1746536575351
+      "lastModified": 1746587528227
     }
   },
   "timer": {
@@ -574,7 +574,7 @@
     "script": {
       "scriptSize": 463,
       "scriptLines": 28,
-      "lastModified": 1746536575351
+      "lastModified": 1746587528227
     }
   },
   "todo": {
@@ -601,7 +601,7 @@
     "script": {
       "scriptSize": 1166,
       "scriptLines": 54,
-      "lastModified": 1746536575351
+      "lastModified": 1746587528227
     }
   },
   "wosle": {
@@ -631,7 +631,7 @@
     "script": {
       "scriptSize": 24916,
       "scriptLines": 254,
-      "lastModified": 1746536575355
+      "lastModified": 1746587528232
     }
   },
   "youtube": {
@@ -656,7 +656,7 @@
     "script": {
       "scriptSize": 3423,
       "scriptLines": 123,
-      "lastModified": 1746536575356
+      "lastModified": 1746587528232
     }
   }
 }
