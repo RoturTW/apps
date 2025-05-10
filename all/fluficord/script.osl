@@ -104,7 +104,7 @@ class Net (
           oldtimer = timer
         ),
         onframe: def() -> (
-          if (timer - oldtimer) > 60 (
+          if (timer - oldtimer) > 120 (
             Net.send({"cmd":"ping"})
             oldtimer = timer
           )
