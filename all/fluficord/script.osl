@@ -37,7 +37,7 @@ class Config (
   server = "flf-server"
   serversUrl = "https://raw.githubusercontent.com/ThePandaDever/flf/refs/heads/main/social/servers.json"
   servers = self.serversUrl.get().JsonParse()
-  version = "0.5a-"
+  version = "0.5b-"
 )
 Settings = null
 
