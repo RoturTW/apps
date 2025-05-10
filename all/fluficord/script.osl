@@ -187,6 +187,9 @@ class Net (
           break
         case "user_settings_get"
           Settings = data["data"]
+          if isType == "notif" and Settings["notifs"].not() (
+            window.close()
+          )
           break
         
         case "emote_list"
