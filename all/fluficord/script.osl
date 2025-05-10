@@ -1,15 +1,17 @@
+save @= import("~/packages/save/v1.osl")
+
 isType = "normal"
 if passed_Data == "SYS.onboot" (
   isType = "notif"
-  window "stop"
 )
 
 import "window_tools" as "wt"
 import as "glass" from "packages"
 
-//permission "request" "rotur token"
-//permission "request" "start run"
-//permission "request" "notifications"
+permission "request" "start run"
+permission "request" "notifications"
+
+save.init("fluficord@flufi")
 
 portName = ("social:" ++ OuidNew())
 
@@ -20,11 +22,24 @@ window "min_size" 175 300
 window.width = 900
 window.height = 500
 
+def "notifyCustom" "text,icon,title" (
+  file "open" my_uuid
+  local icn = file[11]
+  local name = file[2]
+  file "set" 11 icon
+  file "set" 2 title
+  notify text
+  file "set" 11 icn
+  file "set" 2 name
+)
+
 class Config (
   server = "flf-server"
   serversUrl = "https://raw.githubusercontent.com/ThePandaDever/flf/refs/heads/main/social/servers.json"
   servers = self.serversUrl.get().JsonParse()
+  version = "0.5a-"
 )
+Settings = null
 
 class Net (
   gotPingBack = false
@@ -44,6 +59,8 @@ class Net (
   messages = {}
   
   emotes = null
+  roles = null
+  shush = false
   
   def wipe() (
     self.gotPingBack = false
@@ -58,14 +75,15 @@ class Net (
     self.onlineUsers = null
     self.messages = {}
     self.emotes = null
+    self.roles = null
   )
   
   class packetworker (
     queue = []
     worker = null
     def start() (
-      self.worker = worker({
-        oncreated: def() -> (
+      self.worker @= worker({
+        oncreate: def() -> (
           portName.roturConnect()
         ),
         onframe: def() -> (
@@ -81,12 +99,12 @@ class Net (
     queue = []
     worker = null
     def start() (
-      self.worker = worker({
-        oncreated: def() -> (
+      self.worker @= worker({
+        oncreate: def() -> (
           oldtimer = timer
         ),
         onframe: def() -> (
-          if (timer - oldtimer) > 5 (
+          if (timer - oldtimer) > 60 (
             Net.send({"cmd":"ping"})
             oldtimer = timer
           )
@@ -97,12 +115,15 @@ class Net (
 
   
   def send(data) (
-    log "send" data
-    self.packetworker.queue.append(data)
+    if Net.shush.not() (
+      log "send" data
+      data["version"] = Config.version.destr
+      self.packetworker.queue.append(data)
+    )
   )
   def update() (
     if new_network_data (
-      //log "get" packet["data"]
+      log "get" packet["data"]
       Net.handlePacket(packet)
       new_network_data = false
     )
@@ -114,11 +135,16 @@ class Net (
   def handlePacket(p) (
     local data = p["data"]
     //log "get" data
+    
     if data.getKeys().contains("cmd") (
+      if data["cmd"] != "comb" (
+        //log "get" data
+      )
       switch data["cmd"] (
         case "ping"
           self.gotPingBack = true
           break
+        
         case "channel_list"
           self.channels = data["data"]
           break
@@ -150,18 +176,36 @@ class Net (
           self.getOnlineUsers()
           break
         
+        case "notif"
+          if Settings["notifs"] ?? false or data["doanyway"] (
+            notifyCustom data["text"] data["icon"] data["title"]
+          )
+          break
+        
         case "user_online"
           self.onlineUsers = data["data"]
+          break
+        case "user_settings_get"
+          Settings = data["data"]
           break
         
         case "emote_list"
           self.emotes = data["data"]
           break
         
+        case "roles_list"
+          self.roles = data["data"]
+          break
+        
         case "comb"
-          each this.packet2 data["packets"] (
+          each this.i this.packet2 data["packets"] (
             self.handlePacket({"data":packet2})
           )
+          break
+        case "killshutthefuckupidontwantpingsanymoresoshush"
+          self.packetworker.worker.kill()
+          self.onlineworker.worker.kill()
+          self.shush = true
           break
         
         default
@@ -171,19 +215,24 @@ class Net (
       )
     )
   )
-  def getRoturUser(u) (
-    if roturUsers.getKeys().contains(u).not() (
-      roturUsers[u] = ("https://social.rotur.dev/profile?name=" ++ u ++ "&include_posts=0").get()
-    )
-  )
   def getOnlineUsers() (
     Net.send({"cmd":"user_online"})
+  )
+  def getConfig() (
+    if self.getCooldown <= 0 (
+      self.getCooldown = 20
+      Net.send({"cmd":"user_settings_get"})
+    )
+  )
+  def setConfigKey(key,value) (
+    Net.send({"cmd":"user_settings_set","key":key,"value":value})
   )
   
   def ping() (
     Net.send({"cmd":"ping"})
     self.getCooldown = 50
   )
+  
   def getChannelList() (
     Net.send({"cmd":"channel_list"})
     self.getCooldown = 10
@@ -239,8 +288,8 @@ class UI (
   def drawEmote(emote, size) (
     local e = Net.emotes[emote]
     if e["text"] (
-      change size * -13 size * -1
-      text e["text"] size * 24 : c#txtc
+      change size * -20 size * .5
+      text e["text"] size * 35 : c#txtc
     ) else (
       icon e["icon"] ?? "grid-apps-full" size : c#txtc
     )
@@ -252,9 +301,12 @@ class UI (
   def getUnFormattedText(text) (
   
   )
-  
   def textHeight() (
     return 2
+  )
+  
+  def drawPFP(user, w, h) (
+    image "https://avatars.rotur.dev/" ++ (user ?? "_") ++ "?radius=256px" w + 1 h + 1
   )
   
   class channel_list (
@@ -267,7 +319,8 @@ class UI (
       self.shown = window.width > 500
       self.real_width = self.shown ? self.width 0
       if self.shown (
-        glass:frame window.left window.top window.left + self.real_width window.bottom UI.channel_list.height "channel_list"
+        c prim
+        glass:frame window.left window.top window.left + self.real_width window.bottom + 80 UI.channel_list.height - 15 "channel_list"
           UI.channel_list.list()
         frame "clear"
       )
@@ -279,7 +332,8 @@ class UI (
       )
       if Net.channels != null and loaded and typeof(Net.channels) == "array" (
         if Net.channels.len > 0 (
-          local y = frame.top - 27.5
+          local y = frame.top - 27.5 + frame.scroll
+          self.height = 0
           each this.channel Net.channels (
             local channelData = Net.channelData[channel]
             goto 0 y
@@ -301,6 +355,7 @@ class UI (
             icon UI.channelTypes[channelData["type"] ?? "unknown"].icon .9 : c#txtc
             text channel 10 : c#txtc chx#20
             y -= 50
+            self.height += 50
           )
         ) else (
           goto 0 0
@@ -390,7 +445,7 @@ class UI (
           local doTitle = (messages[msgi + 1] != null) ? isConnected(msgData,Net.messages[messages[msgi + 1]]).not true
           local connected = (messages[msgi - 1] != null) ? isConnected(Net.messages[messages[msgi - 1]],msgData) false
           local height = 0
-          local emotes = msgData["emotes"]
+          emotes = msgData["emotes"]
           height += content.split("\n").len * self.messageSize * 2.3
           height += doTitle ? (connected ? (self.messageSize * 2) 25) 0
           height += emotes.getKeys().len > 0 ? 37.5 0
@@ -455,20 +510,20 @@ class UI (
           )
           
           if msgData["reply"] != null (
-            goto frame.left + 30 y + (height / 2 - 13.5)
+            goto frame.left + 50 y + (height / 2 - 13.5)
             local replyMessage = Net.messages[msgData["reply"]]
             if replyMessage == null (
               Net.getMessage(msgData["reply"])
             )
-            image "https://avatars.rotur.dev/" ++ (replyMessage.user ?? "_") 18 18 : chx#17.5 chy#0
-            text "@" ++ (replyMessage.user ?? "?") self.messageSize * .8 : chx#18 c#txtc chx#-6.25
+            UI.drawPFP(replyMessage.user, 14, 14)
+            text "@" ++ (replyMessage.user ?? "?") self.messageSize * .8 : chx#16 c#txtc chx#-6.25
             UI.drawText(replyMessage.content.trimText(frame.width / (self.messageSize * .8) - 16), self.messageSize * .8, txtc) : chx#5
             y -= 20
           )
           
           if doTitle (
             goto frame.left y + (height / 2 - 20)
-            image "https://avatars.rotur.dev/" ++ (msgData.user ?? "_") 25 25 : chx#17.5 chy#0
+            UI.drawPFP(msgData.user, 25, 25) : chx#17.5 chy#0
             text msgData.user ?? "?" self.messageSize : chx#25 c#txtc chx#-6.25 chy#6.25
             //log msgData.timestamp
             text msgData.timestamp.timestamp("to-relative") self.messageSize * .7 : chx#10
@@ -502,9 +557,9 @@ class UI (
                     Net.toggleEmote(msg, emote)
                   )
                 )
-                goto x2 + 50 y2
+                goto x2 + 57.5 - (w3 * .5 - 10) y2
                 UI.drawEmote(emote, .75)
-                goto x2 + 65 y2
+                goto x2 + 57.5 - (w3 * .5 - 25) y2
                 text emoteUsers.len 10 : c#txtc
                 x2 += spacing + (emoteUsers.len.toStr().len * 10) + 17.5
               )
@@ -582,7 +637,7 @@ class UI (
               goto 0 y
               square frame.width - 20 25 10 : c#prim
               set_x frame.left + 22
-              image "https://avatars.rotur.dev/" ++ user 25 25
+              UI.drawPFP(user, 25, 25)
               //icon "square 0 0 25 25" .5 : c#fff
               change 10 -10
               
@@ -666,6 +721,36 @@ class UI (
       )
     )
   )
+  
+  class info_panel (
+    def update() (
+      if UI.channel_list.shown (
+        goto 0 0
+        line window.left + UI.channel_list.real_width - 2 window.bottom window.left + UI.channel_list.real_width - 2 window.bottom + 80 - 1 : c#prim
+        frame window.left window.bottom + 80 window.left + UI.channel_list.real_width window.bottom (
+          loc 2 9999 22.5 15
+          image "https://avatars.rotur.dev/" ++ username ++ "?radius=50px" 40 40
+          text username 10 : c#txtc chx#25 chy#9
+          loc 2 -2 15 17.5
+          
+          c prim
+          if Settings["notifs"] (
+            c tert
+          )
+          square 10 10 15 : hover_c#seco
+          if mouse_touching (
+            cursor "pointer"
+            if onclick (
+              Settings["notifs"] = Settings["notifs"].not()
+              Net.setConfigKey("notifs",Settings["notifs"])
+            )
+          )
+          square 10 10 10 : c#prim
+          icon "notifications" .65 : c#txtc
+        )
+      )
+    )
+  )
 )
 
 class Input (
@@ -684,12 +769,21 @@ Net.packetworker.start()
 Net.onlineworker.start()
 
 mainloop:
+  if isType == "notif" (
+    Net.update()
+    window "hide"
+    return
+  )
+  
   wt:load_theme
   Net.update()
   Input.update()
   
   if Net.gotPingBack and Net.channels == null and Net.getCooldown <= 0 (
     Net.getChannelList()
+  )
+  if Settings == null and Net.gotPingBack and Net.shush (
+    Net.getConfig()
   )
   each this.channel Net.channels (
     if Net.channelData.getKeys().contains(channel).not() (
@@ -699,7 +793,7 @@ mainloop:
     ) else if Net.channelUsers.getKeys().contains(channel).not() (
       if Net.getCooldown <= 0 (
         //log channel Net.channelUsers Net.channelUsers.getKeys()
-        Net.getChannelUsers(channel)
+        //Net.getChannelUsers(channel)
       )
     ) else (
       if UI.neededMessages[channel] > 0 and (Net.channelMessagesLoaded[channel] ?? false).not() (
@@ -728,6 +822,7 @@ mainloop:
   UI.user_list.update()
   void UI.emote_menu.update()
   UI.topbar.update()
+  UI.info_panel.update()
   
   if false (
     goto 0 0
