@@ -5,7 +5,7 @@ permission "request" "rotur token"
 
 token = roturToken()
 
-current_version = 2.3
+current_version = 2.4
 
 // automatically update claw
 promise.new(def() -> (
@@ -471,7 +471,7 @@ if url == "premium" (
       )
       
       claw_input w.top - 300 790 def() -> (
-        c (api ++ "reply?id=" ++ posts.data.id ++ "&auth=" ++ token ++ "&content=" ++ encodeURIComponent(input_claw)).getAsync()
+        c (api ++ "reply?id=" ++ posts.data.id ++ "&auth=" ++ token ++ "&content=" ++ encodeURIComponent(inputs.claw)).getAsync()
         attachment = ""
       ) "Reply to this post..."
     ) else (
