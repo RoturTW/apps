@@ -5,6 +5,26 @@ permission "request" "rotur token"
 
 token = roturToken()
 
+current_version = 2.2
+
+// automatically update claw
+promise.new(def() -> (
+  local version = "https://raw.githubusercontent.com/RoturTW/apps/refs/heads/main/all/claw/info.json".httpGet()
+    .JsonParse()
+    .version.toNum()
+    
+  if version > current_version (
+    file "open" window.file.uuid "onlyaccess"
+    local code = "https://raw.githubusercontent.com/RoturTW/apps/refs/heads/main/all/claw/script.osl".httpGet()
+    if code.split("\n").len == 1 (
+      return
+    )
+    file "set" 4 code
+    say "New update installed"
+    window.restart()
+  )
+))
+
 posts = {
   "got": true,
   "feed":"Loading"
@@ -13,6 +33,16 @@ posts = {
 api = "https://social.rotur.dev/"
 
 url = "feed"
+
+max_post_length = 100
+owns_premium = ("https://social.rotur.dev/keys/check/" ++ username ++ "?key=bd6249d2b87796a25c30b1f1722f784f").httpGet().owned
+
+if owns_premium (
+  max_post_length = 300
+)
+// you cant change this, its verified server side
+
+post_response = ""
 
 users = {}
 
@@ -30,13 +60,20 @@ def getAvatar(username) (
   return "https://avatars.rotur.dev/" ++ username ++ "?radius=256px&s=100"
 )
 
-def "send_post" "this.content, this.attachment" (
-  local url = "https://claw.rotur.dev/post?os=originOS&auth=" ++ token
-  local url ++= "&content=" ++ encodeURIComponent(content)
-  if attachment != "" (
-    local url ++= "&attachment=" ++ encodeURIComponent(attachment)
-  )
-  void url.getAsync()
+def "send_post" "attachment" (
+  void promise.new(def() -> (
+    local url = "https://claw.rotur.dev/post?os=originOS&auth=" ++ token
+    url ++= "&content=" ++ encodeURIComponent(inputs.claw.join("\n"))
+    if attachment != "" (
+      url ++= "&attachment=" ++ encodeURIComponent(attachment)
+    )
+    local response = url.httpGet()
+    if response.error != null (
+      say response.error
+    ) else (
+      inputs.claw = [""]
+    )
+  ).bind(this))
 )
 
 def "repost" "id" (
@@ -86,19 +123,22 @@ def "render_post" "w, h, post, offset_y, reply" (
     )
   )
   
-
   loc 2 2 33 y + offset_y
   image getAvatar(user) 40 40
   text post.user 10 : c#txtc chx#30
   if onclick (
     load_profile user
   )
+  if post.premium (
+    square 15 15 10 : c#seco chx#20
+    icon "tick" 0.5 : c#txtc
+  )
   
   local time = post.timestamp
   if timestamp - time > 128000000 (
-    local time = time.timestamp("convert-date")
+    time = time.timestamp("convert-date")
   ) else (
-    local time = time.timestamp("convert-relative")
+    time = time.timestamp("convert-relative")
   )
   local tw = time.len * 8
   loc -2 2 -20 - tw y + offset_y
@@ -205,11 +245,16 @@ def "claw_input" "y, w, onsend, message" (
   goto x y
   square w 90 10 : c#prim
 
-  change_y 25
-  input w - 15 23 "claw" message
-  input_claw.trim(0,100)
+  change_y 10
+  textbox w - 15 66 "claw" 10 {
+    line_numbers: false,
+    default_text: "Type your post here",
+    sel_colour: seco
+  }
+  local inp = inputs.claw.join("\n")
+  inputs.claw = inp.trim(1,max_post_length).split("\n")
   change w / -2 + 10 -50
-  text input_claw.len ++ "/100" 8 : c#txtc
+  text inp.len ++ "/" ++ max_post_length 8 : c#txtc
 
   change_x 40
   text "Click Here To Paste An Image URL" 8
@@ -249,6 +294,10 @@ object sidebar = {
   "up-arrow": def() -> (
     posts.got = false
     url = "top_posts?time_period=168"
+  ),
+  "rotur": def() -> (
+    posts.got = true
+    url = "premium"
   )
 }
 
@@ -256,6 +305,9 @@ object sidebar = {
 mainloop:
 
 page_label = "Claw"
+if owns_premium (
+  page_label ++= " Premium"
+)
 
 if social.wsOpen() (
   if social.wsHasnew() (
@@ -334,58 +386,120 @@ frame w.left w.top w.left + 265 w.bottom (
 top = w.top - 170
 x = 130
 
-if posts.got (
-  c prim
-  len = posts.feed.len
-  
-  if url == "feed" (
-    posts.feed = main_feed.reverse()
-    claw_input w.top - 110 790 def() -> (
-      send_post input_claw attachment
-      input_claw = ""
-      attachment = ""
-    ) "Type your post..."
-  ) else if url.startsWith("Post_") (
-    page_label ++= ": Post by " ++ posts.data.user
-    top -= 190
+if url == "premium" (
+  frame x - 408 w.top - 40 x + 408 w.bottom (
+    goto 0 0
+    square frame.width - 30 frame.height - 30 10 : c#window_colour
+    goto 0 200
+    icon "rotur" 3 : c#txtc
+    change_y -60
+    centext "Claw Premium" 15
     
-    frame x - 408 w.top - 50 x + 408 top - 110 (
-      y = -100
-      render_post 790 170 posts.data 65
+    change_y -50
+    centext "What do you get?" 10
+    
+    y = window.top - 740
+    render_post 790 170 {
+      "id": "",
+      "content": "When you buy claw premium you get the ability to send posts up to 300 characters in length and a cool badge next to your name!",
+      "user": "Mist",
+      "timestamp": 1743165080311,
+      "attachment": null,
+      "profile_only": false,
+      "os": "Rotur Land",
+      "premium": true
+    } 65 false
+    
+    
+    change_y -150
+    if owns_premium (
+      square 150 30 20 : c#prim
+      if mouse_touching (
+        square 150 30 25 : c#seco
+        square 150 30 20 : c#prim
+        if onclick (
+          promise.new(def() -> (
+            local response = (api ++ "keys/cancel/bd6249d2b87796a25c30b1f1722f784f?auth=" ++ token).httpGet()
+            say response.message ?? response.error
+            window.restart()
+          ))
+        )
+      )
+      centext "Unsubscribe :(" 10 : c#txtc
+    
+      change_y -50
+      centext "Hello Claw Premium user!" 10
+    ) else (
+      square 150 30 20 : c#prim
+      if mouse_touching (
+        square 150 30 25 : c#seco
+        square 150 30 20 : c#prim
+        if onclick (
+          promise.new(def() -> (
+            local response = (api ++ "keys/buy/bd6249d2b87796a25c30b1f1722f784f?auth=" ++ token).httpGet()
+            say response.message ?? response.error
+            window.restart()
+          ))
+        )
+      )
+      centext "Subscribe Now!" 10 : c#txtc
+    
+      change_y -50
+      centext "Cost: 5 rotur credits a month, cancel here" 10
     )
-    
-    claw_input w.top - 300 790 def() -> (
-      c (api ++ "reply?id=" ++ posts.data.id ++ "&auth=" ++ token ++ "&content=" ++ encodeURIComponent(input_claw)).getAsync()
-      input_claw = ""
-      attachment = ""
-    ) "Reply to this post..."
-  ) else (
-    top = w.top - 60
-  )
-  
-  if url.startsWith("profile") (
-    page_label ++= ": " ++ posts.data.username ++ "'s profile"
-  )
-  if url.startsWith("top_posts") (
-    page_label ++= ": Most likes in the past week"
-  )
-  if url.startsWith("following_feed") (
-    page_label ++= ": Posts from users I follow"
-  )
-  
-  c prim
-
-  frame x - 408 top x + 408 w.bottom len * 180 "feed" (
-    render_main posts.feed
   )
 ) else (
-  posts.feed = (api ++ url).getAsync()
-  if posts.feed != "Loading" (
-    posts.got = true
-    if url.startsWith("profile?") (
-      posts.data = posts.feed
-      posts.feed = posts.feed.posts
-      void posts.data.delete("posts")
+  if posts.got (
+    c prim
+    len = posts.feed.len
+    
+    if url == "feed" (
+      posts.feed = main_feed.reverse()
+      claw_input w.top - 110 790 def() -> (
+        send_post attachment
+        attachment = ""
+      ) "Type your post..."
+    ) else if url.startsWith("Post_") (
+      page_label ++= ": Post by " ++ posts.data.user
+      top -= 190
+      
+      frame x - 408 w.top - 50 x + 408 top - 110 (
+        y = -100
+        render_post 790 170 posts.data 65
+      )
+      
+      claw_input w.top - 300 790 def() -> (
+        c (api ++ "reply?id=" ++ posts.data.id ++ "&auth=" ++ token ++ "&content=" ++ encodeURIComponent(input_claw)).getAsync()
+        attachment = ""
+      ) "Reply to this post..."
+    ) else (
+      top = w.top - 60
+    )
+    
+    if url.startsWith("profile") (
+      page_label ++= ": " ++ posts.data.username ++ "'s profile"
+    )
+    if url.startsWith("top_posts") (
+      page_label ++= ": Most likes in the past week"
+    )
+    if url.startsWith("following_feed") (
+      page_label ++= ": Posts from users I follow"
+    )
+    
+    c prim
+  
+    frame x - 408 top x + 408 w.bottom len * 180 "feed" (
+      render_main posts.feed
+    )
+  ) else (
+    posts.feed = (api ++ url).getAsync()
+    if posts.feed != "Loading" (
+      posts.got = true
+      if url.startsWith("profile?") (
+        posts.data = posts.feed
+        posts.feed = posts.feed.posts
+        void posts.data.delete("posts")
+      )
     )
   )
 )
