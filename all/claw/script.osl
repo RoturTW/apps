@@ -5,7 +5,7 @@ permission "request" "rotur token"
 
 token = roturToken()
 
-current_version = 2.2
+current_version = 2.3
 
 // automatically update claw
 promise.new(def() -> (
@@ -14,14 +14,16 @@ promise.new(def() -> (
     .version.toNum()
     
   if version > current_version (
-    file "open" window.file.uuid "onlyaccess"
-    local code = "https://raw.githubusercontent.com/RoturTW/apps/refs/heads/main/all/claw/script.osl".httpGet()
-    if code.split("\n").len == 1 (
-      return
+    try (
+      file "open" window.file.uuid "onlyaccess"
+      local code = "https://raw.githubusercontent.com/RoturTW/apps/refs/heads/main/all/claw/script.osl".httpGet()
+      if code.split("\n").len == 1 (
+        return
+      )
+      file "set" 4 code
+      say "New update installed"
+      window.restart()
     )
-    file "set" 4 code
-    say "New update installed"
-    window.restart()
   )
 ))
 
