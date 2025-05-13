@@ -5,7 +5,7 @@ permission "request" "rotur token"
 
 token = roturToken()
 
-current_version = 2.4
+current_version = 2.5
 
 // automatically update claw
 promise.new(def() -> (
@@ -212,7 +212,7 @@ def "render_post" "w, h, post, offset_y, reply" (
 def "render_main" "feed" (
   local ih = 180
     
-  len = feed.len
+  local len = feed.len
   count = (scroll_yfeed // ih).clamp(0,100)
   y = scroll_yfeed % ih - (ih / 2)
   
@@ -224,7 +224,7 @@ def "render_main" "feed" (
     )
     local h = ih - 20
     
-    render_post w h feed[count] (h / 2 - 20) url.startsWith("Post_")
+    render_post w h main_feed_obj[feed[count].id] ?? feed[count] (h / 2 - 20) url.startsWith("Post_")
     y -= ih
   )
 )
@@ -317,23 +317,30 @@ if social.wsOpen() (
     switch current.cmd (
       case "posts"
         main_feed = current.val
-        each post main_feed (
-          main_feed_obj[post.id] = post
+        for i main_feed.len (
+          main_feed_obj[main_feed[i].id] @= main_feed[i]
         )
         break
       case "new_post"
         local id = current.val.id
-        main_feed_obj[id] = current.val
-        main_feed.append(main_feed_obj[id])
+        main_feed_obj[id] @= current.val
+        void main_feed.append(main_feed_obj[id])
         break
       case "update_post"
         local id = current.val.id
-        main_feed_obj[id][current.val.key] = current.val.data
+        local key = current.val.key
+        main_feed_obj[id][key] = current.val.data
         main_feed = main_feed_obj.getValues()
+        if url.startsWith("Post_") (
+          posts.data[key] = current.val.data
+          if key == "replies" (
+            posts.feed = current.val.data
+          )
+        )
         break
       case "delete_post"
         local id = current.val.id
-        main_feed_obj.delete(id)
+        void main_feed_obj.delete(id)
         main_feed = main_feed_obj.getValues()
         break
       case "followers"
@@ -464,6 +471,7 @@ if url == "premium" (
     ) else if url.startsWith("Post_") (
       page_label ++= ": Post by " ++ posts.data.user
       top -= 190
+      posts.feed = posts.data.replies
       
       frame x - 408 w.top - 50 x + 408 top - 110 (
         y = -100
