@@ -1,0 +1,13 @@
+w 15
+c #ecf
+dot 0 0
+w 13
+c #c9f
+dot 0 0
+c #fff
+w 2.5
+line -1 2.5 2 0
+cont -1 -2.5
+cont -1 2.5
+w 4
+dot -0 0
