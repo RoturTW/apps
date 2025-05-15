@@ -1,0 +1,648 @@
+// -------------------------------------
+//    Youwutube - OriginOS YT Player
+//             Version 1.0
+//  Contributors: NamelessCat (nameless)
+// -------------------------------------
+
+import "window_tools" as "wt"
+import as "glass" from "packages"
+window "min_size" 900 400
+window.width = max(window.width, 900)
+
+save "yt@nameless" "set_directory"
+
+dbs = ["videos", "history", "channels"]
+db = {}
+for index dbs.len (
+  fileid = dbs[index]
+  filename = fileid ++ ".json"
+  if filename.saveExists() (
+    db[fileid] = filename.saveGet()
+  ) else (
+    db[fileid] = {list: [], data: {}}
+  )
+)
+
+fetchQueue = []
+fetchCache = {}
+videoList = []
+
+urlRef = {
+  proxy: "https://apps.mistium.com/headers_cors?url=@",
+  ytvid: "https://www.youtube.com/watch?v=@",
+  ytchannel: "https://www.youtube.com/channel/@",
+  home: "https://api.tubo.media/api/v1/services/0/kiosks/Trending?region=US",
+  search: "https://api.tubo.media/api/v1/services/0/search?q=@&filter=videos",
+  video: "https://api.tubo.media/api/v1/streams/@",
+  channel: "https://api.tubo.media/api/v1/channels/@",
+  thumbnail: "https://img.youtube.com/vi/@/hqdefault.jpg",
+  raw: "@"
+}
+
+window.on("close", def() -> (
+  video streamurl "clear"
+))
+
+icons = {
+  "unpause": "w 5 line -8 10 8 0 cont -8 -10 cont -8 10 w 15 dot -2 0",
+  "bookmark": "w 4 line 10 15 10 -15 cont 0 -7 cont -10 -15 cont -10 15 cont 10 15",
+  "play": "w 4 line -6 10 6 0 cont -6 -10 cont -6 10",
+  "pause": "w 4 line 6 10 6 -10 line -6 -10 -6 10",
+  "sound": "w 2.5 line -9 3 -5 3 cont -1 7 cont -1 -7 cont -5 -3 cont -9 -3 cont -9 3 cutcircle 1 0 4 9 60 cutcircle 1 0 8 9 60 line -3 4 -3 -4 w 8 dot -5 0",
+  "stopwatch": "w 3 cutcircle 0 -1 9 0 180 w 3 line 0 0 0 11 line -2 12 2 12 line 6 7 7 8",
+  "volume": "w 2 cutcircle -3 -1.5 6.5 -9 90 line -3 5 0 7 line -3 -8 0 -10 line 0 -10 0 7 cutcircle 4 -2 3 9 90 cutcircle 4 -2 8 9 80",
+}
+
+// NETWORKING FUNCTIONS
+
+def returnRef(reference2, arg2) (
+  return urlRef[reference2].replace("@", arg2)
+)
+
+def appendQueue(id, reference, arg) (
+  url = returnRef(reference, arg)
+  content = {
+    id: id,
+    url: url,
+  }
+  log url
+  fetchQueue.append(content)
+)
+
+def downloadQueue() (
+  queueLen = fetchQueue.len + 1
+  for i queueLen - 1 (
+    item = fetchQueue[queueLen - i]
+    content = item.url.getAsync()
+    log content
+    if content !== "Loading" (
+      fetchCache[item.id] = content
+      fetchQueue.delete(queueLen - i)
+    )
+  )
+)
+
+// RENDERING FUNCTIONS
+
+def startPage() (
+  displayContent = true
+  scroll_framey_videos = 0
+)
+
+def endPage() (
+  fetchQueue = []
+  fetchCache = {}
+  displayContent = false
+)
+
+def spc(val) (
+  return val * spacing
+)
+
+def trimTitle(val, twidth) (
+  pT = val.wrapText(twidth)
+  tA = pT.split("\n")
+  return tA[1] ++ (tA.len > 1 ? ("\n" ++ (tA.trim(2, tA.len).join(" ")).trimText(twidth - 3)) null)
+)
+
+def bookmarkButton(metadata, buttonSize, type) (
+  if db.videos.list.contains(metadata.id) or db.channels.list.contains(metadata.id) (
+    square buttonSize buttonSize 0 : c#accent
+    if mouse_touching (
+      cursor pointer
+    )
+    if onclick (
+      if type === "channel" (
+        db.channels.list = db.channels.list.delete(metadata.id)
+        db.channels.data = db.channels.data.delete(metadata.id)
+        save "channels.json" "set" db.channels
+      ) else (
+        db.videos.list = db.videos.list.delete(metadata.id)
+        db.videos.data = db.videos.data.delete(metadata.id)
+        save "videos.json" "set" db.videos
+      )
+    )
+    icon icons.bookmark buttonSize / 45 : c#seco
+  ) else (
+    square buttonSize buttonSize 0 : c#tert
+    if mouse_touching (
+      cursor pointer
+    )
+    if onclick (
+      if type === "channel" (
+        db.channels.list = db.channels.list.prepend(metadata.id)
+        db.channels.data[metadata.id] = {
+          name: metadata.name,
+          avatar: metadata.avatars[1].url,
+          url: metadata.url
+        }
+        save "channels.json" "set" db.channels
+      ) else (
+        db.videos.list = db.videos.list.prepend(metadata.id)
+        db.videos.data[metadata.id] = {
+          name: metadata.name,
+          uploaded: metadata.uploaded,
+          thumbnails: metadata.thumbnails,
+          "uploader-name": metadata["uploader-name"],
+          url: metadata.url,
+          id: metadata.id
+        }
+        save "videos.json" "set" db.videos
+      )
+    )
+    icon icons.bookmark buttonSize / 45 : c#txtc
+  )
+)
+
+def channelFrame(width, height, metadata) (
+  frame width / -2 y_position width / 2 y_position - height 0 "videos" (
+    goto 0 0
+    effect "transparency" 75
+    image metadata.banners[1].url null frame.height
+    effect "transparency" 0
+    goto 0 frame.top / 3
+    image metadata.avatars[1].url frame.height / 3 frame.height / 3
+    
+    textSize = frame.height / 10
+    change_y frame.top / -3 - textSize + spc(-1)
+    centext metadata.name textSize : c#txtc
+    change_y -1.5 * textSize + spc(-1)
+    centext metadata["subscriber-count"] + "Subscribers" textSize / 2
+    
+    goto frame.right - (height / 8) - spc(1) frame.bottom + (height / 8) + spc(1)
+    bookmarkButton(metadata, height / 6, "channel")
+    goto 0 frame.bottom - spc(1)
+  )
+)
+
+def streamWindow(width, height, metadata, content) (
+  change_y height / -2 - spc(1)
+  homex = x_position
+  homey = y_position
+
+  // Video Skin
+  video content width height
+  if videoState.pause (
+    video content "pause"
+  ) else (
+    // Pause video when it's over
+    if content.videoinfo("duration") === content.videoinfo("current_time") and content.videoinfo("duration") !== 0 (
+      videoState.pause = true
+    ) else (
+      video content "play"
+    )
+  )
+  
+  // Video Controls
+  square width height 0 0 1
+  if mouse_touching (
+    
+    // Seek Bar
+    change_y height / -2 + spc(2.5)
+    videoProgress = content.videoinfo("current_time") / content.videoinfo("duration")
+    slider_seek = videoProgress
+    slider width - spc(3) spc(2) "seek" : c#tert
+    if onclick (
+      newProgress = slider_seek * content.videoinfo("duration")
+      video content "seek" newProgress
+      if videoState.pause (
+        video content "pause"
+      )
+    )
+    
+    // Pause
+    change_y spc(4.5)
+    set_x width / -2 + spc(3.5)
+    square spc(4) spc(4) : c#tert
+    if mouse_touching (
+      cursor pointer
+    )
+    if onclick (
+      videoState.pause = videoState.pause.not()
+    )
+    icon videoState.pause ? icons.play icons.pause 1 : c#txtc
+    
+    // Duration
+    timestamps = [content.videoinfo("current_time"), content.videoinfo("duration")]
+    for index 2 (
+      temp = (timestamps[index].toNum() % 60).floor
+      if temp.len === 1 (
+        temp = 0 ++ temp
+      )
+      timestamps[index] = (timestamps[index].toNum() / 60).floor ++ ":" ++ temp
+    )
+    duration = timestamps.join(" / ")
+    change_x spc(3.5)
+    text duration spc(1.5)
+    
+    // Volume
+    set_x width / 2 - spc(11.5)
+    square spc(20) spc(4) : c#tert
+    change_x spc(-8)
+    icon icons.volume 1 : c#txtc
+    change_x spc(10)
+    slider_volume = content.videoinfo("volume") / 100
+    slider spc(14) spc(1.5) "volume" : c#tert
+    video content "volume" slider_volume * 100
+  )
+
+  // Title Parsing
+  textSize = width * 0.02
+  textWidth = floor(width - spc(4) / textSize) - 2
+  title = trimTitle(metadata.name, textWidth)
+  textHeight = title.split("\n").len * textSize * 1.5 + 1.5
+  
+  goto homex homey + (height / -2)
+  frame frame.left + spc(1) y_position frame.right - spc(1) y_position - textHeight - (width / 5) 0 "videos" (
+    goto 0 frame.top
+    square frame.width frame.height * 2 : c#seco
+    square frame.width textHeight * 4 : c#prim
+    goto frame.left + textSize + spc(1) frame.top - (textSize * 1.25) - spc(1)
+    text title textSize : c#txtc
+    
+    imageSize = width / 20
+    textSize = width / 60
+    goto frame.left + spc(2) + (imageSize / 2) (textHeight * -1)
+    image metadata["uploader-avatars"][1].url imageSize imageSize : c#txtc
+    change_x spc(2) + (imageSize / 2)
+    text metadata["uploader-name"].trimText(20) textSize : c#txtc
+    set_x average(x_position, frame.left + spc(2))
+    square abs(frame.left - spc(2)) imageSize 0 0 1
+    if mouse_touching (
+      cursor pointer
+    )
+    if onclick (
+      page = "channel"
+      endPage()
+      appendQueue("channel", "channel", encodeURIComponent(metadata["uploader-url"]))
+    )
+    
+    
+    statistics = [
+      metadata["like-count"] + "likes",
+      metadata["view-count"] + "views",
+      "Posted on" + metadata["upload-date"].split("T")[1]
+    ]
+    textHeight = statistics.len - 1 * textSize * 3
+    change_y textHeight / 2 - textSize
+    for index statistics.len (
+      set_x frame.right - spc(2) - (textSize * statistics[index].len)
+      text statistics[index] ++ "\n" textSize : c#txtc
+    )
+    
+    goto 0 frame.bottom
+  )
+  
+  change_y width / -24 + spc(-1)
+  subTabs = [
+    { name: "Related Streams", state: "related", width: 0.45 },
+    { name: "Description", state: "desc", width: 0.45 }
+  ]
+  set_x frame.left + spc(1)
+  for index subTabs.len (
+    change_x subTabs[index].width / 2 * (width - spc(2))
+    if subTabs[index].state === videoState.tab (
+      c tert
+    ) else (
+      c prim
+    )
+    square width - spc(2) * subTabs[index].width width / 12
+    if mouse_touching (
+      cursor pointer
+    )
+    if onclick (
+      videoState.tab = subTabs[index].state
+    )
+    centext subTabs[index].name width / 48 : c#txtc
+    change_x subTabs[index].width / 2 * (width - spc(2))
+  )
+  set_x frame.right - (width / 24) - spc(1)
+  bookmarkButton(metadata, width / 12)
+  set_x 0
+  change_y width / -24 + spc(-1)
+)
+
+def videoCard(width, height, metadata) (
+  change_y height / -2
+  homex = x_position
+  homey = y_position
+  square width - spc(2) height - spc(1) : c#seco
+
+  // Thumbnail
+  imageHeight = height - spc(3)
+  imageWidth = imageHeight * 1.777
+  imageMargin = (imageWidth / 2) + spc(2)
+  change_x width / -2 + imageMargin
+  frame window.left y_position + (imageHeight / 2) window.right y_position - (imageHeight / 2) (
+    image metadata.thumbnails imageWidth imageHeight * 1.333
+  )
+  
+  // Title
+  change imageMargin height / 4
+  textSize = height * 0.08
+  textWidth = floor(width - imageWidth / textSize) - 3
+  title = trimTitle(metadata.name, textWidth)
+  temp = x_position
+  text title textSize : c#txtc
+  
+  // Subtitle
+  set_x temp
+  change_y height / -4
+  textSize *= .5
+  parsedText = ["By: ", metadata["uploader-name"], "\nUploaded ", metadata.uploaded.timestamp("to-relative")].join("")
+  text parsedText textSize : c#txtc
+  
+  // Bookmark icon
+  buttonSize = height * .25
+  goto homex homey
+  change width / 2 - spc(2) - (buttonSize / 2) height / -2 + spc(1.5) + (buttonSize / 2)
+  bookmarkButton(metadata, height * .25)
+  
+  // Invisible button for detecting clicks
+  goto homex - (buttonSize / 2) - spc(1) homey
+  square width - buttonSize - spc(3) height - spc(2) 0 0 1
+  if mouse_touching (
+    cursor pointer
+  )
+  if onclick (
+    if db.history.list.contains(metadata.id).not() (
+      db.history.list = db.history.list.prepend(metadata.id)
+      db.history.data[metadata.id] = {
+        name: metadata.name,
+        uploaded: metadata.uploaded,
+        thumbnails: metadata.thumbnails,
+        "uploader-name": metadata["uploader-name"],
+        url: metadata.url,
+        id: metadata.id
+      }
+    ) else (
+      db.history.list = db.history.list.delete(metadata.id)
+      db.history.list = db.history.list.prepend(metadata.id)
+    )
+    if db.history.list.len > 10 (
+      sacrifice = db.history.list.last()
+      db.history.list = db.history.list.delete(sacrifice)
+      db.history.data = db.history.data.delete(sacrifice)
+    )
+    save "history.json" "set" db.history
+    page = "stream"
+    endPage()
+    appendQueue("stream", "video", encodeURIComponent(metadata.url))
+  )
+
+  goto homex homey + (height / -2)
+)
+
+page = "home"
+appendQueue("home", "home", null)
+displayContent = false
+
+// MAIN LOOP -----------------------------------------------------------------------------------------------------------------
+mainloop:
+
+wt:load_theme
+accent = user.theme.accent
+
+contentWidth = min(window.width, screensize_x * .7)
+sidebarWidth = screensize_x * .15
+sidebarHeight = screensize_y * .04
+sidebarntWidth = contentWidth - sidebarWidth
+videoCardHeight = max(window.height * .3, screensize_y * .17)
+spacing = 8
+
+downloadQueue()
+
+glass:frame window.left window.top window.right window.bottom (
+
+  // Sidebar content, always visible
+
+  frame contentWidth / -2 window.top - 40 contentWidth / -2 + sidebarWidth window.bottom (
+    goto 0 0
+    square 999 999 : c#prim
+    
+    // Search Bar
+    goto 0 frame.top - (sidebarHeight / 2) - spc(3)
+    square sidebarWidth - spc(2) sidebarHeight : c#seco
+    input sidebarWidth - spc(8) sidebarHeight - spc(2) "search" "Search..." 0 txtc
+    if selected_input === "search" and "Enter".onKeyDown() (
+      input "focus"
+      searchTerm = input_search
+      input_search = ""
+      page = "search"
+      endPage()
+      appendQueue("search", "search", encodeURIComponent(searchTerm))
+    )
+    
+    change_y 0 - (sidebarHeight / 3) - spc(3)
+    square sidebarWidth - spc(4) 2 : c#seco
+    change_y 0 - (sidebarHeight / 3) - spc(3)
+    
+    // Navigation Buttons
+    options = [
+      {name: "Home", page: "home", fetch: true},
+      {name: "Saved Videos", page: "saved", fetch: false},
+      {name: "Watch History", page: "history", fetch: false}
+    ]
+    for index options.len (
+      square sidebarWidth - spc(2) sidebarHeight : c#seco
+      if mouse_touching (
+        cursor pointer
+      )
+      if onclick (
+        page = options[index].page
+        endPage()
+        if options[index].fetch (
+          appendQueue(options[index].page, options[index].page, null)
+        )
+      )
+      set_x frame.left + spc(4)
+      text options[index].name 10 : c#txtc
+      set_x 0
+      if index != options.len (
+        change_y 1 - (sidebarHeight / 2) - spc(3)
+      )
+    )
+    
+    change_y 0 - (sidebarHeight / 3) - spc(3)
+    square sidebarWidth - spc(4) 2 : c#seco
+    change_y 0 - (sidebarHeight / 3) - spc(3)
+    
+    frame frame.left y_position + (sidebarHeight / 2) frame.right frame.bottom channelsHeight "channelList" (
+      set_y frame.top + scroll_framey_channelList - (sidebarHeight / 2)
+      for index db.channels.list.len (
+        set_x 0
+        channelIndex = db.channels.data[db.channels.list[index]]
+        square sidebarWidth - spc(2) sidebarHeight : c#seco
+        if mouse_touching (
+          cursor pointer
+        )
+        if onclick (
+          page = "channel"
+          endPage()
+          appendQueue("channel", "channel", encodeURIComponent(channelIndex.url))
+        )
+        set_x frame.left + spc(1) + (sidebarHeight / 2)
+        image channelIndex.avatar sidebarHeight sidebarHeight
+        change_x spc(1) + (sidebarHeight / 2)
+        text channelIndex.name.trimText(20) 10 : c#txtc
+        change_y 1 - (sidebarHeight / 2) - spc(3)
+      )
+      listHeight = frame.height
+    )
+    channelsHeight = abs(y_position - scroll_framey_channelList) + (listHeight / 6)
+  )
+  
+  // Main content and executions.
+  // "displayContent" variable dictates whether content is ready to be shown or not.
+
+  if displayContent (
+    frame contentWidth / -2 + sidebarWidth window.top - 40 contentWidth / 2 window.bottom pagesHeight "videos" (
+      switch page (
+
+        case "saved"
+          // fall through
+        case "history"
+          // fall through
+        case "home"
+          // fall through
+        case "search"
+          goto 0 frame.top + scroll_framey_videos - spc(.5)
+          for index videoList.len (
+            videoCard(frame.width, videoCardHeight, videoList[index])
+          )
+          break
+
+        case "stream"
+          goto 0 frame.top + scroll_framey_videos - spc(1)
+          streamWindow(frame.width - spc(2), frame.width * videoState.ratio - spc(2), stream, streamurl)
+          if videoState.tab === "related" (
+            for index videoList.len (
+              videoCard(frame.width, videoCardHeight, videoList[index])
+            )
+          ) else (
+            set_x frame.left + spc(2)
+            change_y spc(-3)
+            textSize = frame.width * 0.01
+            textWidth = floor(frame.width - spc(4) / textSize)
+            title = stream.description.wrapText(textWidth)
+            text title textSize : c#txtc
+          )
+          break
+        
+        case "channel"
+          goto 0 frame.top + scroll_framey_videos
+          channelFrame(frame.width, videoCardHeight * 1.5, channel)
+          for index videoList.len (
+            videoCard(frame.width, videoCardHeight, videoList[index])
+          )
+          break
+
+      )
+    )
+    pagesHeight = abs(y_position - scroll_framey_videos) + (frame.height / 2)
+    frameOne = true
+  ) else (
+    switch page (
+
+      case "home"
+        pageName = "Home"
+        if fetchCache.contains("home") (
+          videoList = fetchCache.home["related-streams"]
+          log videoList
+          for index videoList.len (
+            videoMeta @= videoList[index]
+            videoMeta.id = videoMeta.url.right(11).destr
+            videoMeta.thumbnails = returnRef("thumbnail", videoMeta.id).destr
+          )
+          startPage()
+        )
+        break
+      
+      case "search"
+        pageName = "Results for \"" ++ searchTerm ++ "\""
+        if fetchCache.contains("search") (
+          if fetchCache.search["corrected-search?"] (
+            pageName = "Results for similar term \"" ++ fetchCache.search["search-suggestion"] ++ "\""
+          )
+          videoList = fetchCache.search.items
+          log videoList
+          for index videoList.len (
+            videoMeta @= videoList[index]
+            videoMeta.id = videoMeta.url.right(11).destr
+            videoMeta.thumbnails = returnRef("thumbnail", videoMeta.id).destr
+          )
+          startPage()
+        )
+        break
+
+      case "saved"
+        pageName = "Saved Videos"
+        videoList = []
+        for index db.videos.list.len (
+          videoList.append(db.videos.data[db.videos.list[index]])
+        )
+        startPage()
+        break
+      
+      case "history"
+        pageName = "Watch History"
+        videoList = []
+        for index db.history.list.len (
+          videoList.append(db.history.data[db.history.list[index]])
+        )
+        startPage()
+        break
+        
+      case "stream"
+        pageName = "Streaming Content"
+        video streamurl "clear"
+        if fetchCache.len > 0 (
+          stream = fetchCache.stream
+          streamurl = returnRef("proxy", encodeURIComponent(stream["video-streams"][1].content))
+          videoList = stream["related-streams"]
+          for index videoList.len (
+            videoMeta @= videoList[index]
+            videoMeta.id = videoMeta.url.right(11).destr
+            videoMeta.thumbnails = returnRef("thumbnail", videoMeta.id).destr
+          )
+          videoState = {
+            pause: false,
+            speed: 1,
+            ratio: stream["video-streams"][1].height / stream["video-streams"][1].width,
+            expandedBio: false,
+            tab: "related"
+          }
+          startPage()
+        )
+        break
+        
+      case "channel"
+        pageName = "..."
+        if fetchCache.len > 0 (
+          channel = fetchCache.channel
+          videoList = channel["related-streams"]
+          pageName = channel.name
+          for index videoList.len (
+            videoMeta @= videoList[index]
+            videoMeta.id = videoMeta.url.right(11).destr
+            videoMeta.thumbnails = returnRef("thumbnail", videoMeta.id).destr
+          )
+          startPage()
+        )
+        break
+
+    )
+    frameOne = false
+  )
+)
+
+if page !== "stream" (
+  video streamurl "clear"
+)
+
+loc 999 2 0 -20
+square window_width 20 20 : c#tert
+loc 2 2 10 -20
+text "Youwutube - " ++ pageName 10 : c#txtc
+
+import "win-buttons"
