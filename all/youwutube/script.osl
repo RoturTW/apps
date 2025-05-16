@@ -1,8 +1,10 @@
 // -------------------------------------
 //    Youwutube - OriginOS YT Player
-//             Version 1.0
+//             Version 1.1
 //  Contributors: NamelessCat (nameless)
 // -------------------------------------
+
+window.icon = "w 15 c #ecf dot 0 0 w 13 c #c9f dot 0 0 c #fff w 2.5 line -1 2.5 2 0 cont -1 -2.5 cont -1 2.5 w 4 dot -0 0"
 
 import "window_tools" as "wt"
 import as "glass" from "packages"
@@ -317,7 +319,7 @@ def streamWindow(width, height, metadata, content) (
     change_x subTabs[index].width / 2 * (width - spc(2))
   )
   set_x frame.right - (width / 24) - spc(1)
-  bookmarkButton(metadata, width / 12)
+  bookmarkButton(metadataToReferToWhenBookmarkingThanksTubo, width / 12)
   set_x 0
   change_y width / -24 + spc(-1)
 )
@@ -388,6 +390,7 @@ def videoCard(width, height, metadata) (
     page = "stream"
     endPage()
     appendQueue("stream", "video", encodeURIComponent(metadata.url))
+    metadataToReferToWhenBookmarkingThanksTubo = metadata
   )
 
   goto homex homey + (height / -2)
