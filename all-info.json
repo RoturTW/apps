@@ -21,7 +21,31 @@
     "script": {
       "scriptSize": 3145,
       "scriptLines": 194,
-      "lastModified": 1747435123496
+      "lastModified": 1747441277305
+    }
+  },
+  "arrow": {
+    "title": "Arrow",
+    "description": "Arrow is a wave based survival game where you must defeat enemies and level up your character.",
+    "author": "Mist",
+    "version": "1.0",
+    "genre": "Action, Arcade, Shooter",
+    "game_modes": [
+      "Single-PLayer"
+    ],
+    "supports": [
+      "originOS"
+    ],
+    "icon": "image https://raw.githubusercontent.com/RoturTW/apps/refs/heads/main/all/arrow/assets/icon.png 20\n",
+    "size": {
+      "bytes": 51263,
+      "kilobytes": "50.06",
+      "megabytes": "0.05"
+    },
+    "script": {
+      "scriptSize": 18237,
+      "scriptLines": 791,
+      "lastModified": 1747441277306
     }
   },
   "ceslum": {
@@ -47,7 +71,7 @@
     "script": {
       "scriptSize": 1210,
       "scriptLines": 46,
-      "lastModified": 1747435123498
+      "lastModified": 1747441277307
     }
   },
   "claw": {
@@ -81,7 +105,7 @@
     "script": {
       "scriptSize": 14722,
       "scriptLines": 615,
-      "lastModified": 1747435123499
+      "lastModified": 1747441277308
     }
   },
   "crl": {
@@ -107,7 +131,7 @@
     "script": {
       "scriptSize": 907,
       "scriptLines": 30,
-      "lastModified": 1747435123499
+      "lastModified": 1747441277308
     }
   },
   "dock themer": {
@@ -134,7 +158,7 @@
     "script": {
       "scriptSize": 916,
       "scriptLines": 43,
-      "lastModified": 1747435123499
+      "lastModified": 1747441277308
     }
   },
   "flappy bird": {
@@ -159,7 +183,7 @@
     "script": {
       "scriptSize": 2960,
       "scriptLines": 146,
-      "lastModified": 1747435123500
+      "lastModified": 1747441277309
     }
   },
   "fluficord": {
@@ -189,7 +213,7 @@
     "script": {
       "scriptSize": 24618,
       "scriptLines": 841,
-      "lastModified": 1747435123517
+      "lastModified": 1747441277326
     }
   },
   "focuser": {
@@ -211,7 +235,7 @@
     "script": {
       "scriptSize": 426,
       "scriptLines": 18,
-      "lastModified": 1747435123517
+      "lastModified": 1747441277326
     }
   },
   "fortnite skibidi 2024": {
@@ -239,7 +263,7 @@
     "script": {
       "scriptSize": 4773,
       "scriptLines": 214,
-      "lastModified": 1747435123524
+      "lastModified": 1747441277334
     }
   },
   "goose": {
@@ -264,7 +288,7 @@
     "script": {
       "scriptSize": 2332,
       "scriptLines": 95,
-      "lastModified": 1747435123527
+      "lastModified": 1747441277336
     }
   },
   "im rich": {
@@ -289,7 +313,7 @@
     "script": {
       "scriptSize": 452,
       "scriptLines": 27,
-      "lastModified": 1747435123527
+      "lastModified": 1747441277336
     }
   },
   "jump and run": {
@@ -314,7 +338,7 @@
     "script": {
       "scriptSize": 3956,
       "scriptLines": 194,
-      "lastModified": 1747435123527
+      "lastModified": 1747441277337
     }
   },
   "lights out": {
@@ -339,7 +363,7 @@
     "script": {
       "scriptSize": 1112,
       "scriptLines": 71,
-      "lastModified": 1747435123528
+      "lastModified": 1747441277337
     }
   },
   "mallet": {
@@ -363,7 +387,7 @@
     "script": {
       "scriptSize": 29981,
       "scriptLines": 1114,
-      "lastModified": 1747435123528
+      "lastModified": 1747441277337
     }
   },
   "oft": {
@@ -390,7 +414,7 @@
     "script": {
       "scriptSize": 865,
       "scriptLines": 41,
-      "lastModified": 1747435123534
+      "lastModified": 1747441277343
     }
   },
   "origincord": {
@@ -417,7 +441,31 @@
     "script": {
       "scriptSize": 39373,
       "scriptLines": 1524,
-      "lastModified": 1747435123535
+      "lastModified": 1747441277344
+    }
+  },
+  "originfy": {
+    "title": "originFy",
+    "description": "originFy is a simplistic music application that, (despite the name) uses soundcloud as a backend :trole:",
+    "author": "Mist",
+    "version": "1.0",
+    "genre": "Entertainment, Media, Music",
+    "game_modes": [
+      "Single-PLayer"
+    ],
+    "supports": [
+      "originOS"
+    ],
+    "icon": "c #1DB954 w 20 dot 0 0 c #191414 w 2.5 cutcircle -2 -10 6 1 27 cutcircle -2 -10 10 1 27 cutcircle -2 -10 14 1 27\n",
+    "size": {
+      "bytes": 7611,
+      "kilobytes": "7.43",
+      "megabytes": "0.01"
+    },
+    "script": {
+      "scriptSize": 7187,
+      "scriptLines": 298,
+      "lastModified": 1747441277346
     }
   },
   "originkill": {
@@ -447,7 +495,7 @@
     "script": {
       "scriptSize": 40837,
       "scriptLines": 1438,
-      "lastModified": 1747435123553
+      "lastModified": 1747441277362
     }
   },
   "ping pong": {
@@ -472,7 +520,7 @@
     "script": {
       "scriptSize": 1735,
       "scriptLines": 100,
-      "lastModified": 1747435123553
+      "lastModified": 1747441277362
     }
   },
   "slider": {
@@ -497,7 +545,7 @@
     "script": {
       "scriptSize": 2201,
       "scriptLines": 86,
-      "lastModified": 1747435123553
+      "lastModified": 1747441277362
     }
   },
   "snake": {
@@ -522,7 +570,7 @@
     "script": {
       "scriptSize": 2225,
       "scriptLines": 124,
-      "lastModified": 1747435123553
+      "lastModified": 1747441277362
     }
   },
   "super slime bros": {
@@ -552,7 +600,7 @@
     "script": {
       "scriptSize": 22766,
       "scriptLines": 895,
-      "lastModified": 1747435123557
+      "lastModified": 1747441277366
     }
   },
   "timer": {
@@ -574,7 +622,7 @@
     "script": {
       "scriptSize": 463,
       "scriptLines": 28,
-      "lastModified": 1747435123557
+      "lastModified": 1747441277366
     }
   },
   "todo": {
@@ -601,7 +649,7 @@
     "script": {
       "scriptSize": 1166,
       "scriptLines": 54,
-      "lastModified": 1747435123557
+      "lastModified": 1747441277366
     }
   },
   "wosle": {
@@ -631,7 +679,7 @@
     "script": {
       "scriptSize": 24916,
       "scriptLines": 254,
-      "lastModified": 1747435123562
+      "lastModified": 1747441277371
     }
   },
   "youtube": {
@@ -656,7 +704,7 @@
     "script": {
       "scriptSize": 3423,
       "scriptLines": 123,
-      "lastModified": 1747435123562
+      "lastModified": 1747441277371
     }
   },
   "youwutube": {
@@ -681,7 +729,7 @@
     "script": {
       "scriptSize": 19896,
       "scriptLines": 650,
-      "lastModified": 1747435123562
+      "lastModified": 1747441277371
     }
   }
 }
