@@ -1,0 +1,298 @@
+import "Window_Tools" as "wt"
+
+originfy = {
+  "icon":    "w 20 c #1ed760 dot 0 0 c #000 w 2 curve -6 3.2 6.5 2 1 4.9 w 1.8 curve -5.3 0 5.1 -1.2 0.5 1.4 w 1.6 curve -5 -3 4 -4 0 -1.7",
+  "home":    "w 3 line -10 -10 -10 0 cont 0 10 cont 10 0 cont 10 -10 cont 3 -10 cont 3 -3 cont -3 -3 cont -3 -10 cont -10 -10",
+  "search":  "w 2.5 cutcircle -3 3 10 0 180 w 3 line 5 -5 10 -10",
+  "playing": "w 3 line 8 0 -9 9 cont -9 -9 cont 8 0",
+  "button":  "w 30 dot 0 0"
+}
+
+window "responsive" true
+
+wt:seticon originfy.icon
+
+search = []
+queue = []
+home_items = []
+last_search_time = 0
+last_load_attempt = timestamp
+song_url = null
+
+window.width = 1000
+window.height = 600
+
+def "getThen" "q, callback" (
+  promise.new(def() -> (
+    void callback(q.httpGet())
+  ).bind(this.clone()))
+)
+
+getThen "https://api.tubo.media/api/v1/services/1/kiosks/Top%2050" def(response) -> (
+  home_items = response["related-streams"]
+)
+
+def formatSongTime(seconds) (
+  seconds = round(seconds)
+  local mins = floor(seconds / 60)
+  return mins ++ ":" ++ (seconds - (mins * 60)).padStart("0",2)
+)
+
+def songlist(songs, callback) (
+  for i songs.len (
+    local song @= songs[i]
+    local y = -75 * (i - 0.5) + frame.scroll
+    
+    loc 9999 2 0 y
+    square frame.width - 30 50 20 : c#prim
+    
+    loc 2 2 40 y
+    image song.thumbnails[-1].url 50 50
+    loc 2 2 70 y + 10
+    text song.name.trimText(width) 10 : c#txtc
+    loc 2 2 70 y - 10
+    text song["uploader-name"] 9
+    
+    if callback != null (
+      callback(song, i)
+    )
+  )
+)
+
+class pages (
+  self.current = "Home"
+  self.pages = []
+  self.target = -1
+  self.position = -1
+  
+  def switchPage(name) (
+    self.current = name
+    self.page @= self.pages[self.pages
+      .getKeys("name")
+      .index(name)]
+  )
+  
+  def addPage(name, position, func) (
+    self.pages @= self.pages.append({
+      "name":      name,
+      "position":  position,
+      "func":      func
+    })
+  )
+  
+  def render() (
+    frame window.left window.top - 55 window.right - 305 window.bottom (
+      void self.page.func()
+    )
+    frame window.right - 300 window.top - 55 window.right window.bottom (
+      goto 0 0
+      square frame.width - 20 frame.height - 20 20 : c#prim
+    
+      loc 2 2 10 -20
+      c txtc
+      if queue.len == 0 (
+        text "Your Queue Is Empty" 10
+      ) else (
+        text "Queue: " ++ queue.len ++ " Items" 10
+        c prim
+        frame frame.left frame.top - 40 frame.right frame.bottom queue.len * 65 "queue" (
+          width = frame.width / 10 - 5
+          songlist(queue, def(current, i) -> (
+            set_x frame.right - 25
+            square 0 0 30 : c#seco
+            icon "close" 0.7 : c#txtc
+            if onclick (
+              if i == 1 (
+                sound song_url "clear"
+              )
+              queue.delete(i)
+            )
+          ))
+        )
+      )
+    )
+  )
+)
+
+pages.addPage("Home", -1, def() -> (
+  loc 2 2 20 -20
+  text "Home (Top 50 Tracks rn)" 10
+  c prim
+  frame frame.left frame.top - 50 frame.right frame.bottom home_items.len * 75 "home" (
+    width = frame.width / 10 - 5
+    songlist(home_items, def(current, i) -> (
+      set_x frame.right - 28
+      square 0 0 25 : c#seco
+      icon "add" 0.5 : c#txtc
+      if onclick (
+        void queue.append(current)
+      )
+    ))
+  )
+))
+
+pages.addPage("Search", 0, def() -> (
+  goto 0 frame.top - 23
+  square frame.width - 30 25 20 : c#prim
+  input frame.width - 40 25 "search" "Search Songs" 10 : c#prim
+  
+  if input_search != last_input_search and inputs.search.len > 0 and timestamp - last_search_time > 1000 (
+    getThen "https://api.tubo.media/api/v1/services/1/search?q=" ++ encodeURIComponent(inputs.search) def(response) -> (
+      search = response.items.filter(v -> (v["type"] == "stream"))
+      last_search_time = 0
+    )
+    last_search_time = timestamp
+    last_input_search = input_search
+  )
+  c prim
+  frame frame.left frame.top - 50 frame.right frame.bottom search.len * 75 "search" (
+    width = frame.width / 10 - 5
+    songlist(search, def(current, i) -> (
+      set_x frame.right - 28
+      square 0 0 25 : c#seco
+      icon "add" 0.5 : c#txtc
+      if onclick (
+        void queue.append(current)
+      )
+    ))
+  )
+))
+
+pages.addPage("Playing", 1, def() -> (
+  loc 2 2 20 -20
+  text "Playing" 10 : c#txtc
+  current_song = queue[1]
+  
+  if current_song.url != last_song.url (
+    sound song_url "clear"
+    song_url = null
+    last_song = current_song
+  )
+  
+  width = min(frame.width, frame.height) - 100
+  goto 0 30
+  image current_song.thumbnails[-1].url width width
+  
+  if current_song.isType("object").not() (
+    return
+  )
+  
+  if song_url == null (
+    if timestamp - last_fetch > 2000 (
+      getThen "https://api.tubo.media/api/v1/streams/" ++ encodeURIComponent(current_song.url) def(response) -> (
+        song_url = response["audio-streams"]
+          .filter(v -> (v.format == "MP3" and v.deliveryMethod == "PROGRESSIVE_HTTP"))[1].content
+      )
+      last_fetch = timestamp
+    )
+    return
+  )
+  
+  if song_url.soundinfo("loaded") (
+    loc 2 -2 30 55
+    if song_url.soundinfo("playing") (
+      icon "pause" 1
+      if onclick (
+        playing = false
+        sound song_url "pause"
+      )
+    ) else (
+      if song_url.soundinfo("completion") == 1 (
+        sound song_url "clear"
+        queue.delete(1)
+        song_url = null
+      )
+      icon "play" 1
+      if onclick (
+        playing = true
+        sound song_url "play"
+      )
+    )
+    
+    goto 30 frame.bottom + 55
+    width = frame.width - 85
+    square width 10 5 0 1
+    if clicked or (mouse_down and seeking) (
+      local dur = song_url.soundinfo("duration")
+      sound song_url "start" (mouse_x - x_position + (width / 2) / width * dur).clamp(0, dur)
+      seeking = true
+    ) else (
+      seeking = false
+    )
+    square width 0 5 : c#seco
+    change_x song_url.soundinfo("completion") - 0.5 * width
+    square 0 0 15 : c#txtc
+    
+    goto frame.left + 20 frame.bottom + 25
+    text formatSongTime(song_url.soundinfo("current_time")) 10
+    
+    set_x frame.right - 20
+    rigtext formatSongTime(song_url.soundinfo("duration")) 10
+  ) else if timestamp - last_load_attempt > 2000 (
+    last_load_attempt = timestamp
+    if loaded_song != null (
+      sound loaded_song "clear"
+    )
+    sound song_url "load" song_url
+    if playing (
+      sound song_url "play"
+    )
+    loaded_song = song_url
+  )
+))
+
+pages.switchPage("Search")
+
+window "show"
+
+name = user.username
+
+mainloop:
+
+wt:load_theme
+
+pages.render()
+
+len = name.len * 5
+loc 2 2 75 + len -25
+square len * 2 0 40 : c#prim
+
+loc 2 2 25 -25
+image user.pfp 40 40
+icon circle_pfp 1.3 : c#window_colour
+
+text name 10 : c#txtc chx#50
+
+goto 0 window.top - 25
+square 100 0 40 : c#prim
+icon originfy.home 0.7 : c#txtc chx#-50
+if onclick (
+  pages.switchPage("Home")
+)
+
+icon originfy.search 0.7 : chx#50
+if onclick (
+  pages.switchPage("Search")
+)
+
+icon originfy.playing 0.7 : chx#50
+if onclick (
+  pages.switchPage("Playing")
+)
+
+loc -2 2 -55 -25
+square 60 0 40 : c#prim
+
+loc -2 2 -25 -25
+icon "close" 0.6 : c#txtc
+if onclick (
+  window "stop"
+)
+icon "down" 0.6 : chx#-30
+if onclick (
+  window "minimise"
+)
+icon "maximise" 0.6 : chx#-30
+if onclick (
+  window "maximise"
+)
