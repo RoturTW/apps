@@ -1,7 +1,8 @@
 // -------------------------------------
 //    Youwutube - OriginOS YT Player
-//             Version 1.1
+//             Version 1.2
 //  Contributors: NamelessCat (nameless)
+//                Mist (Mistium)
 // -------------------------------------
 
 import "window_tools" as "wt"
@@ -18,6 +19,10 @@ for index dbs.len (
   filename = fileid ++ ".json"
   if filename.saveExists() (
     db[fileid] = filename.saveGet()
+    // make sure to handle if its an invalid save file
+    if db[fileid].contains("list") nand db[fileid].contains("data") (
+      db[fileid] = {list: [], data: {}}
+    )
   ) else (
     db[fileid] = {list: [], data: {}}
   )
@@ -65,7 +70,7 @@ def appendQueue(id, reference, arg) (
     id: id,
     url: url,
   }
-  log url
+  // log url
   fetchQueue.append(content)
 )
 
@@ -74,7 +79,7 @@ def downloadQueue() (
   for i queueLen - 1 (
     item = fetchQueue[queueLen - i]
     content = item.url.getAsync()
-    log content
+    // log content
     if content !== "Loading" (
       fetchCache[item.id] = content
       fetchQueue.delete(queueLen - i)
@@ -130,7 +135,7 @@ def bookmarkButton(metadata, buttonSize, type) (
     )
     if onclick (
       if type === "channel" (
-        db.channels.list = db.channels.list.prepend(metadata.id)
+        void db.channels.list.prepend(metadata.id)
         db.channels.data[metadata.id] = {
           name: metadata.name,
           avatar: metadata.avatars[1].url,
@@ -138,7 +143,7 @@ def bookmarkButton(metadata, buttonSize, type) (
         }
         save "channels.json" "set" db.channels
       ) else (
-        db.videos.list = db.videos.list.prepend(metadata.id)
+        void db.videos.list.prepend(metadata.id)
         db.videos.data[metadata.id] = {
           name: metadata.name,
           uploaded: metadata.uploaded,
