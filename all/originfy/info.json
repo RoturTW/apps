@@ -3,7 +3,7 @@
   "description": "originFy is a simplistic music application that, (despite the name) uses soundcloud as a backend :trole:",
   "author": "Mist",
   "version": "1.0",
-  "genre": "Entertainment, Media, Music",
+  "genre": "Entertainment, Media, Music, Streaming",
   "game_modes": [
     "Single-PLayer"
   ],
