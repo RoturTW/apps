@@ -21,7 +21,7 @@
     "script": {
       "scriptSize": 3145,
       "scriptLines": 194,
-      "lastModified": 1747488570352
+      "lastModified": 1747884474737
     }
   },
   "arrow": {
@@ -45,7 +45,7 @@
     "script": {
       "scriptSize": 18237,
       "scriptLines": 791,
-      "lastModified": 1747488570353
+      "lastModified": 1747884474738
     }
   },
   "ceslum": {
@@ -71,7 +71,7 @@
     "script": {
       "scriptSize": 1210,
       "scriptLines": 46,
-      "lastModified": 1747488570354
+      "lastModified": 1747884474739
     }
   },
   "claw": {
@@ -105,7 +105,7 @@
     "script": {
       "scriptSize": 14722,
       "scriptLines": 615,
-      "lastModified": 1747488570355
+      "lastModified": 1747884474740
     }
   },
   "crl": {
@@ -131,7 +131,7 @@
     "script": {
       "scriptSize": 907,
       "scriptLines": 30,
-      "lastModified": 1747488570355
+      "lastModified": 1747884474740
     }
   },
   "dock themer": {
@@ -158,7 +158,7 @@
     "script": {
       "scriptSize": 916,
       "scriptLines": 43,
-      "lastModified": 1747488570355
+      "lastModified": 1747884474740
     }
   },
   "flappy bird": {
@@ -183,7 +183,7 @@
     "script": {
       "scriptSize": 2960,
       "scriptLines": 146,
-      "lastModified": 1747488570356
+      "lastModified": 1747884474741
     }
   },
   "fluficord": {
@@ -213,7 +213,7 @@
     "script": {
       "scriptSize": 24618,
       "scriptLines": 841,
-      "lastModified": 1747488570373
+      "lastModified": 1747884474758
     }
   },
   "focuser": {
@@ -235,7 +235,7 @@
     "script": {
       "scriptSize": 426,
       "scriptLines": 18,
-      "lastModified": 1747488570373
+      "lastModified": 1747884474758
     }
   },
   "fortnite skibidi 2024": {
@@ -263,7 +263,7 @@
     "script": {
       "scriptSize": 4773,
       "scriptLines": 214,
-      "lastModified": 1747488570381
+      "lastModified": 1747884474765
     }
   },
   "goose": {
@@ -288,7 +288,7 @@
     "script": {
       "scriptSize": 2332,
       "scriptLines": 95,
-      "lastModified": 1747488570384
+      "lastModified": 1747884474768
     }
   },
   "im rich": {
@@ -313,7 +313,7 @@
     "script": {
       "scriptSize": 452,
       "scriptLines": 27,
-      "lastModified": 1747488570385
+      "lastModified": 1747884474768
     }
   },
   "jump and run": {
@@ -338,7 +338,7 @@
     "script": {
       "scriptSize": 3956,
       "scriptLines": 194,
-      "lastModified": 1747488570385
+      "lastModified": 1747884474768
     }
   },
   "lights out": {
@@ -363,7 +363,7 @@
     "script": {
       "scriptSize": 1112,
       "scriptLines": 71,
-      "lastModified": 1747488570385
+      "lastModified": 1747884474769
     }
   },
   "mallet": {
@@ -387,14 +387,14 @@
     "script": {
       "scriptSize": 29981,
       "scriptLines": 1114,
-      "lastModified": 1747488570385
+      "lastModified": 1747884474769
     }
   },
   "oft": {
     "title": "oft",
     "description": "Control your refresh rate in OriginOS at last!",
     "author": "0Stormy",
-    "version": "1.0",
+    "version": "1.1",
     "genre": "Utility, System, Performance",
     "permissions": [
       "terminal"
@@ -407,14 +407,14 @@
     ],
     "icon": "c #111 w 10 square 0 0 5 5 c #0F0 w 8 square 0 0 5 5 dot 0 0 w 3 c #000 line -4 -4 -4 4 line -4 4 4 4 line -4 0 4 0\n",
     "size": {
-      "bytes": 1757223,
-      "kilobytes": "1716.04",
+      "bytes": 1757235,
+      "kilobytes": "1716.05",
       "megabytes": "1.68"
     },
     "script": {
-      "scriptSize": 865,
-      "scriptLines": 41,
-      "lastModified": 1747488570392
+      "scriptSize": 877,
+      "scriptLines": 43,
+      "lastModified": 1747884474775
     }
   },
   "origincord": {
@@ -441,7 +441,7 @@
     "script": {
       "scriptSize": 39373,
       "scriptLines": 1524,
-      "lastModified": 1747488570392
+      "lastModified": 1747884474776
     }
   },
   "originfy": {
@@ -465,7 +465,7 @@
     "script": {
       "scriptSize": 7187,
       "scriptLines": 298,
-      "lastModified": 1747488570394
+      "lastModified": 1747884474778
     }
   },
   "originkill": {
@@ -495,7 +495,7 @@
     "script": {
       "scriptSize": 40837,
       "scriptLines": 1438,
-      "lastModified": 1747488570410
+      "lastModified": 1747884474794
     }
   },
   "ping pong": {
@@ -520,7 +520,7 @@
     "script": {
       "scriptSize": 1735,
       "scriptLines": 100,
-      "lastModified": 1747488570410
+      "lastModified": 1747884474794
     }
   },
   "slider": {
@@ -545,7 +545,7 @@
     "script": {
       "scriptSize": 2201,
       "scriptLines": 86,
-      "lastModified": 1747488570410
+      "lastModified": 1747884474794
     }
   },
   "snake": {
@@ -570,7 +570,7 @@
     "script": {
       "scriptSize": 2225,
       "scriptLines": 124,
-      "lastModified": 1747488570410
+      "lastModified": 1747884474794
     }
   },
   "super slime bros": {
@@ -600,7 +600,7 @@
     "script": {
       "scriptSize": 22766,
       "scriptLines": 895,
-      "lastModified": 1747488570414
+      "lastModified": 1747884474798
     }
   },
   "timer": {
@@ -622,7 +622,7 @@
     "script": {
       "scriptSize": 463,
       "scriptLines": 28,
-      "lastModified": 1747488570415
+      "lastModified": 1747884474798
     }
   },
   "todo": {
@@ -649,7 +649,7 @@
     "script": {
       "scriptSize": 1166,
       "scriptLines": 54,
-      "lastModified": 1747488570415
+      "lastModified": 1747884474798
     }
   },
   "wosle": {
@@ -679,7 +679,7 @@
     "script": {
       "scriptSize": 24916,
       "scriptLines": 254,
-      "lastModified": 1747488570419
+      "lastModified": 1747884474803
     }
   },
   "youtube": {
@@ -704,7 +704,7 @@
     "script": {
       "scriptSize": 3423,
       "scriptLines": 123,
-      "lastModified": 1747488570419
+      "lastModified": 1747884474803
     }
   },
   "youwutube": {
@@ -729,7 +729,7 @@
     "script": {
       "scriptSize": 20080,
       "scriptLines": 655,
-      "lastModified": 1747488570419
+      "lastModified": 1747884474803
     }
   }
 }
