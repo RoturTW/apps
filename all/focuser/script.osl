@@ -8,7 +8,7 @@ window.height = 0
 
 mainloop:
   name = Windows()[1].name
-  if temp[1] == name (
+  if temp == name (
     exit
   )
   temp = name

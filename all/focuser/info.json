@@ -2,7 +2,7 @@
   "title": "Focuser",
   "description": "Sets the tab's name to the current focused window.",
   "author": "Mist, Flufi",
-  "version": "1.1",
+  "version": "1.2",
   "genre": "Utility, System, Customization",
   "permissions": [],
   "supports":["originOS"]
