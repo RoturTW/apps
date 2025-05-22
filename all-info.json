@@ -21,7 +21,7 @@
     "script": {
       "scriptSize": 3145,
       "scriptLines": 194,
-      "lastModified": 1747913988546
+      "lastModified": 1747942477858
     }
   },
   "arrow": {
@@ -45,7 +45,7 @@
     "script": {
       "scriptSize": 18237,
       "scriptLines": 791,
-      "lastModified": 1747913988547
+      "lastModified": 1747942477859
     }
   },
   "ceslum": {
@@ -71,7 +71,7 @@
     "script": {
       "scriptSize": 1210,
       "scriptLines": 46,
-      "lastModified": 1747913988548
+      "lastModified": 1747942477860
     }
   },
   "claw": {
@@ -105,7 +105,7 @@
     "script": {
       "scriptSize": 14722,
       "scriptLines": 615,
-      "lastModified": 1747913988549
+      "lastModified": 1747942477861
     }
   },
   "crl": {
@@ -131,7 +131,7 @@
     "script": {
       "scriptSize": 907,
       "scriptLines": 30,
-      "lastModified": 1747913988549
+      "lastModified": 1747942477861
     }
   },
   "dock themer": {
@@ -158,7 +158,7 @@
     "script": {
       "scriptSize": 916,
       "scriptLines": 43,
-      "lastModified": 1747913988550
+      "lastModified": 1747942477861
     }
   },
   "flappy bird": {
@@ -183,7 +183,7 @@
     "script": {
       "scriptSize": 2960,
       "scriptLines": 146,
-      "lastModified": 1747913988550
+      "lastModified": 1747942477862
     }
   },
   "fluficord": {
@@ -213,14 +213,14 @@
     "script": {
       "scriptSize": 24618,
       "scriptLines": 841,
-      "lastModified": 1747913988567
+      "lastModified": 1747942477879
     }
   },
   "focuser": {
     "title": "Focuser",
     "description": "Sets the tab's name to the current focused window.",
     "author": "Mist, Flufi",
-    "version": "1.1",
+    "version": "1.2",
     "genre": "Utility, System, Customization",
     "permissions": [],
     "supports": [
@@ -228,14 +228,14 @@
     ],
     "icon": "w 4 c #111 square 0 0 8 3 line -5 0 5 0 c #fff icn origin-logo 0.3 -5.5 0 c #fff w 1.5 line 0 0 5 0 line 5 3 8 0 cont 5 -3\n",
     "size": {
-      "bytes": 755,
-      "kilobytes": "0.74",
+      "bytes": 752,
+      "kilobytes": "0.73",
       "megabytes": "0.00"
     },
     "script": {
-      "scriptSize": 396,
+      "scriptSize": 393,
       "scriptLines": 20,
-      "lastModified": 1747913988568
+      "lastModified": 1747942477879
     }
   },
   "fortnite skibidi 2024": {
@@ -263,7 +263,7 @@
     "script": {
       "scriptSize": 4773,
       "scriptLines": 214,
-      "lastModified": 1747913988575
+      "lastModified": 1747942477886
     }
   },
   "goose": {
@@ -288,7 +288,7 @@
     "script": {
       "scriptSize": 2332,
       "scriptLines": 95,
-      "lastModified": 1747913988578
+      "lastModified": 1747942477889
     }
   },
   "im rich": {
@@ -313,7 +313,7 @@
     "script": {
       "scriptSize": 452,
       "scriptLines": 27,
-      "lastModified": 1747913988578
+      "lastModified": 1747942477889
     }
   },
   "jump and run": {
@@ -338,7 +338,7 @@
     "script": {
       "scriptSize": 3956,
       "scriptLines": 194,
-      "lastModified": 1747913988578
+      "lastModified": 1747942477889
     }
   },
   "lights out": {
@@ -363,7 +363,7 @@
     "script": {
       "scriptSize": 1112,
       "scriptLines": 71,
-      "lastModified": 1747913988578
+      "lastModified": 1747942477889
     }
   },
   "mallet": {
@@ -387,7 +387,7 @@
     "script": {
       "scriptSize": 29981,
       "scriptLines": 1114,
-      "lastModified": 1747913988579
+      "lastModified": 1747942477890
     }
   },
   "oft": {
@@ -414,7 +414,7 @@
     "script": {
       "scriptSize": 877,
       "scriptLines": 43,
-      "lastModified": 1747913988585
+      "lastModified": 1747942477896
     }
   },
   "origincord": {
@@ -441,7 +441,7 @@
     "script": {
       "scriptSize": 39373,
       "scriptLines": 1524,
-      "lastModified": 1747913988586
+      "lastModified": 1747942477897
     }
   },
   "originfy": {
@@ -465,7 +465,7 @@
     "script": {
       "scriptSize": 7187,
       "scriptLines": 298,
-      "lastModified": 1747913988588
+      "lastModified": 1747942477899
     }
   },
   "originkill": {
@@ -495,7 +495,7 @@
     "script": {
       "scriptSize": 40837,
       "scriptLines": 1438,
-      "lastModified": 1747913988604
+      "lastModified": 1747942477914
     }
   },
   "ping pong": {
@@ -520,7 +520,7 @@
     "script": {
       "scriptSize": 1735,
       "scriptLines": 100,
-      "lastModified": 1747913988604
+      "lastModified": 1747942477915
     }
   },
   "slider": {
@@ -545,7 +545,7 @@
     "script": {
       "scriptSize": 2201,
       "scriptLines": 86,
-      "lastModified": 1747913988604
+      "lastModified": 1747942477915
     }
   },
   "snake": {
@@ -570,7 +570,7 @@
     "script": {
       "scriptSize": 2225,
       "scriptLines": 124,
-      "lastModified": 1747913988604
+      "lastModified": 1747942477915
     }
   },
   "super slime bros": {
@@ -600,7 +600,7 @@
     "script": {
       "scriptSize": 22766,
       "scriptLines": 895,
-      "lastModified": 1747913988608
+      "lastModified": 1747942477919
     }
   },
   "timer": {
@@ -622,7 +622,7 @@
     "script": {
       "scriptSize": 463,
       "scriptLines": 28,
-      "lastModified": 1747913988608
+      "lastModified": 1747942477919
     }
   },
   "todo": {
@@ -649,7 +649,7 @@
     "script": {
       "scriptSize": 1166,
       "scriptLines": 54,
-      "lastModified": 1747913988609
+      "lastModified": 1747942477919
     }
   },
   "wosle": {
@@ -679,7 +679,7 @@
     "script": {
       "scriptSize": 24916,
       "scriptLines": 254,
-      "lastModified": 1747913988613
+      "lastModified": 1747942477924
     }
   },
   "youtube": {
@@ -704,7 +704,7 @@
     "script": {
       "scriptSize": 3423,
       "scriptLines": 123,
-      "lastModified": 1747913988613
+      "lastModified": 1747942477924
     }
   },
   "youwutube": {
@@ -729,7 +729,7 @@
     "script": {
       "scriptSize": 20080,
       "scriptLines": 655,
-      "lastModified": 1747913988613
+      "lastModified": 1747942477924
     }
   }
 }
