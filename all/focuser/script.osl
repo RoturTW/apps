@@ -7,11 +7,13 @@ window.width = 0
 window.height = 0
 
 mainloop:
-  terminal "-get.windows"
-  if temp == windows_names "exit"
-  temp = windows_names
-  if windows_names[1] != "focuser" (
-    eval "document.title = 'originOS > " ++ windows_names[1] ++ "'"
+  name = Windows()[1].name
+  if temp[1] == name (
+    exit
+  )
+  temp = name
+  if name != "focuser" (
+    eval "document.title = 'originOS > " ++ name ++ "'"
   ) else (
     eval "document.title = 'originOS'"
   )
