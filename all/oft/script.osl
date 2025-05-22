@@ -8,6 +8,8 @@ def applyFPS(frames) (
   terminal cmd
 )
 
+slider_fpsSlider = 0
+
 mainloop:
 wt:load_theme
 wt:seticon oft_icon
@@ -19,7 +21,7 @@ goto 0 0
 slider 256 20 "fpsSlider"
 
 goto 0 64
-chosenFPS = (251 * slider_fpsSlider)
+chosenFPS = (251 * output)
 chosenFPS = round(chosenFPS)
 centext "Current FPS: " ++ round(fps) 12
 
