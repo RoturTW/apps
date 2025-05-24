@@ -2,7 +2,7 @@
   "title": "Lights Out",
   "description": "Lights Out is a challenging puzzle game where the player is presented with a grid of lights, some of which are on and some off. The goal is to turn off all the lights on the grid. Toggling a light also toggles the adjacent lights. The catch is that toggling a light affects its neighbors, making it a strategic challenge to find the correct sequence of moves to turn off all the lights. The game tests logic, problem-solving skills, and spatial reasoning.",
   "author": "Mist",
-  "version": "1.1",
+  "version": "1.2",
   "genre": "Puzzle, Strategy, Brain Teaser",
   "game_modes": ["Single-player"],
   "permissions": [],

@@ -2,7 +2,7 @@
   "title": "Mallet",
   "description": "Full map editor for creating games with, including brushes (boxes) and entities (objects) with a custom .map format (which can just be read as json) plus a fully modular addon system!",
   "author": "Flufi",
-  "version": "1.9.4",
+  "version": "1.9.5",
   "genre": "Utility, Game Development, Creation",
   "permissions": ["file viewer"],
   "supports":["originOS"]
