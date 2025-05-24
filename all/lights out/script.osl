@@ -10,7 +10,7 @@ window "dimensions" 300 330
 window "resizable" false
 window "show"
 
-def "tile" "x,y,id"
+def "tile" "x,y,id" (
   if tiles[id] "c #64b342" else "c #b34242"
   loc 999 -2 x y - 50
   square 90 90 10
@@ -21,7 +21,7 @@ def "tile" "x,y,id"
     can = false
     tc = id
   )
-endef
+)
 
 mainloop:
 

@@ -1,18 +1,18 @@
 brushes = []
 entities = []
 
-if window.permissions.contains("save admin").not (
+if window.permissions.contains("save admin").not() (
   permission "request" "save admin"
 )
 
-def "setdefaults"
+def "setdefaults" (
   do_win_buttons = true
   do_sidebar = true
   do_topbar = true
   do_topbar_mouse_pos = true
   do_topbar_fps = true
   topbar_text = "Mallet - untitled.map"
-endef
+)
 setdefaults
 
 state = "main"
@@ -25,13 +25,13 @@ tools = [
   ["brush","Brush","b",1.7,"c #fff w 2 line 0 -10 0 2 line -9.5 -6 -9.5 6 line 9.5 -6 9.5 6 line -9.5 6 0 2 line 0 2 9.5 6 line -9.5 6 0 10 line 9.5 6 0 10 line -9.5 -6 0 -10 line 0 -10 9.5 -6"],
   ["texture","Texture","t",1.7,"c #d7d7d9 w 2 square 0 0 10 10 w 9 square 0 0 6 6 dot 0 0 c #bd5b3e w 2.75 square -5.3 8 3.5 .75 square 5.3 8 3.5 .75 square -8 2.5 1 .75 square 0 2.5 3.5 .75 square 8 2.5 1 .75 square -5.3 -2.5 3.5 .75 square 5.3 -2.5 3.5 .75 square -8 -8 1 .75 square 0 -8 3.5 .75 square 8 -8 1 .75"]
 ]
-def "clear_data"
+def "clear_data" (
   sidebar_authors = {}
   sidebar = []
   tools = []
   entity_types = {}
   textures = {}
-endef
+)
 
 textures = {}
 entity_types = {}
@@ -40,15 +40,15 @@ logs = []
 
 icon_mallet = "w 20 c #d23a3a dot 0 0 w 2 c #2b2b2b line 6 -6 0 0 line 5 -7 7 -5 line 5 -7 2 -4 cont 2.5 -3.5 cont -1.5 0.5 line 7 -5 4 -2 cont 3.5 -2.5 cont -0.5 1.5 w 2 line -4.5 -1.5 1.5 4.5 line -4.5 -1.5 -7.5 1.5 line 1.5 4.5 -1.5 7.5 line -7.5 1.5 -1.5 7.5 w 3 line -5 1 -1 5"
 icon_addon = "c #881bbf w 6 square 0 -2 5 6 square -2 3 3 5 dot 0 -3 w 3 c #6d1499 line 2 9.5 6.5 5 cont 2 5 cont 2 9.5 w 1.5 c #fff line -3.25 -1 -5.75 -4 cont -3.25 -7 line 3.25 -1 5.75 -4 cont 3.25 -7 line -2.5 -4 2.5 -4 line 0 -6.5 0 -1.5"
-def "loadtheme"
+def "loadtheme" (
   primary = user.theme.primary
   secondary = user.theme.secondary
   tertiary = user.theme.tertiary
   text = user.theme.text
   background = user.theme.background
-endef
+)
 
-import "Window_Tools"
+import "window_tools"
 //seticon icon_mallet
 window "dimensions" 1100 700
 window "set_dragbox" [[2,2,0,0],[-2,2,-90,-42]]
@@ -67,16 +67,18 @@ if passed_Data == "SYS.onboot" (
   window "stop"
 )
 
-def "newTool" "id,name,hotkey,icn_size,icn"
-  t = [].append(id).append(name).append(hotkey).append(icn_size).append(icn)
-  tools.append(t)
-endef
-def "newEntity" "id,params"
+def "newTool" "id,name,hotkey,icn_size,icn" (
+  t = [id,name,hotkey,icn_size,icn]
+  void tools.append(t)
+)
+
+def "newEntity" "id,params" (
   e = {}
   e["params"] = params
   entity_types[id] = e
-endef
-def "newSidebar" "id,name"
+)
+
+def "newSidebar" "id,name" (
   do = true
   each sidebaritemi sidebaritem sidebar (
     if sidebaritem[1] == name (
@@ -84,12 +86,13 @@ def "newSidebar" "id,name"
     )
   )
   if do (
-    s = [].append(id).append(name)
-    sidebar.append(s)
+    s = [id,name]
+    void sidebar.append(s)
     sidebar_authors[id] = addon
   )
-endef
-def "newSidebarIcn" "id,name,size,icn"
+)
+
+def "newSidebarIcn" "id,name,size,icn" (
   do = true
   each sidebaritemi sidebaritem sidebar (
     if sidebaritem[1] == name (
@@ -97,58 +100,64 @@ def "newSidebarIcn" "id,name,size,icn"
     )
   )
   if do (
-    s = [].append(id).append(name).append(icn).append(size)
-    sidebar.append(s)
+    s = [id,name,icn,size]
+    void sidebar.append(s)
     sidebar_authors[id] = addon
   )
-endef
-def "newTexture" "id,url"
+)
+
+def "newTexture" "id,url" (
   textures[id] = url
-endef
+)
 
-def "runaddon" "addon,func"
+def "runaddon" "addon,func" (
   run "" + addons[addon]["scripts"][func]
-endef
+)
 
-def "eventaddon" "func"
+def "eventaddon" "func" (
   each addoni addon addons.getKeys() (
     if addons[addon]["scripts"].getKeys().contains(func) (
       runaddon addon func
     )
   )
-endef
+)
+
 includebase = false
-def "installdefaultaddons"
+def "installdefaultaddons" (
   save save_dir "set_directory"
   save "mallet.addon" "exists"
-  if save_data.not (; installmalletaddon; )
+  if save_data.not() (; installmalletaddon; )
   save "core.addon" "exists"
-  if save_data.not (; installcoreaddon; )
+  if save_data.not() (; installcoreaddon; )
   save "marketplace.addon" "exists"
-  if save_data.not (; installmarketplaceaddon; )
+  if save_data.not() (; installmarketplaceaddon; )
   if includebase (
     save "base.addon" "exists"
-    if save_data.not (; installbaseaddon; )
+    if save_data.not() (; installbaseaddon; )
   )
-endef
-def "installmalletaddon"
+)
+
+def "installmalletaddon" (
   data = "https://raw.githubusercontent.com/ThePandaDever/mallet/main/mallet.addon".get()
   save "mallet.addon" "set" data
-endef
-def "installmarketplaceaddon"
+)
+
+def "installmarketplaceaddon" (
   data = "https://raw.githubusercontent.com/ThePandaDever/mallet/main/marketplace.addon".get()
   save "marketplace.addon" "set" data
-endef
-def "installcoreaddon"
+)
+
+def "installcoreaddon" (
   data = "https://raw.githubusercontent.com/ThePandaDever/mallet/main/core.addon".get()
   save "core.addon" "set" data
-endef
-def "installbaseaddon"
+)
+
+def "installbaseaddon" (
   data = "https://raw.githubusercontent.com/ThePandaDever/mallet/main/base.addon".get()
   save "base.addon" "set" data
-endef
+)
 
-def "loadfiles"
+def "loadfiles" (
   addons = {}
   addonnames = []
   save "mallet@flufi" "set_directory"
@@ -186,80 +195,86 @@ def "loadfiles"
         )
       )
       if filetokens[2] == "addon" (
-        if disabledaddons.contains(filetokens[1]).not (
+        if disabledaddons.contains(filetokens[1]).not() (
           // temp fix
           //addons[filetokens[1]] = filedata.destr
           addons[filetokens[1]] = filedata.replace("\n","").JsonParse()
           runaddon filetokens[1] "load"
         )
-        addonnames.append(filetokens[1])
+        void addonnames.append(filetokens[1])
       )
     )
   ) else (
     say "Fatal Error:" + save_data
     window "stop"
   )
-  if textures.getKeys().contains(current_texture).not or current_texture == "" (
+  if textures.getKeys().contains(current_texture).not() or current_texture == "" (
     current_texture = textures.getKeys()[1]
   )
   eventaddon "late_load"
-endef
+)
+
 assetqueue = []
-def "loadassetfiletovariablenamewithflags" "path,variable,flags"
+def "loadassetfiletovariablenamewithflags" "path,variable,flags" (
   assetqueue.append([path,variable,flags])
-endef
+)
 
 scale = 10
 sidebarexpanded = {}
 
 out = false
-def "getx" "x"
+def "getx" "x" (
   out = x - camera_x * scale
-endef
-def "gety" "y"
+)
+
+def "gety" "y" (
   out = y - camera_y * scale
-endef
-def "getx(x)"
+)
+
+def getx(x) (
   getx x
   return out
-endef
-def "gety(y)"
+)
+
+def gety(y) (
   gety y
   return out
-endef
-def "ungetx(x)"
-  return x / scale + camera_x
-endef
-def "ungety(y)"
-  return y / scale + camera_y
-endef
+)
 
-def "sinsmooth(x)"
+def ungetx(x) (
+  return x / scale + camera_x
+)
+
+def ungety(y) (
+  return y / scale + camera_y
+)
+
+def sinsmooth(x) (
   x = x * 360
   if x + 90 < -90 (; return 0; )
   if x + 90 > 270 (; return 0; )
-  return (x + 90).sin + 1 * .5
-endef
+  return (x + 90).sin() + 1 * .5
+)
 
 out = false
-def "checkbx" "x,y,ax,ay,bx,by"
+def "checkbx" "x,y,ax,ay,bx,by" (
   ix = x > ax and x < bx
   iy = y > ay and y < by
   out = ix and iy
-endef
+)
 
-def "checkxy" "x,y,bx,by,bw,bh"
+def "checkxy" "x,y,bx,by,bw,bh" (
   checkbx x y bx - bw by - bh bx + bw by + bh
-endef
+)
 
-def "mid(a,b)"
+def mid(a,b) (
   a = a.toNum()
   return a + ((b - a) / 2)
-endef
+)
 
 draw_guides = false
 
-def "draw_brush" "b"
+def "draw_brush" "b" (
   x = getx(b[1])
   y = gety(b[2])
   w = b[3] * scale
@@ -277,9 +292,9 @@ def "draw_brush" "b"
     goto 0 0; line x + w window_height * -1 x + w window_height * 1
   )
   draw_guides = false
-endef
+)
 
-def "debug_dot" "x,y"
+def "debug_dot" "x,y" (
   goto getx(x) gety(y)
   pen "size" 10
   pen "down"
@@ -294,9 +309,9 @@ def "brush_touching"
     if selected_brush != brushi "can_interact = false"
     selected_brush = brushi
   )
-endef
+)
 
-def "brush_create(arr)"
+def brush_create(arr) (
   local ax = arr[1]
   local ay = arr[2]
   local bx = arr[3]
@@ -305,10 +320,10 @@ def "brush_create(arr)"
   y = ay + by / 2
   w = (bx - ax * .5).abs
   h = (by - ay * .5).abs
-  return [].append(x).append(y).append(w).append(h).append(current_texture)
-endef
+  return [x,y,w,h,current_texture]
+)
 
-def "brush_handle" "x,y,handle,brsi,cur"
+def "brush_handle" "x,y,handle,brsi,cur" (
   goto x y
   c text
   square 3 3 5
@@ -322,10 +337,10 @@ def "brush_handle" "x,y,handle,brsi,cur"
       dragging_brush_data = brushes[brsi]
     )
   )
-endef
+)
 
-def "win_buttons"
-  window "show"
+def "win_buttons" (
+  window.show()
   if do_win_buttons (
     direction 90
     loc -2 2 -45 -20
@@ -347,9 +362,9 @@ def "win_buttons"
       window "maximise"
     )
   )
-endef
+)
 
-def "loadmap" "map"
+def "loadmap" "map" (
   map_data = map.destr
   brushes = map_data["brushes"].destr
   entities = map_data["entities"].destr
@@ -363,22 +378,21 @@ def "loadmap" "map"
       entities[enti] = ent.JsonParse()
     )
   )
+)
 
-endef
-
-def "SEparams.getparamtype(SEtype)"
+/* def "SEparams.getparamtype(SEtype)"
   each SEparami SEparam SEparams (
     if SEparam[1] == SEtype (
       return SEparam[2]
     )
   )
   return null
-endef
+endef */
 
-def "input_update"
+def "input_update" (
   click = mouse_down and last_down.not
   last_down = mouse_down
-  middle_click = mouse_middle and last_middle_down.not and false
+  middle_click = mouse_middle and last_middle_down.not() and false
   last_middle_down = mouse_middle
   right_click = mouse_right and last_right_down.not
   last_right_down = mouse_right
@@ -393,7 +407,7 @@ def "input_update"
   
   speed = delta_time * (1000 / scale)
   
-  if hovering_ui.not (
+  if hovering_ui.not() (
     if "w".isKeyDown() "camera_y += speed"
     if "s".isKeyDown() "camera_y -= speed"
     if "d".isKeyDown() "camera_x += speed"
@@ -432,8 +446,8 @@ def "input_update"
   if current_tool != "brush" "creating_brush_stage = 0"
   if current_tool != "entity" "creating_entity_stage = 0"
 
-  mouse_wld_x = ungetx(mouse_x).round
-  mouse_wld_y = ungety(mouse_y).round
+  mouse_wld_x = round(ungetx(mouse_x))
+  mouse_wld_y = round(ungety(mouse_y))
 
   if delete_click (
     if selected_brush != 0 (
@@ -445,9 +459,9 @@ def "input_update"
       selected_entity = 0
     )
   )
-endef
+)
 
-def "topbar_update"
+def "topbar_update" (
   // top bar
   loc 9999 2 0 -15
   square window_width 40 10 : c#primary
@@ -466,21 +480,21 @@ def "topbar_update"
   loop logs.len - 15 (
     logs.delete(1)
   )
-endef
+)
 
-def "state_textures"
+def "state_textures" (
     texture_size = 300
 
-    per_line = (window_width - 85 / texture_size).floor
+    per_line = floor(window_width - 85 / texture_size)
 
-    height = (texture_size / -2) + ((textures.len - 1 / per_line).floor * (texture_size * -1 + -20)) * -1 + (texture_size * .5)
+    height = (texture_size / -2) + (floor(textures.len - 1 / per_line) * (texture_size * -1 + -20)) * -1 + (texture_size * .5)
 
     frame window_width * -.5 window_height * .5 - 40 (window_width * -.5 + (per_line * texture_size) + 15) window_height * -.5 + 100 height "texturescroll" : c#tertiary
 
     each texturei temp textures (
-      texture = textures.getKeys().[texturei]
+      texture = textures.getKeys()[texturei]
 
-      loc 2 2 (texture_size / 2) + (texturei - 1 % per_line * texture_size) (texture_size / -2) + ((texturei - 1 / per_line).floor * (texture_size * -1 + -20)) + scroll_ytexturescroll
+      loc 2 2 (texture_size / 2) + (texturei - 1 % per_line * texture_size) (texture_size / -2) + (floor(texturei - 1 / per_line) * (texture_size * -1 + -20)) + scroll_ytexturescroll
       col = current_texture == texture ? global_accent c#primary
       square texture_size - 20 texture_size 10 : c#col chy#-10
 
@@ -493,7 +507,7 @@ def "state_textures"
 
       square texture_size - 20 texture_size 5 : c#primary
 
-      image textures[texture].str texture_size - 20 texture_size - 20 : chy#10
+      image textures[texture].toStr() texture_size - 20 texture_size - 20 : chy#10
 
       x = texture_size * -.5 + 12
       y = texture_size * -.5 + -2
@@ -515,9 +529,9 @@ def "state_textures"
     if mouse_touching and click (; state = "main"; )
     text "Exit" size : c#text chx#x
     if mouse_touching (; cursor "pointer"; )
-endef
+  )
 
-def "sidebar_update"
+def "sidebar_update" (
   // sidebar
   sidebarx = window_width * .5 - 145
   sidebarheight_panel = (window_height * .5 - 45) - (window_height * -.5 + 10) - 20
@@ -535,17 +549,17 @@ def "sidebar_update"
     author = sidebar_authors[sidebartab[1]]
     tooltip = author + ":" + sidebartab[1]
     if sidebartab.len == 2 (
-      text sidebartab[2].str 10 : c#text chx#-125 tooltip#tooltip
+      text sidebartab[2].toStr() 10 : c#text chx#-125 tooltip#tooltip
     ) else (
-      icon sidebartab[3].str sidebartab[4] : c#text chx#-115
-      text sidebartab[2].str 10 : c#text chx#17 tooltip#tooltip
+      icon sidebartab[3].toStr() sidebartab[4] : c#text chx#-115
+      text sidebartab[2].toStr() 10 : c#text chx#17 tooltip#tooltip
     )
     sidebary += 35
     start_sidebary = sidebary
 
     sidebarid = sidebartab[1]
     expanded = sidebarexpanded[sidebarid]
-    if sidebarexpanded.getKeys().contains(sidebarid).not (
+    if sidebarexpanded.getKeys().contains(sidebarid).not() (
       expanded = false
     )
 
@@ -582,9 +596,9 @@ def "sidebar_update"
   frame "clear"
   sidebarheight = sidebary - (frame_height / -2 - scroll_ysidebarscroll + 30) - 31
   eventaddon "gui_edt_update"
-endef
+)
 
-def "tools_update"
+def "tools_update" (
   shouldntdrag = dragging_handle != ""
   shouldntdrag = shouldntdrag or dragging_brush != 0
   shouldntdrag = shouldntdrag or selected_brush != 0
@@ -593,8 +607,8 @@ def "tools_update"
   shouldntdrag = shouldntdrag or dragging_entity != 0
   shouldntdrag = shouldntdrag or selected_entity != 0
   shouldntdrag = shouldntdrag or hovered_entity != 0
-  if mouse_down and drgtl_set and hovering_ui.not and shouldntdrag.not (
-    brs = brush_create([].append(drgtl_start_x).append(drgtl_start_y).append(mouse_wld_x).append(mouse_wld_y))
+  if mouse_down and drgtl_set and hovering_ui.not() and shouldntdrag.not() (
+    brs = brush_create([drgtl_start_x,drgtl_start_y,mouse_wld_x,mouse_wld_y])
     c #006464
     draw_brush brs
     
@@ -611,7 +625,7 @@ def "tools_update"
     goto sbrsx - sbrsw + (-9 * (brsh * 10).len) - 5 sbrsy
     text (brsh * 10) 9
   )
-  if mouse_down.not (
+  if mouse_down.not() (
     drgtl_set = false
   )
 
@@ -633,18 +647,18 @@ def "tools_update"
       current_tool = tool[1]
     ); ); )
     square 40 40 10 : c#primary
-    icon tool[5].str tool[4]
+    icon tool[5].toStr() tool[4]
   )
   if current_tool == "select" (
-    if click and hovering_ui.not (
+    if click and hovering_ui.not() (
       drgtl_start_x = mouse_wld_x
       drgtl_start_y = mouse_wld_y
       drgtl_set = true
     )
   )
-endef
+)
 
-def "scene_brush_update"
+def "scene_brush_update" (
   eventaddon "gui_brush_update_early"
   hovered_brush = 0
   hovered_handle = ""
@@ -726,7 +740,7 @@ def "scene_brush_update"
     )
   )
   // unselect brush if clicked off.
-  if hovered_brush == 0 and click and hovering_ui.not (
+  if hovered_brush == 0 and click and hovering_ui.not() (
     selected_brush = 0
     if current_tool == "brush" (
       if creating_brush_stage == 0 (
@@ -779,7 +793,7 @@ def "scene_brush_update"
       if dragging_handle == "l" (
         ax = mouse_wld_x
       )
-      brushes[dragging_brush] = [].append(mid(ax,bx)).append(mid(ay,by)).append((bx - ax * .5).abs()).append((by - ay * .5).abs()).append(org_txt)
+      brushes[dragging_brush] = [mid(ax,bx),mid(ay,by),abs(bx - ax * .5),abs(by - ay * .5),org_txt]
     )
   )
   eventaddon "gui_brush_update"
@@ -797,7 +811,7 @@ def "scene_brush_update"
     can_interact = false
     if creating_brush_stage == 1 (
       c #007272
-      brs = brush_create([].append(creating_brush_x).append(creating_brush_y).append(mouse_wld_x).append(mouse_wld_y))
+      brs = brush_create([creating_brush_x,creating_brush_y,mouse_wld_xa,mouse_wld_y])
       draw_guides = true
       draw_brush brs
 
@@ -815,7 +829,7 @@ def "scene_brush_update"
       text (brsh * 10) 9
     )
     if creating_brush_stage == 2 (
-      brs = brush_create([].append(creating_brush_x).append(creating_brush_y).append(creating_brush_end_x).append(creating_brush_end_y))
+      brs = brush_create([creating_brush_x,creating_brush_y,creating_brush_end_x,creating_brush_end_y])
       if brs[3] != 0 and brs[4] != 0 (
         brushes.append(brs)
         selected_brush = brushes.len
@@ -824,10 +838,10 @@ def "scene_brush_update"
     )
   )
   // brushes
-  if mouse_down.not (
+  if mouse_down.not() (
     if dragging_brush != 0 (
       if "shift".isKeyDown() (
-        brs = [].append(org_x).append(org_y).append(org_w).append(org_h).append(org_txt)
+        brs = [org_x,org_y,org_w,org_h,org_txt]
         brushes.append(brs)
       )
     )
@@ -841,9 +855,9 @@ def "scene_brush_update"
     dragging_entity = 0
     can_interact = true
   )
-endef
+)
 
-def "scene_entity_update"
+def "scene_entity_update" (
   ignoreents = []
   eventaddon "gui_ent_update_early"
   hovered_entity = 0
@@ -852,7 +866,7 @@ def "scene_entity_update"
       entx = getx(entity[1])
       enty = gety(entity[2])
       enttype = entity[3]
-      if enttype.str != "enttype" (
+      if enttype.toStr() != "enttype" (
         goto entx enty
         col = selected_entity == entityi ? #c0c #a0a
         notignored = ignoreents.contains(entityi).not
@@ -868,7 +882,7 @@ def "scene_entity_update"
           params = entity_types[type]["params"]
           each parami param params (
             id = param[1]
-            if entities[selected_entity][4].getKeys().contains(id).not (
+            if entities[selected_entity][4].getKeys().contains(id).not() (
               e = entities[selected_entity]
               p = e[4]
               p[id] = "0"
@@ -881,7 +895,7 @@ def "scene_entity_update"
         ); )
 
         change_y 1.5 * scale
-        if enttype.str != "enttype" and notignored (
+        if enttype.toStr() != "enttype" and notignored (
           centext enttype .5 * scale : c#text
           if entity_types[enttype] == null (
             change_x enttype.len * (-.25 * scale) - (scale * .75)
@@ -919,7 +933,7 @@ def "scene_entity_update"
     entities[dragging_entity] = ent
   )
   // unselect entity if clicked off.
-  if hovered_entity == 0 and click and hovering_ui.not (
+  if hovered_entity == 0 and click and hovering_ui.not() (
     selected_entity = 0
     if current_tool == "entity" and current_entity != "" (
       if creating_entity_stage < 2 (
@@ -966,14 +980,14 @@ def "scene_entity_update"
           dta[prm_id] = param[3]
         )
       )
-      ent = [].append(creating_entity_x).append(creating_entity_y).append(creating_entity_type).append(dta)
-      entities.append(ent)
+      ent = [creating_entity_x,creating_entity_y,creating_entity_type,dta]
+      void entities.append(ent)
       creating_entity_stage = 0
     )
   )
-endef
+)
 
-def "center_axis"
+def "center_axis" (
   // center axis
   c #006464
   x = getx(0)
@@ -983,13 +997,13 @@ def "center_axis"
   line x window_height x window_height * -1
   goto 0 0
   line window_width y window_width * -1 y
-endef
+)
 
 cur_col = #000
-def "col" "color"
+def "col" "color" (
   c color
   cur_col = color
-endef
+)
 
 if passed_data != "" (
   file "open" passed_data
