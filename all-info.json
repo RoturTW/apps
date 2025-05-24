@@ -21,7 +21,7 @@
     "script": {
       "scriptSize": 3145,
       "scriptLines": 194,
-      "lastModified": 1748118780843
+      "lastModified": 1748118812227
     }
   },
   "arrow": {
@@ -45,7 +45,7 @@
     "script": {
       "scriptSize": 18237,
       "scriptLines": 791,
-      "lastModified": 1748118780844
+      "lastModified": 1748118812228
     }
   },
   "ceslum": {
@@ -71,7 +71,7 @@
     "script": {
       "scriptSize": 1210,
       "scriptLines": 46,
-      "lastModified": 1748118780845
+      "lastModified": 1748118812229
     }
   },
   "claw": {
@@ -105,7 +105,7 @@
     "script": {
       "scriptSize": 14722,
       "scriptLines": 615,
-      "lastModified": 1748118780846
+      "lastModified": 1748118812230
     }
   },
   "crl": {
@@ -131,7 +131,7 @@
     "script": {
       "scriptSize": 907,
       "scriptLines": 30,
-      "lastModified": 1748118780846
+      "lastModified": 1748118812230
     }
   },
   "dock themer": {
@@ -158,7 +158,7 @@
     "script": {
       "scriptSize": 916,
       "scriptLines": 43,
-      "lastModified": 1748118780846
+      "lastModified": 1748118812231
     }
   },
   "flappy bird": {
@@ -183,7 +183,7 @@
     "script": {
       "scriptSize": 2960,
       "scriptLines": 146,
-      "lastModified": 1748118780847
+      "lastModified": 1748118812231
     }
   },
   "fluficord": {
@@ -213,7 +213,7 @@
     "script": {
       "scriptSize": 24618,
       "scriptLines": 841,
-      "lastModified": 1748118780864
+      "lastModified": 1748118812248
     }
   },
   "focuser": {
@@ -235,7 +235,7 @@
     "script": {
       "scriptSize": 393,
       "scriptLines": 20,
-      "lastModified": 1748118780864
+      "lastModified": 1748118812248
     }
   },
   "fortnite skibidi 2024": {
@@ -263,7 +263,7 @@
     "script": {
       "scriptSize": 4773,
       "scriptLines": 214,
-      "lastModified": 1748118780872
+      "lastModified": 1748118812256
     }
   },
   "goose": {
@@ -288,7 +288,7 @@
     "script": {
       "scriptSize": 2332,
       "scriptLines": 95,
-      "lastModified": 1748118780874
+      "lastModified": 1748118812259
     }
   },
   "im rich": {
@@ -313,7 +313,7 @@
     "script": {
       "scriptSize": 452,
       "scriptLines": 27,
-      "lastModified": 1748118780875
+      "lastModified": 1748118812259
     }
   },
   "jump and run": {
@@ -338,14 +338,14 @@
     "script": {
       "scriptSize": 3956,
       "scriptLines": 194,
-      "lastModified": 1748118780875
+      "lastModified": 1748118812259
     }
   },
   "lights out": {
     "title": "Lights Out",
     "description": "Lights Out is a challenging puzzle game where the player is presented with a grid of lights, some of which are on and some off. The goal is to turn off all the lights on the grid. Toggling a light also toggles the adjacent lights. The catch is that toggling a light affects its neighbors, making it a strategic challenge to find the correct sequence of moves to turn off all the lights. The game tests logic, problem-solving skills, and spatial reasoning.",
     "author": "Mist",
-    "version": "1.1",
+    "version": "1.2",
     "genre": "Puzzle, Strategy, Brain Teaser",
     "game_modes": [
       "Single-player"
@@ -363,14 +363,14 @@
     "script": {
       "scriptSize": 1110,
       "scriptLines": 71,
-      "lastModified": 1748118780875
+      "lastModified": 1748118812259
     }
   },
   "mallet": {
     "title": "Mallet",
     "description": "Full map editor for creating games with, including brushes (boxes) and entities (objects) with a custom .map format (which can just be read as json) plus a fully modular addon system!",
     "author": "Flufi",
-    "version": "1.9.4",
+    "version": "1.9.5",
     "genre": "Utility, Game Development, Creation",
     "permissions": [
       "file viewer"
@@ -387,7 +387,7 @@
     "script": {
       "scriptSize": 29643,
       "scriptLines": 1128,
-      "lastModified": 1748118780875
+      "lastModified": 1748118812259
     }
   },
   "oft": {
@@ -414,7 +414,7 @@
     "script": {
       "scriptSize": 877,
       "scriptLines": 43,
-      "lastModified": 1748118780881
+      "lastModified": 1748118812266
     }
   },
   "origincord": {
@@ -441,7 +441,7 @@
     "script": {
       "scriptSize": 39373,
       "scriptLines": 1524,
-      "lastModified": 1748118780882
+      "lastModified": 1748118812266
     }
   },
   "originfy": {
@@ -465,7 +465,7 @@
     "script": {
       "scriptSize": 7187,
       "scriptLines": 298,
-      "lastModified": 1748118780884
+      "lastModified": 1748118812268
     }
   },
   "originkill": {
@@ -495,7 +495,7 @@
     "script": {
       "scriptSize": 40837,
       "scriptLines": 1438,
-      "lastModified": 1748118780900
+      "lastModified": 1748118812284
     }
   },
   "ping pong": {
@@ -520,7 +520,7 @@
     "script": {
       "scriptSize": 1735,
       "scriptLines": 100,
-      "lastModified": 1748118780900
+      "lastModified": 1748118812284
     }
   },
   "slider": {
@@ -545,7 +545,7 @@
     "script": {
       "scriptSize": 2201,
       "scriptLines": 86,
-      "lastModified": 1748118780900
+      "lastModified": 1748118812284
     }
   },
   "snake": {
@@ -570,7 +570,7 @@
     "script": {
       "scriptSize": 2225,
       "scriptLines": 124,
-      "lastModified": 1748118780900
+      "lastModified": 1748118812285
     }
   },
   "super slime bros": {
@@ -600,7 +600,7 @@
     "script": {
       "scriptSize": 22766,
       "scriptLines": 895,
-      "lastModified": 1748118780904
+      "lastModified": 1748118812289
     }
   },
   "timer": {
@@ -622,7 +622,7 @@
     "script": {
       "scriptSize": 463,
       "scriptLines": 28,
-      "lastModified": 1748118780904
+      "lastModified": 1748118812289
     }
   },
   "todo": {
@@ -649,7 +649,7 @@
     "script": {
       "scriptSize": 1166,
       "scriptLines": 54,
-      "lastModified": 1748118780905
+      "lastModified": 1748118812289
     }
   },
   "wosle": {
@@ -679,7 +679,7 @@
     "script": {
       "scriptSize": 24916,
       "scriptLines": 254,
-      "lastModified": 1748118780909
+      "lastModified": 1748118812293
     }
   },
   "youtube": {
@@ -704,7 +704,7 @@
     "script": {
       "scriptSize": 3423,
       "scriptLines": 123,
-      "lastModified": 1748118780909
+      "lastModified": 1748118812293
     }
   },
   "youwutube": {
@@ -729,7 +729,7 @@
     "script": {
       "scriptSize": 20080,
       "scriptLines": 655,
-      "lastModified": 1748118780909
+      "lastModified": 1748118812294
     }
   }
 }
