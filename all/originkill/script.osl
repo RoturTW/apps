@@ -125,14 +125,7 @@ def "newEntRaw2" "id,x,y,isboss" (
   // spawns an entity with
   // id, x, y, health, velocity_x, velocity_y, spawn_smoothing
   // then adds an extra one which is extras in an obj
-  temp = []
-  temp.append(id)
-  temp.append(x)
-  temp.append(y)
-  temp.append(entity_health[id])
-  temp.append(0)
-  temp.append(0)
-  temp.append(0)
+  temp = [id, x, y, entity_health[id], 0, 0, 0]
   enid = ouidNew()
   entities[enid] = temp
   if isboss (
@@ -227,14 +220,14 @@ def "entDie" "id" (
   )
 )
 
-def "ouidtonum(ouid)" (
+def ouidtonum(ouid) (
   num = 0
   each chari char ouid (
     num += chars.index(char) * (10 ^ (chari - 1))
   )
   return num / (10 ^ ouid.len) * 100
 )
-def "lookat(x1,y1,x2,y2)" (
+def lookat(x1,y1,x2,y2) (
   goto x1 y1
   pointat x2 y2
   dir = direction
