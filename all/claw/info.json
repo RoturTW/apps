@@ -5,7 +5,7 @@
   "version": "2.5",
   "genre": "Social, Communication, Networking",
   "game_modes": [
-    "Single-PLayer"
+    "Single-Player"
   ],
   "permissions": [
     "rotur token"
