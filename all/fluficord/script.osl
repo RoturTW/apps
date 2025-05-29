@@ -467,10 +467,10 @@ class UI (
         local y = start
         local total_h = 0
         local isConnected @= def(msgData,otherData) -> (
-          // if its the same user, and the messages are less than 30 seconds apart
-          local timeconnected = msgData.timestamp != null and otherData.timestamp != null ? msgData.timestamp - otherData.timestamp < (30 * 1000) true
+          // if its the same user, and the messages are less than 2 minutes apart
+          local timeconnected = msgData.timestamp != null and otherData.timestamp != null ? msgData.timestamp - otherData.timestamp < (2 * 60 * 1000) true
           //temp["time"] = timeconnected
-          return msgData.user == otherData.user and timeconnected and msgData["reply"] == nul
+          return msgData.user == otherData.user and timeconnected and msgData["reply"] == null
         )
         local sizeFunction = def(emote, spacing) -> (
           return spacing + (emotes[emote].len.toStr().len * 10)
@@ -480,14 +480,6 @@ class UI (
         local drawText @= UI.drawText
         local drawEmote @= UI.drawEmote
         local messageSize = self.messageSize
-        local emoteKeys = emotes.getKeys()
-        local getHeight @= def(lines, messageSize, doTitle, connected, reply, emoteKeys, nul) -> (
-          local title = doTitle ? (connected ? (messageSize * 2) 25) 0
-          local line = lines.len * messageSize * 2.3
-          local emote = emoteKeys.len > 0 ? 37.5 0
-          local replyH = reply != nul ? 20 0
-          return line + title + emote + replyH
-        )
         contentCache ??= {}
         heightCache ??= {}
         isConnectedCache ??= {}
@@ -501,9 +493,10 @@ class UI (
           local connected = (messages[msgi - 1] != null) ? isConnected(Net.messages[messages[msgi - 1]],msgData) false
           local height = 0
           emotes = msgData["emotes"]
+          local emoteKeys = emotes.getKeys()
           height += content.split("\n").len * self.messageSize * 2.3
           height += doTitle ? (connected ? (self.messageSize * 2) 25) 0
-          height += emoteKeys.len > 0 ? 37.5 0
+          height += emotes.len > 0 ? 37.5 0
           height += msgData["reply"] != null ? 20 0
           total_h += height
           if y > frame.top (
