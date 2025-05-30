@@ -1,6 +1,3 @@
-// base github url for all assets, files and data
-github = "https://raw.githubusercontent.com/RoturTW/apps/main/all/arrow/"
-
 // asset urls
 player_eye = "w 2 c #000 dot -8 0 w 1 square -8 0 1 1 c #777 w 1 line 5 3.5 -4 11 cont -9 12 cont -8 13.5 cont 0 13 w 3 line 6 5 -3 12 w 2 cont -7.5 13 w 1 line 5 -3.5 -4 -11 cont -9 -12 cont -8 -13.5 cont 0 -13 w 3 line 6 -5 -3 -12 w 2 cont -7.5 -13 c #666 w 1 line 5 12.5 -4 17.4 cont -6 16 cont -1 13 cont 5 3.5 cont 7 4 w 3 line 6 5 1 13 w 2 cont -4.2 16 w 1 line 5 -12.5 -4 -17.4 cont -6 -16 cont -1 -13 cont 5 -3.5 cont 7 -4 w 3 line 6 -5 1 -13 w 2 cont -4.2 -16 c #444 w 1 line 9.5 3 6 15 cont 1 19 cont -1 18.5 cont 2.5 15 cont 6 4 cont 9.5 3 w 3 line 7.6 4.6 4 15 w 2 cont 0.5 18 w 1 line 9.5 -3 6 -15 cont 1 -19 cont -1 -18.5 cont 2.5 -15 cont 6 -4 cont 9.5 -3 w 3 line 7.6 -4.6 4 -15 w 2 cont 0.5 -18"
 
@@ -344,15 +341,10 @@ object renderer = {
     move 40 * s
     icon player_eye 4.7 * s
     move 30 * s
-    image github ++ "assets/Charge/" ++ (per * 10 + 1).floor() ++ ".svg" 25 * s
     move -30 * s
     effect "clear"
   )
 }
-
-for i 11 (
-  load github ++ "assets/Charge/" ++ i ++ ".svg"
-)
 
 per = 0
 s = 0.7
