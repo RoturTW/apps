@@ -1,9 +1,8 @@
 save "snake@mistium" "set_directory"
 
-save "highscore.txt" "get"
-highscore = save_data
-if save_data == null (
-  highscore = 0
+if "highscore.txt".saveExists() (
+  save "highscore.txt" "get"
+  highscore = "highscore.txt".saveGet() ?? 0
 )
 
 def "move" "x, y" (
