@@ -2,7 +2,7 @@
   "title": "Snake",
   "description": "Snake is a classic single-player arcade game where the player controls a snake that moves around a bounded area, collecting food items represented by dots. As the snake consumes food, it grows longer. The objective is to navigate the snake around the playfield without colliding with itself or the boundaries. The game ends if the snake collides with itself or the boundaries. It requires reflexes, spatial awareness, and strategic planning to achieve the highest score possible.\nRecently fixed for v5.5.7 due to an issue with a deprecated method in osl",
   "author": "Mist",
-  "version": "1.2",
+  "version": "1.3",
   "genre": "Arcade, Casual, Strategy",
   "game_modes": ["Single-player"],
   "permissions": [],
