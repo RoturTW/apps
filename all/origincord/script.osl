@@ -1028,7 +1028,7 @@ if loaded_cord.not() (
       c prim
     )
     square frame.width - 30 25 10
-    if onclick (
+    if onclick and (input_token_name ++ input_token_data != "") (
       save input_token_name ++ ".txt" "set" input_token_data
       input_token_data = ""
       input_token_name = ""
