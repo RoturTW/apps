@@ -1497,7 +1497,7 @@ if "enter".isKeyDown() or onclick and "shift".isKeyDown().not() and send != null
     exit
   )
   if send.startsWith(".version") (
-    async_msg "originCord v5.81" current_channel
+    async_msg "originCord v5.82" current_channel
     inputs.message = ""
     exit
   )
