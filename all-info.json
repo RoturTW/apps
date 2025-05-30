@@ -21,7 +21,7 @@
     "script": {
       "scriptSize": 3145,
       "scriptLines": 194,
-      "lastModified": 1748559493795
+      "lastModified": 1748579841467
     }
   },
   "arrow": {
@@ -45,7 +45,7 @@
     "script": {
       "scriptSize": 18237,
       "scriptLines": 791,
-      "lastModified": 1748559493796
+      "lastModified": 1748579841468
     }
   },
   "ceslum": {
@@ -71,7 +71,7 @@
     "script": {
       "scriptSize": 1210,
       "scriptLines": 46,
-      "lastModified": 1748559493797
+      "lastModified": 1748579841469
     }
   },
   "claw": {
@@ -105,7 +105,7 @@
     "script": {
       "scriptSize": 14722,
       "scriptLines": 615,
-      "lastModified": 1748559493798
+      "lastModified": 1748579841470
     }
   },
   "crl": {
@@ -131,7 +131,7 @@
     "script": {
       "scriptSize": 907,
       "scriptLines": 30,
-      "lastModified": 1748559493798
+      "lastModified": 1748579841471
     }
   },
   "dock themer": {
@@ -158,7 +158,7 @@
     "script": {
       "scriptSize": 916,
       "scriptLines": 43,
-      "lastModified": 1748559493798
+      "lastModified": 1748579841471
     }
   },
   "flappy bird": {
@@ -183,7 +183,7 @@
     "script": {
       "scriptSize": 2960,
       "scriptLines": 146,
-      "lastModified": 1748559493799
+      "lastModified": 1748579841472
     }
   },
   "fluficord": {
@@ -213,7 +213,7 @@
     "script": {
       "scriptSize": 29032,
       "scriptLines": 993,
-      "lastModified": 1748559493816
+      "lastModified": 1748579841488
     }
   },
   "focuser": {
@@ -235,7 +235,7 @@
     "script": {
       "scriptSize": 393,
       "scriptLines": 20,
-      "lastModified": 1748559493816
+      "lastModified": 1748579841488
     }
   },
   "fortnite skibidi 2024": {
@@ -263,7 +263,7 @@
     "script": {
       "scriptSize": 4773,
       "scriptLines": 214,
-      "lastModified": 1748559493824
+      "lastModified": 1748579841496
     }
   },
   "goose": {
@@ -288,32 +288,7 @@
     "script": {
       "scriptSize": 2332,
       "scriptLines": 95,
-      "lastModified": 1748559493827
-    }
-  },
-  "im rich": {
-    "title": "im rich",
-    "description": "Do you ever feel like you have too many Rotur Credits? No...? Oh. Well if you *were actually rich* this would be the perfect app for you to show off how rich you are by purchasing a completely useless item!",
-    "author": "Mist",
-    "version": "1.0",
-    "genre": "Entertainment, Novelty, Humor",
-    "game_modes": [
-      "Single-player"
-    ],
-    "permissions": [],
-    "supports": [
-      "originOS"
-    ],
-    "icon": "c #DAF0F2 w 3 line 3 5 -3 5 cont -6 2 cont 0 -5 cont 6 2 cont 3 5 w 9.5 dot 0 0\n",
-    "size": {
-      "bytes": 951,
-      "kilobytes": "0.93",
-      "megabytes": "0.00"
-    },
-    "script": {
-      "scriptSize": 452,
-      "scriptLines": 27,
-      "lastModified": 1748559493827
+      "lastModified": 1748579841499
     }
   },
   "jump and run": {
@@ -338,7 +313,7 @@
     "script": {
       "scriptSize": 3956,
       "scriptLines": 194,
-      "lastModified": 1748559493827
+      "lastModified": 1748579841499
     }
   },
   "lights out": {
@@ -363,7 +338,7 @@
     "script": {
       "scriptSize": 1110,
       "scriptLines": 71,
-      "lastModified": 1748559493827
+      "lastModified": 1748579841499
     }
   },
   "mallet": {
@@ -387,7 +362,7 @@
     "script": {
       "scriptSize": 29643,
       "scriptLines": 1128,
-      "lastModified": 1748559493827
+      "lastModified": 1748579841500
     }
   },
   "oft": {
@@ -414,7 +389,7 @@
     "script": {
       "scriptSize": 877,
       "scriptLines": 43,
-      "lastModified": 1748559493833
+      "lastModified": 1748579841506
     }
   },
   "origincord": {
@@ -441,7 +416,7 @@
     "script": {
       "scriptSize": 39382,
       "scriptLines": 1524,
-      "lastModified": 1748559493834
+      "lastModified": 1748579841506
     }
   },
   "originfy": {
@@ -465,7 +440,7 @@
     "script": {
       "scriptSize": 7187,
       "scriptLines": 298,
-      "lastModified": 1748559493836
+      "lastModified": 1748579841509
     }
   },
   "originkill": {
@@ -495,7 +470,7 @@
     "script": {
       "scriptSize": 40733,
       "scriptLines": 1431,
-      "lastModified": 1748559493852
+      "lastModified": 1748579841524
     }
   },
   "ping pong": {
@@ -520,7 +495,7 @@
     "script": {
       "scriptSize": 1735,
       "scriptLines": 100,
-      "lastModified": 1748559493852
+      "lastModified": 1748579841524
     }
   },
   "slider": {
@@ -545,7 +520,7 @@
     "script": {
       "scriptSize": 2201,
       "scriptLines": 86,
-      "lastModified": 1748559493852
+      "lastModified": 1748579841525
     }
   },
   "snake": {
@@ -570,7 +545,7 @@
     "script": {
       "scriptSize": 2225,
       "scriptLines": 124,
-      "lastModified": 1748559493852
+      "lastModified": 1748579841525
     }
   },
   "super slime bros": {
@@ -600,7 +575,7 @@
     "script": {
       "scriptSize": 22766,
       "scriptLines": 895,
-      "lastModified": 1748559493856
+      "lastModified": 1748579841529
     }
   },
   "timer": {
@@ -622,7 +597,7 @@
     "script": {
       "scriptSize": 463,
       "scriptLines": 28,
-      "lastModified": 1748559493857
+      "lastModified": 1748579841529
     }
   },
   "todo": {
@@ -649,7 +624,7 @@
     "script": {
       "scriptSize": 1166,
       "scriptLines": 54,
-      "lastModified": 1748559493857
+      "lastModified": 1748579841529
     }
   },
   "wosle": {
@@ -679,7 +654,7 @@
     "script": {
       "scriptSize": 24916,
       "scriptLines": 254,
-      "lastModified": 1748559493861
+      "lastModified": 1748579841534
     }
   },
   "youtube": {
@@ -704,7 +679,7 @@
     "script": {
       "scriptSize": 3423,
       "scriptLines": 123,
-      "lastModified": 1748559493861
+      "lastModified": 1748579841534
     }
   },
   "youwutube": {
@@ -729,7 +704,7 @@
     "script": {
       "scriptSize": 20080,
       "scriptLines": 655,
-      "lastModified": 1748559493861
+      "lastModified": 1748579841534
     }
   }
 }
