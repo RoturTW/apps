@@ -30,11 +30,11 @@ def "notifyCustom" "text,icon,title" (
   file "open" my_uuid
   local icn = file[11]
   local name = file[2]
-  file "set" 11 icon
-  file "set" 2 title
+  //file "set" 11 icon
+  //file "set" 2 title
   notify text
-  file "set" 11 icn
-  file "set" 2 name
+  //file "set" 11 icn
+  //file "set" 2 name
 )
 
 class Config (
@@ -339,7 +339,7 @@ class UI (
   )
   
   class channel_list (
-    width = 200
+    width = 225
     real_width = self.width
     height = 0
     shown = true
@@ -776,13 +776,14 @@ class UI (
               //icon "square 0 0 25 25" .5 : c#fff
               change 10 -10
               
-              local back = "c" + prim + "w 32 dot 0 0"
+              local back = "c" + prim + "w 30 dot 0 0"
               if Net.onlineUsers == null (
-                text "?" 8 : c#txtc
+                icon back .5
+                text "?" 6 : c#txtc chx#-3
               ) else if Net.onlineUsers.contains(user) (
-                icon back + "c #03c200 w 20 dot 0 0" .5
+                icon back + "c #03c200 w 19 dot 0 0" .5
               ) else (
-                icon back + "c #424242 w 5.5 cutcircle 0 0 7.5 0 180" .5
+                icon back + "c #424242 w 4.5 cutcircle 0 0 7 0 180" .5
               )
               
               change 12.5 10
@@ -926,7 +927,8 @@ window.on("close", def() -> (
 mainloop:
   if isType == "notif" (
     Net.update()
-    window "hide"
+    window.hide()
+    window.resize(0,0)
     return
   )
   
