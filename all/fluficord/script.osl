@@ -494,8 +494,7 @@ class UI (
           local height = 0
           emotes = msgData["emotes"]
           local emoteKeys = emotes.getKeys()
-          height += content.split("
-").len * self.messageSize * 2.3
+          height += content.split("\n").len * self.messageSize * 2.3
           height += doTitle ? (connected ? (self.messageSize * 2) 25) 0
           height += emotes.len > 0 ? 37.5 0
           height += msgData["reply"] != null ? 20 0
@@ -573,8 +572,7 @@ class UI (
             )
             drawPFP(replyMessage.user, 14, 14)
             drawUser(replyMessage.user, self.messageSize * .8, "@") : chx#16 c#txtc chx#-6.25
-            drawText(replyMessage.content.replace("
-"," ").trimText(frame.width / (self.messageSize * .8) - 16), self.messageSize * .8, txtc) : chx#5
+            drawText(replyMessage.content.replace("\n"," ").trimText(frame.width / (self.messageSize * .8) - 16), self.messageSize * .8, txtc) : chx#5
             y -= 20
           )
           
@@ -655,8 +653,7 @@ class UI (
           "line_numbers": false
         }
         if "enter".onKeyDown() and "shift".isKeyDown().not() (
-          Net.sendMessage(inputs["input_bar"].join("
-"), UI.selected_channel, UI.replying_message)
+          Net.sendMessage(inputs["input_bar"].join("\n"), UI.selected_channel, UI.replying_message)
           UI.replying_message = null
           inputs["input_bar"] = [""]
         )
