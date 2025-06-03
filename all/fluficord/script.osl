@@ -30,11 +30,11 @@ def "notifyCustom" "text,icon,title" (
   file "open" my_uuid
   local icn = file[11]
   local name = file[2]
-  file "set" 11 icon
-  file "set" 2 title
+  //file "set" 11 icon
+  //file "set" 2 title
   notify text
-  file "set" 11 icn
-  file "set" 2 name
+  //file "set" 11 icn
+  //file "set" 2 name
 )
 
 class Config (
@@ -339,7 +339,7 @@ class UI (
   )
   
   class channel_list (
-    width = 200
+    width = 225
     real_width = self.width
     height = 0
     shown = true
@@ -494,7 +494,8 @@ class UI (
           local height = 0
           emotes = msgData["emotes"]
           local emoteKeys = emotes.getKeys()
-          height += content.split("\n").len * self.messageSize * 2.3
+          height += content.split("
+").len * self.messageSize * 2.3
           height += doTitle ? (connected ? (self.messageSize * 2) 25) 0
           height += emotes.len > 0 ? 37.5 0
           height += msgData["reply"] != null ? 20 0
@@ -572,7 +573,8 @@ class UI (
             )
             drawPFP(replyMessage.user, 14, 14)
             drawUser(replyMessage.user, self.messageSize * .8, "@") : chx#16 c#txtc chx#-6.25
-            drawText(replyMessage.content.replace("\n"," ").trimText(frame.width / (self.messageSize * .8) - 16), self.messageSize * .8, txtc) : chx#5
+            drawText(replyMessage.content.replace("
+"," ").trimText(frame.width / (self.messageSize * .8) - 16), self.messageSize * .8, txtc) : chx#5
             y -= 20
           )
           
@@ -653,7 +655,8 @@ class UI (
           "line_numbers": false
         }
         if "enter".onKeyDown() and "shift".isKeyDown().not() (
-          Net.sendMessage(inputs["input_bar"].join("\n"), UI.selected_channel, UI.replying_message)
+          Net.sendMessage(inputs["input_bar"].join("
+"), UI.selected_channel, UI.replying_message)
           UI.replying_message = null
           inputs["input_bar"] = [""]
         )
@@ -776,13 +779,14 @@ class UI (
               //icon "square 0 0 25 25" .5 : c#fff
               change 10 -10
               
-              local back = "c" + prim + "w 32 dot 0 0"
+              local back = "c" + prim + "w 30 dot 0 0"
               if Net.onlineUsers == null (
-                text "?" 8 : c#txtc
+                icon back .5
+                text "?" 6 : c#txtc chx#-3
               ) else if Net.onlineUsers.contains(user) (
-                icon back + "c #03c200 w 20 dot 0 0" .5
+                icon back + "c #03c200 w 19 dot 0 0" .5
               ) else (
-                icon back + "c #424242 w 5.5 cutcircle 0 0 7.5 0 180" .5
+                icon back + "c #424242 w 4.5 cutcircle 0 0 7 0 180" .5
               )
               
               change 12.5 10
@@ -926,7 +930,8 @@ window.on("close", def() -> (
 mainloop:
   if isType == "notif" (
     Net.update()
-    window "hide"
+    window.hide()
+    window.resize(0,0)
     return
   )
   
