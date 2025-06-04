@@ -1,6 +1,6 @@
 // -------------------------------------
 //    Youwutube - OriginOS YT Player
-//             Version 1.2
+//             Version 1.3
 //  Contributors: NamelessCat (nameless)
 //                Mist (Mistium)
 // -------------------------------------
@@ -200,8 +200,10 @@ def streamWindow(width, height, metadata, content) (
   
   // Video Controls
   square width height 0 0 1
-  if mouse_touching (
-    
+  if mouse_touching and timestamp - last_mouse_move >= 5000 (
+    cursor "none"
+  )
+  if mouse_touching and timestamp - last_mouse_move < 5000 (
     // Seek Bar
     change_y height / -2 + spc(2.5)
     videoProgress = content.videoinfo("current_time") / content.videoinfo("duration")
@@ -220,25 +222,36 @@ def streamWindow(width, height, metadata, content) (
     set_x width / -2 + spc(3.5)
     square spc(4) spc(4) : c#tert
     if mouse_touching (
-      cursor pointer
-    )
-    if onclick (
-      videoState.pause = videoState.pause.not()
+      cursor "pointer"
+      if onclick (
+        videoState.pause = videoState.pause.not()
+      )
     )
     icon videoState.pause ? icons.play icons.pause 1 : c#txtc
+    
+    // fullscreen
+    change_x spc(5)
+    square spc(4) spc(4) : c#tert
+    if mouse_touching (
+      cursor "pointer"
+      if onclick (
+        videoState.fullscreen = videoState.fullscreen.not()
+      )
+    )
+    icon videoState.fullscreen ? "minimise" "maximise" 1 : c#txtc
     
     // Duration
     timestamps = [content.videoinfo("current_time"), content.videoinfo("duration")]
     for index 2 (
-      temp = (timestamps[index].toNum() % 60).floor
+      temp = floor(timestamps[index].toNum() % 60)
       if temp.len === 1 (
         temp = 0 ++ temp
       )
-      timestamps[index] = (timestamps[index].toNum() / 60).floor ++ ":" ++ temp
+      timestamps[index] = floor(timestamps[index].toNum() / 60) ++ ":" ++ temp
     )
     duration = timestamps.join(" / ")
     change_x spc(3.5)
-    text duration spc(1.5)
+    text duration spc(1.5) : c#txtc
     
     // Volume
     set_x width / 2 - spc(11.5)
@@ -258,6 +271,9 @@ def streamWindow(width, height, metadata, content) (
   textHeight = title.split("\n").len * textSize * 1.5 + 1.5
   
   goto homex homey + (height / -2)
+  if videoState.fullscreen or floor(y_position) <= floor(frame.bottom) (
+    return
+  )
   frame frame.left + spc(1) y_position frame.right - spc(1) y_position - textHeight - (width / 5) 0 "videos" (
     goto 0 frame.top
     square frame.width frame.height * 2 : c#seco
@@ -281,7 +297,6 @@ def streamWindow(width, height, metadata, content) (
       endPage()
       appendQueue("channel", "channel", encodeURIComponent(metadata["uploader-url"]))
     )
-    
     
     statistics = [
       metadata["like-count"] + "likes",
@@ -416,10 +431,24 @@ sidebarntWidth = contentWidth - sidebarWidth
 videoCardHeight = max(window.height * .3, screensize_y * .17)
 spacing = 8
 
+if mouse_moving (
+  last_mouse_move = timestamp
+)
+
 downloadQueue()
 
 glass:frame window.left window.top window.right window.bottom (
-
+  
+  if videoState.fullscreen (
+    goto 0 window.top + spc(1)
+    local w = frame.width
+    if w * videoState.ratio > frame.height (
+      w = frame.height / videoState.ratio
+    )
+    streamWindow(w, w * videoState.ratio, stream, streamurl)
+    exit
+  )
+  
   // Sidebar content, always visible
 
   frame contentWidth / -2 window.top - 40 contentWidth / -2 + sidebarWidth window.bottom (
@@ -554,7 +583,6 @@ glass:frame window.left window.top window.right window.bottom (
         pageName = "Home"
         if fetchCache.contains("home") (
           videoList = fetchCache.home["related-streams"]
-          log videoList
           for index videoList.len (
             videoMeta @= videoList[index]
             videoMeta.id = videoMeta.url.right(11).destr
@@ -571,7 +599,6 @@ glass:frame window.left window.top window.right window.bottom (
             pageName = "Results for similar term \"" ++ fetchCache.search["search-suggestion"] ++ "\""
           )
           videoList = fetchCache.search.items
-          log videoList
           for index videoList.len (
             videoMeta @= videoList[index]
             videoMeta.id = videoMeta.url.right(11).destr
@@ -616,7 +643,8 @@ glass:frame window.left window.top window.right window.bottom (
             speed: 1,
             ratio: stream["video-streams"][1].height / stream["video-streams"][1].width,
             expandedBio: false,
-            tab: "related"
+            tab: "related",
+            fullscreen: false
           }
           startPage()
         )
