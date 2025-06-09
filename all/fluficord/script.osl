@@ -337,6 +337,30 @@ class UI (
     user = (prefix ?? "") ++ user
     text user size
   )
+   
+  def colorPad(t) (
+    return t.len == 2 ? t t.prepend("0")
+  )
+  
+  def lerpColor(a,b,t) (
+    local r1 = a.trim(2,3).toBase(16, 10).toNum()
+    local g1 = a.trim(4,5).toBase(16, 10).toNum()
+    local b1 = a.trim(6,7).toBase(16, 10).toNum()
+    local r2 = b.trim(2,3).toBase(16, 10).toNum()
+    local g2 = b.trim(4,5).toBase(16, 10).toNum()
+    local b2 = b.trim(6,7).toBase(16, 10).toNum()
+    return "#" ++ self.colorPad(floor(r2 - r1 * t + r1).toBase(10,16)) ++ self.colorPad(floor(g2 - g1 * t + g1).toBase(10,16)) ++ self.colorPad(floor(b2 - b1 * t + b1).toBase(10,16))
+  )
+  
+  def gradText(text, size, a, b) (
+    local len = text.len
+    local chari = 0
+    while chari < len (
+      c lerpColor(a,b,chari / len)
+      chari ++
+      text text[chari] size
+    )
+  )
   
   class channel_list (
     width = 225
@@ -579,7 +603,12 @@ class UI (
           if doTitle (
             goto frame.left y + (height / 2 - 20)
             drawPFP(Muser, 25, 25) : chx#17.5 chy#0
-            drawUser(Muser, self.messageSize) : chx#25 c#txtc chx#-6.25 chy#6.25
+            local roleColor = UI.user_list.roleColorUsers[Muser]
+            if typeof(roleColor) == "string" (
+              drawUser(Muser, self.messageSize) : chx#25 c#roleColor chx#-6.25 chy#6.25
+            ) else (
+              UI.gradText(Muser, self.messageSize, roleColor[1], roleColor[2]) : chx#25 c#roleColor chx#-6.25 chy#6.25
+            )
             //log msgData.timestamp
             change_x -6
             local tags @= Net.tags[msgData.user] ?? []
@@ -590,7 +619,11 @@ class UI (
             for this.tagi tags.len (
               local tag @= tags[tagi]
               square 20 20 0 0 1 : chx#22 tooltip#tag.tooltip
-              icon tag.icon .6 * (tag.size ?? 1) : c#txtc
+              c txtc
+              if tag.color != null (
+                c tag.color
+              )
+              icon tag.icon .6 * (tag.size ?? 1)
             )
             change_x 6
             text msgData.timestamp.timestamp("to-relative") self.messageSize * .7 : chx#10 c#txtc
@@ -605,11 +638,17 @@ class UI (
             local x2 = frame.left
             local spacing = 27.5
             local y2 = y - (height * .5) + 20.5
+            local showUsers = Settings["showEmoteUsers"]
             each this.emote emoteKeys (
               local emoteUsers @= emotes[emote]
               if emoteUsers.len > 0 (
-                goto x2 + 57.5 y2
                 local w3 = sizeFunction(emote, spacing)
+                if showUsers (
+                  local w4 = emoteUsers.len * 25
+                  w3 += w4
+                  x2 += w4 / 2
+                )
+                goto x2 + 57.5 y2
                 local pri = emoteUsers.contains(username.toLower()) ? seco prim
                 local hov = emoteUsers.contains(username.toLower()) ? tert seco
                 square w3 20 10 : c#pri hover_c#hov
@@ -623,6 +662,13 @@ class UI (
                 drawEmote(emote, .75)
                 goto x2 + 57.5 - (w3 * .5 - 25) y2
                 text emoteUsers.len 10 : c#txtc
+                if showUsers (
+                  goto x2 + 57.5 - (w3 * .5 - 25) y2
+                  each this.user emoteUsers (
+                    drawPFP(user, 20, 20) : chx#25
+                  )
+                  x2 += w4 / 2
+                )
                 x2 += spacing + (emoteUsers.len.toStr().len * 10) + 17.5
               )
             )
@@ -662,18 +708,20 @@ class UI (
   )
   
   class user_list (
-    width = 200
+    width = 215
     real_width = self.width
     height = 0
     shown = true
     
     taggedUsers = []
     sortedUsers = []
+    roleColorUsers = {}
     roleCount = {}
     
     def refresh() (
       self.taggedUsers = self.tagUsers(Net.users.getKeys())
       self.sortedUsers = self.sortUsers(taggedUsers)
+      self.roleColorUsers = self.colorUsers(taggedUsers)
       self.roleCount = {}
       each this.user self.taggedUsers (
         local role = user.role
@@ -705,6 +753,23 @@ class UI (
       return newUsers
     )
     
+    def colorUsers(users) (
+      local newUsers = {}
+      each this.user users (
+        local col = null
+        local roles = Net.users[user.name]["roles"]
+        each this.roleKey roles (
+          local role = Net.roles[roleKey]
+          if (role.color != null or role.colora != null) (
+            col = self.getRoleColor(role)
+            break
+          )
+        )
+        newUsers[user.name] = col ?? txtc
+      )
+      return newUsers
+    )
+    
     def sortUsers(users) (
       return users.sortBy("rank","ascending").reverse()
     )
@@ -713,6 +778,9 @@ class UI (
       if role != null (
         if role.color != null (
           return role.color
+        )
+        if role.colora != null (
+          return [role.colora,role.colorb]
         )
       )
       return txtc
@@ -760,9 +828,14 @@ class UI (
                 roleColor = self.getRoleColor(role)
                 y -= 4
                 goto frame.left + 10 y
-                text roleName 10 : c#roleColor
-                text "-" 10 : chx#5
-                text self.roleCount[roleName] 10 : chx#5
+                if typeof(roleColor) == "string" (
+                  text roleName 10 : c#roleColor
+                  text "-" 10 : chx#5
+                  text self.roleCount[roleName] 10 : chx#5
+                ) else (
+                  local txt = roleName + "-" + self.roleCount[roleName]
+                  void UI.gradText(txt, 10, roleColor[1], roleColor[2])
+                )
                 y -= 20
               )
               lastRole = roleName
@@ -787,8 +860,29 @@ class UI (
               )
               
               change 12.5 10
-              c roleColor
-              UI.drawUser(user.trimText(frame.width - 60 / 10), 10)
+              local roleUserColor = self.roleColorUsers[user]
+              if typeof(roleUserColor) == "string" (
+                c roleUserColor
+                UI.drawUser(user.trimText(frame.width - 60 / 10), 10)
+              ) else (
+                void UI.gradText(user.trimText(frame.width - 60 / 10), 10, roleUserColor[1], roleUserColor[2])
+              )
+              
+              local tags = Net.tags[user] ?? []
+              if tags.len > 0 (
+                change_x -10
+                local tagi = 0
+                for this.tagi tags.len (
+                  local tag @= tags[tagi]
+                  square 20 20 0 0 1 : chx#22 tooltip#tag.tooltip
+                  c txtc
+                  if tag.color != null (
+                    c tag.color
+                  )
+                  icon tag.icon .6 * (tag.size ?? 1)
+                )
+              )
+              
               y -= 20
             )
             self.height = start - y - 20
@@ -860,6 +954,18 @@ class UI (
   )
   
   class info_panel (
+    def setting(name, icn, current, callback, data) (
+      c (current ?? false).toBool() ? tert prim
+      square 10 10 15 : hover_c#seco chx#30 tooltip#name
+      if mouse_touching (
+        cursor "pointer"
+        if onclick (
+          callback(data)
+        )
+      )
+      square 10 10 10 : c#prim
+      icon icn .65 : c#txtc
+    )
     def update() (
       if UI.channel_list.shown (
         goto 0 0
@@ -868,37 +974,21 @@ class UI (
           loc 2 9999 22.5 15
           image "https://avatars.rotur.dev/" ++ username ++ "?radius=50px" 40 40
           text username 10 : c#txtc chx#25 chy#9
-          loc 2 -2 15 17.5
+          loc 2 -2 15 - 30 17.5
           
-          c prim
-          if Settings["notifs"] (
-            c tert
+          local toggle @= def(key) -> (
+            Settings[key] = Settings[key].not()
+            Net.setConfigKey(key,Settings[key])
           )
-          square 10 10 15 : hover_c#seco
-          if mouse_touching (
-            cursor "pointer"
-            if onclick (
-              Settings["notifs"] = Settings["notifs"].not()
-              Net.setConfigKey("notifs",Settings["notifs"])
-            )
-          )
-          square 10 10 10 : c#prim
-          icon "notifications" .65 : c#txtc
           
-          c prim
-          if Settings["bg"] (
-            c tert
-          )
-          square 10 10 15 : hover_c#seco chx#30
-          if mouse_touching (
-            cursor "pointer"
-            if onclick (
-              Settings["bg"] = Settings["bg"].not()
-              Net.setConfigKey("bg",Settings["bg"])
-            )
-          )
-          square 10 10 10 : c#prim
-          icon "multitasking" .6 : c#txtc chy#.75
+          local settingKey = "notifs"
+          self.setting("notifications", "notifications", Settings[settingKey], toggle, settingKey)
+          
+          settingKey = "bg"
+          self.setting("background worker", "multitasking", Settings[settingKey], toggle, settingKey)
+          
+          settingKey = "showEmoteUsers"
+          self.setting("show emote users", "accounts", Settings[settingKey], toggle, settingKey)
         )
       )
     )
