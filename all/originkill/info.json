@@ -2,7 +2,7 @@
     "title": "OriginKill",
     "description": "(almost perfect) recreation of windowkill but on origin",
     "author": "Flufi",
-    "version": "1.3",
+    "version": "1.2c",
     "genre": "Action, Arcade, Shooter",
     "game_modes": ["singleplayer"],
     "permissions": [],
