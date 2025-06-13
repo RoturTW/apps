@@ -21,7 +21,7 @@
     "script": {
       "scriptSize": 3145,
       "scriptLines": 194,
-      "lastModified": 1749506342834
+      "lastModified": 1749845149007
     }
   },
   "arrow": {
@@ -45,7 +45,7 @@
     "script": {
       "scriptSize": 17969,
       "scriptLines": 783,
-      "lastModified": 1749506342835
+      "lastModified": 1749845149009
     }
   },
   "ceslum": {
@@ -71,7 +71,7 @@
     "script": {
       "scriptSize": 1210,
       "scriptLines": 46,
-      "lastModified": 1749506342836
+      "lastModified": 1749845149010
     }
   },
   "claw": {
@@ -105,7 +105,7 @@
     "script": {
       "scriptSize": 14722,
       "scriptLines": 615,
-      "lastModified": 1749506342837
+      "lastModified": 1749845149011
     }
   },
   "crl": {
@@ -131,7 +131,7 @@
     "script": {
       "scriptSize": 907,
       "scriptLines": 30,
-      "lastModified": 1749506342837
+      "lastModified": 1749845149011
     }
   },
   "dock themer": {
@@ -158,7 +158,7 @@
     "script": {
       "scriptSize": 916,
       "scriptLines": 43,
-      "lastModified": 1749506342837
+      "lastModified": 1749845149011
     }
   },
   "flappy bird": {
@@ -183,7 +183,7 @@
     "script": {
       "scriptSize": 2960,
       "scriptLines": 146,
-      "lastModified": 1749506342838
+      "lastModified": 1749845149012
     }
   },
   "fluficord": {
@@ -213,7 +213,7 @@
     "script": {
       "scriptSize": 32434,
       "scriptLines": 1085,
-      "lastModified": 1749506342855
+      "lastModified": 1749845149029
     }
   },
   "focuser": {
@@ -235,7 +235,7 @@
     "script": {
       "scriptSize": 393,
       "scriptLines": 20,
-      "lastModified": 1749506342855
+      "lastModified": 1749845149029
     }
   },
   "fortnite skibidi 2024": {
@@ -263,7 +263,7 @@
     "script": {
       "scriptSize": 4773,
       "scriptLines": 214,
-      "lastModified": 1749506342863
+      "lastModified": 1749845149037
     }
   },
   "goose": {
@@ -288,7 +288,7 @@
     "script": {
       "scriptSize": 2332,
       "scriptLines": 95,
-      "lastModified": 1749506342866
+      "lastModified": 1749845149040
     }
   },
   "jump and run": {
@@ -313,7 +313,7 @@
     "script": {
       "scriptSize": 3956,
       "scriptLines": 194,
-      "lastModified": 1749506342866
+      "lastModified": 1749845149040
     }
   },
   "lights out": {
@@ -338,7 +338,7 @@
     "script": {
       "scriptSize": 1110,
       "scriptLines": 71,
-      "lastModified": 1749506342866
+      "lastModified": 1749845149040
     }
   },
   "mallet": {
@@ -362,7 +362,7 @@
     "script": {
       "scriptSize": 29643,
       "scriptLines": 1128,
-      "lastModified": 1749506342866
+      "lastModified": 1749845149040
     }
   },
   "oft": {
@@ -389,7 +389,7 @@
     "script": {
       "scriptSize": 877,
       "scriptLines": 43,
-      "lastModified": 1749506342873
+      "lastModified": 1749845149047
     }
   },
   "origincord": {
@@ -416,7 +416,7 @@
     "script": {
       "scriptSize": 39431,
       "scriptLines": 1524,
-      "lastModified": 1749506342873
+      "lastModified": 1749845149047
     }
   },
   "originfy": {
@@ -440,14 +440,14 @@
     "script": {
       "scriptSize": 7187,
       "scriptLines": 298,
-      "lastModified": 1749506342876
+      "lastModified": 1749845149050
     }
   },
   "originkill": {
     "title": "OriginKill",
     "description": "(almost perfect) recreation of windowkill but on origin",
     "author": "Flufi",
-    "version": "1.2b",
+    "version": "1.2c",
     "genre": "Action, Arcade, Shooter",
     "game_modes": [
       "singleplayer"
@@ -463,14 +463,14 @@
     ],
     "icon": "w 10 c #fff square 0 0 5 5 c #111 w 8 square 0 0 5 5 dot 0 0 c #fff w 1.75 cutcircle 0 0 5 0 180\n",
     "size": {
-      "bytes": 4099743,
-      "kilobytes": "4003.66",
+      "bytes": 4099762,
+      "kilobytes": "4003.67",
       "megabytes": "3.91"
     },
     "script": {
-      "scriptSize": 40733,
+      "scriptSize": 40752,
       "scriptLines": 1431,
-      "lastModified": 1749506342891
+      "lastModified": 1749845149065
     }
   },
   "ping pong": {
@@ -495,7 +495,7 @@
     "script": {
       "scriptSize": 1735,
       "scriptLines": 100,
-      "lastModified": 1749506342891
+      "lastModified": 1749845149065
     }
   },
   "slider": {
@@ -520,7 +520,7 @@
     "script": {
       "scriptSize": 2201,
       "scriptLines": 86,
-      "lastModified": 1749506342892
+      "lastModified": 1749845149066
     }
   },
   "snake": {
@@ -545,7 +545,7 @@
     "script": {
       "scriptSize": 2245,
       "scriptLines": 123,
-      "lastModified": 1749506342892
+      "lastModified": 1749845149066
     }
   },
   "super slime bros": {
@@ -575,7 +575,7 @@
     "script": {
       "scriptSize": 22766,
       "scriptLines": 895,
-      "lastModified": 1749506342896
+      "lastModified": 1749845149070
     }
   },
   "timer": {
@@ -597,7 +597,7 @@
     "script": {
       "scriptSize": 463,
       "scriptLines": 28,
-      "lastModified": 1749506342896
+      "lastModified": 1749845149070
     }
   },
   "todo": {
@@ -624,7 +624,7 @@
     "script": {
       "scriptSize": 1166,
       "scriptLines": 54,
-      "lastModified": 1749506342896
+      "lastModified": 1749845149070
     }
   },
   "wosle": {
@@ -654,7 +654,7 @@
     "script": {
       "scriptSize": 24916,
       "scriptLines": 254,
-      "lastModified": 1749506342901
+      "lastModified": 1749845149074
     }
   },
   "youtube": {
@@ -679,7 +679,7 @@
     "script": {
       "scriptSize": 3423,
       "scriptLines": 123,
-      "lastModified": 1749506342901
+      "lastModified": 1749845149075
     }
   },
   "youwutube": {
@@ -704,7 +704,7 @@
     "script": {
       "scriptSize": 20871,
       "scriptLines": 683,
-      "lastModified": 1749506342901
+      "lastModified": 1749845149075
     }
   }
 }
