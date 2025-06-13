@@ -40,11 +40,11 @@ sound urlback ++ "coin5.ogg" "load" "blob5"
 
 // all the upgrade icns
 up_speed = "w 2 c #fff cutcircle 4.5 0 6.5 0 180 c #444 w 2.5 line -9.5 -5 -4 -5 line -11 0 -6 0 line -9.5 5 -4 5"
-up_firerate = "w 2 c #fff ellipse 2.5 -4 1 2 90 ellipse 2.5 1.5 1 2 90 ellipse -2.5 4 1 2 90 ellipse -2.5 -1.5 1 2 90"
-up_multishot = "w 2 c #fff cutcircle 0 -12 6.5 0 90  w 1.6 c #fff ellipse 0 0.5 .8 2 0 ellipse 0 5 .8 2 0  c #2f2 ellipse 6.5 1.5 .8 2 30 ellipse 6.5 6 .8 2 30 ellipse -6.5 1.5 .8 2 -30 ellipse -6.5 6 .8 2 -30"
+up_firerate = "w 2 c #fff ellipse 5.5 2.5 .9 2 90 ellipse -1.5 2.5 .9 2 90 ellipse -5.5 -2.5 .9 2 90 ellipse 1.5 -2.5 .9 2 90"
+up_multishot = "w 2 c #fff cutcircle 0 -12 6.5 0 90 w 1.6 c #fff ellipse 0 -.5 .8 2 0 ellipse 0 5.5 .8 2 0 c #2f2 ellipse 5.5 -1.5 .8 2 20 ellipse 7.75 4.5 .8 2 20 ellipse -5.5 -1.5 .8 2 -20 ellipse -7.75 4.5 .8 2 -20"
 up_wealth = "w 2 c #fff line 0 -3 0 3 line -3 0 3 0  c #a833ff cutcircle 0 0 10 0 0 cutcircle 0 0 10 2 0 cutcircle 0 0 10 4 0 cutcircle 0 0 10 6 0 cutcircle 0 0 10 8 0 cutcircle 0 0 10 10 0 cutcircle 0 0 10 12 0 cutcircle 0 0 10 14 0 cutcircle 0 0 10 16 0 cutcircle 0 0 10 18 0 cutcircle 0 0 10 20 0 cutcircle 0 0 10 22 0 cutcircle 0 0 10 24 0 cutcircle 0 0 10 26 0 cutcircle 0 0 10 28 0 cutcircle 0 0 10 30 0 cutcircle 0 0 10 32 0 cutcircle 0 0 10 34 0"
 up_wallpunch = "w 1.6 c #fff line 4 10 4 -10  c #ffdb1d line 1.5 3 -1 7 line -2.5 2.5 -6 3.5 line -5 -2 -8 -3.5 line 1.5 -3 -1 -6.5  w 1.6 c #fff ellipse 0 0 .8 2 90"
-up_piercing = "w 2 c #333 ellipse 1 -4 1 2 55 w 2 c #999 ellipse 1 0 1 2 55 w 2 c #fff ellipse 1 4 1 2 55 c #fc0 w 2 line 1 7 6 -7 cont -8 -3 cont 1 7"
+up_piercing = "w 2 c #333 ellipse -3 -6 1 2 30 w 2 c #999 ellipse 0 -.5 1 2 40 w 2 c #fff ellipse 6 4 1 2 65 c #fc0 w 2 line 1 7 6 -7 cont -8 -3 cont 1 7"
 up_heal = "w 2 c #0f0 line 0 -2.5 0 2.5 line -2.5 0 2.5 0  w 2 c #fff cutcircle 7 4.5 2 4.5 45 cutcircle 7 -4.5 2 13.5 45 cutcircle -7 -4.5 2 22.5 45 cutcircle -7 4.5 2 31.5 45 line -7 6.5 7 6.5 line -7 -6.5 7 -6.5 line -9 4.5 -9 -4.5 line 9 4.5 9 -4.5"
 up_maxhealth = "w 2 c #0f0 line 0 -2.5 0 2.5 line -2.5 0 2.5 0  w 1.5 cutcircle 0 0 9 0 6.5 cutcircle 0 0 9 4.5 6.5 cutcircle 0 0 9 9 6.5 cutcircle 0 0 9 13.5 6.5 cutcircle 0 0 9 18 6.5 cutcircle 0 0 9 22.5 6.5 cutcircle 0 0 9 27 6.5 cutcircle 0 0 9 31.5 6.5  w 2  c #fff cutcircle 0 0 6.5 0 180"
 
