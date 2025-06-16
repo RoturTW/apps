@@ -111,7 +111,7 @@ def "render_post" "w, h, post, offset_y, reply" (
   local user = post.user.toLower()
   
   loc 9999 2 0 y
-  square w h 10 : c#prim
+  square w h 10 : c#window_colour
   if mouse_touching (
     square w h 15 : c#seco
     square w h 10 : c#prim
@@ -125,35 +125,33 @@ def "render_post" "w, h, post, offset_y, reply" (
     )
   )
   
-  loc 2 2 33 y + offset_y
+  loc 2 2 40 y + offset_y - 7
   image getAvatar(user) 40 40
-  text post.user 10 : c#txtc chx#30
+  text post.user 11 : c#txtc chx#35
   if onclick (
     load_profile user
   )
   if post.premium (
-    square 15 15 10 : c#seco chx#20
+    square 15 15 10 : c#seco chx#20 chy#2
     icon "tick" 0.5 : c#txtc
   )
   
-  local time = post.timestamp
-  if timestamp - time > 128000000 (
-    time = time.timestamp("convert-date")
-  ) else (
-    time = time.timestamp("convert-relative")
-  )
-  local tw = time.len * 8
-  loc -2 2 -20 - tw y + offset_y
-  text time 8
-  
   if reply.not() (
-    loc 2 2 20 y - offset_y
+    loc 2 2 25 y - offset_y
     if isRepost (
       icon "sync" 0.5 : chx#10
       text "Reposted by " ++ poster 8 : chx#20
     ) else (
       text "Posted From " ++ (post.os ?? "Unknown") 8
     )
+    local time = post.timestamp
+    if timestamp - time > 128000000 (
+      time = time.timestamp("convert-date")
+    ) else (
+      time = time.timestamp("convert-relative")
+    )
+    local tw = time.len * 8
+    text time 8 : chx#8
     
     loc -2 2 -30 y - offset_y
     local likes = post.likes
@@ -205,7 +203,7 @@ def "render_post" "w, h, post, offset_y, reply" (
       overlay = post.attachment
     )
   )
-  loc 2 2 20 y + 20
+  loc 2 2 25 y + 17
   text post.content.replace("\n"," ").wrapText(w / 9 - 1 - offset) 9
 )
 
@@ -213,8 +211,8 @@ def "render_main" "feed" (
   local ih = 180
     
   local len = feed.len
-  count = (scroll_yfeed // ih).clamp(0,100)
-  y = scroll_yfeed % ih - (ih / 2)
+  count = round(scroll_yfeed / ih).clamp(0,100)
+  y = scroll_yfeed % ih - (ih / 2) + 4
   
   local w = frame.width - 25
   loop (window_height // ih + 1).clamp(0,len) (
@@ -245,24 +243,27 @@ def "side_button" "this.icn, this.txt, this.callback" (
 
 def "claw_input" "y, w, onsend, message" (
   goto x y
-  square w 90 10 : c#prim
+  square w 90 10 : c#window_colour
 
   change_y 10
-  textbox w - 15 66 "claw" 10 {
+  textbox w - 5 66 "claw" 10 {
     line_numbers: false,
     default_text: "Type your post here",
     sel_colour: seco
   }
   local inp = inputs.claw.join("\n")
-  inputs.claw = inp.trim(1,max_post_length).split("\n")
-  change w / -2 + 10 -50
+  inputs.claw = inp
+    .trim(1,max_post_length)
+    .split("\n")
+  
+  change w / -2 + 5 -45
   text inp.len ++ "/" ++ max_post_length 8 : c#txtc
 
   change_x 40
   text "Click Here To Paste An Image URL" 8
   if onclick (
     attachment = clipboard
-    if attachment.startsWith("https://").not (
+    if attachment.startsWith("https://").not() (
       attachment = ""
       say "Invalid, must be https:// image"
     )
@@ -270,8 +271,8 @@ def "claw_input" "y, w, onsend, message" (
   if attachment != "" (
     image attachment 30 30 : chx#30
   )
-  goto 100 + (w / 2) y - 25
-  icon "send" 0.8
+  goto 120 + (w / 2) y - 35
+  icon "send" 0.6
   if onclick (
     onsend()
   )
@@ -464,10 +465,12 @@ if url == "premium" (
     
     if url == "feed" (
       posts.feed = main_feed.reverse()
-      claw_input w.top - 110 790 def() -> (
+      x += 3
+      claw_input w.top - 110 797 def() -> (
         send_post attachment
         attachment = ""
       ) "Type your post..."
+      x -= 3
     ) else if url.startsWith("Post_") (
       page_label ++= ": Post by " ++ posts.data.user
       top -= 190
@@ -516,7 +519,7 @@ if url == "premium" (
 
 x = w.left + 25
 
-set_x x + 5
+set_x x + 2
 set_y w.top - 25
 local icons = sidebar.getKeys()
 for i icons.len (
