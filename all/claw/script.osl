@@ -5,7 +5,7 @@ permission "request" "rotur token"
 
 token = roturToken()
 
-current_version = 2.6
+current_version = 2.7
 
 // automatically update claw
 promise.new(def() -> (
@@ -211,11 +211,11 @@ def "render_main" "feed" (
   local ih = 180
     
   local len = feed.len
-  count = round(scroll_yfeed / ih).clamp(0,100)
+  count = floor(scroll_yfeed / ih).clamp(0,100)
   y = scroll_yfeed % ih - (ih / 2) + 4
   
   local w = frame.width - 25
-  loop (window_height // ih + 1).clamp(0,len) (
+  loop floor(window_height / ih + 1).clamp(0,len) (
     count ++
     if count > len (
       return
