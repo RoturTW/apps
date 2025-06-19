@@ -67,6 +67,7 @@ class Net (
   tags = null
   shush = false
   users = {}
+  isMod = false
   
   def wipe() (
     self.gotPingBack = false
@@ -84,6 +85,7 @@ class Net (
     self.roles = null
     self.tags = null
     self.users = {}
+    self.isMod = false
   )
   
   class packetworker (
@@ -189,9 +191,15 @@ class Net (
             notifyCustom data["text"] data["icon"] data["title"]
           )
           break
+        case "isMod"
+          self.isMod = data["data"]
+          break
         
         case "user_online"
           self.onlineUsers = data["data"]
+          if (username in self.onlineUsers).not() (
+            self.onlineUsers @= self.onlineUsers.append(username)
+          )
           UI.user_list.refresh()
           break
         case "user_settings_get"
@@ -278,11 +286,14 @@ class Net (
   )
   
   def sendMessage(content, channel, reply, attachments) (
-    attachments = attachments == "attachments" ? null attachments
+    attachments = attachments == null ? null attachments
     Net.sendMessageRaw(channel,{"content":content,"attachments":attachments ?? [],"reply":reply})
   )
   def sendMessageRaw(channel,message) (
     Net.send({"cmd":"message_send","data":message,"channel":channel})
+  )
+  def deleteMessage(channel, message) (
+    Net.send({"cmd":"message_delete","data":message,"channel":channel})
   )
   
   def toggleEmote(message, emote) (
@@ -569,12 +580,20 @@ class UI (
                 )
               }
             }
+            if Net.isMod or Muser == username (
+              actions["delete"] = {
+                "icon": "bin",
+                "code": def(msg) -> (
+                  Net.deleteMessage(UI.selected_channel, msg)
+                )
+              }
+            )
             local actionWidth = 22
             goto frame.right - 25 y + (height / 2) - 12
             change_x actionWidth / 2
             each this.actionKey actions.getKeys() (
               local action @= actions[actionKey]
-              if action.shown ?? true (
+              if action.shown !== null ? action.shown true (
                 square 10 10 10 : c#prim hover_c#seco
                 icon action["icon"] .6 : c#txtc
                 if mouse_touching (
