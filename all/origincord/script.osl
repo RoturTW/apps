@@ -34,25 +34,25 @@ status_colours = {
 }
 
 // guilds
-def "guild_copy_id" "this.guild" (; clipboard "set" this.guild.id ;)
+def "guild_copy_id" "guild" (; clipboard "set" guild.id ;)
 
 guild_menu = [
   {"Copy Guild Id": "guild_copy_id"}
 ]
 
 // Channels
-def "channel_copy_id" "this.chnl" (; clipboard "set" this.chnl.id ;)
+def "channel_copy_id" "chnl" (; clipboard "set" chnl.id ;)
 
 channel_menu = [
   {"Copy Channel Id": "channel_copy_id"},
 ]
 
 // Messages
-def "message_copy" "this.msg" (; clipboard "set" this.msg.content;)
-def "message_reply" "this.msg" (; current_reply = this.msg;)
+def "message_copy" "msg" (; clipboard "set" msg.content;)
+def "message_reply" "msg" (; current_reply = msg;)
 
-def "message_delete" "this.msg" (
-  this.out = ("https://apps.mistium.com/discord-delete-message?channelid=" ++ current_channel ++ "&messageid=" ++ this.msg.id ++ "&token=" ++ token ++ "&user_account=" ++ discord_isUser).getAsync()
+def "message_delete" "msg" (
+  void ("https://apps.mistium.com/discord-delete-message?channelid=" ++ current_channel ++ "&messageid=" ++ msg.id ++ "&token=" ++ token ++ "&user_account=" ++ discord_isUser).getAsync()
 )
 
 message_menu = [
@@ -61,9 +61,9 @@ message_menu = [
   {"Delete Message": "message_delete"}
 ]
 
-def "user_dm" "this.user" (
-  this.url = "https://apps.mistium.com/get-dm-channel?userid=" ++ this.user ++ "&token=" ++ token ++ "&user_account=" ++ discord_isUser
-  current_channel = this.url.http("GET",{},{})
+def "user_dm" "user" (
+  local url = "https://apps.mistium.com/get-dm-channel?userid=" ++ user ++ "&token=" ++ token ++ "&user_account=" ++ discord_isUser
+  current_channel = url.http("GET",{},{})
 )
 
 user_menu = [
@@ -74,8 +74,8 @@ def "connect" (
   discord = "gateway.discord.gg/?v=9&encoding=json:443".newWebsocket()
 )
 
-def doProxy(this.url) (
-  return proxy ++ encodeURIComponent(this.url)
+def doProxy(url) (
+  return proxy ++ encodeURIComponent(url)
 )
 
 def "login" "token" (
@@ -84,7 +84,10 @@ def "login" "token" (
   base.d.token = token.destr
   
   discord.wsSend(base)
-  heartbeat_msg = {"op":1,"d":null}
+  heartbeat_msg = {
+    "op":1,
+    "d":null
+  }
   last_heartbeat = timer + 41.25
 )
 
@@ -146,7 +149,10 @@ def "disc_connect" (
   wait 1
   login token_in
   token = token_in
-  activity_data = [{"name":"originCord","type":1}]
+  activity_data = [{
+    "name":"originCord",
+    "type":1
+  }]
 )
 
 messages = {}
@@ -155,15 +161,15 @@ previous_author = {}
 
 def "async_msg" "content, channel" (
   link = "https://apps.mistium.com/send-discord-message?token=" ++ token ++ "&channelid=" ++ channel ++ "&content=" ++ encodeURIComponent(content.toStr()) ++ "&user_account=" ++ discord_isUser
-  this.result = link.getAsync()
+  void link.getAsync()
 )
 
 def addAttachment(attachment, height) (
-  this.app = height.newArray() ++ [["","","","","","",""]] ++ height.newArray()
+  local app = height.newArray() ++ [["","","","","","",""]] ++ height.newArray()
   attachment.content_height = height
   attachment.url = doProxy(attachment.url)
-  this.app[height+1][5] = attachment
-  return this.app
+  app[height+1][5] = attachment
+  return app
 )
 
 def makepfp(aut) (
@@ -192,7 +198,7 @@ def "focusChannel" "id" (
     discord.wsSend(packet)
   )
   guilds_last_channels[guild] = current_channel
-  current_channel = this.id
+  current_channel = id
 )
 
 
@@ -260,7 +266,7 @@ def "handle_message" "msg, ping" (
     )
     local date_diff = msg_cha.last().timestamp.timestamp("to-date").trim(1,-4) != msg_data.timestamp.timestamp("to-date").trim(1,-4)
     if previous_author[channel] != authid or isreply or date_diff (
-      msg_cha.append("")
+      void msg_cha.append("")
       previous_author[channel] = authid
       message = []
       if type == 7 (
@@ -448,7 +454,7 @@ def "draw_guilds" (
       )
     )
   )
-  guilds_scroll_len = -y + 25
+  guilds_scroll_len = -y + 50
 )
 
 def "draw_channels" (
