@@ -190,7 +190,7 @@ def streamWindow(width, height, metadata, content) (
   if videoState.pause (
     video content "pause"
   ) else (
-    // Pause video when it's over
+    // Pause video when it is over
     if content.videoinfo("duration") === content.videoinfo("current_time") and content.videoinfo("duration") !== 0 (
       videoState.pause = true
     ) else (
