@@ -1,0 +1,10 @@
+{
+  "title": "Nekonline",
+  "description": "A virtual pet widget that sits above the OriginOS dock, displaying all online users as cute lil kitty cats.\nControls:\n- Each cat cooresponds to a user actively on OriginOS. You and your Rotur friends are highlighted.\n- Cats can be dragged around by clicking and holding them.",
+  "author": "Nameless",
+  "version": "0.9",
+  "genre": "Desktop Pet, Utility, Multiplayer",
+  "game_modes": ["Multiplayer"],
+  "permissions": [],
+  "supports":["originOS"]
+}
