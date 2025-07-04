@@ -1,0 +1,384 @@
+// -------------------------------------
+//  Nekonline - Kitty Cat Online Counter
+//             Version 0.9
+//  Contributors: NamelessCat (nameless)
+// -------------------------------------
+
+// Sprites were created by Elthen on itch.io:
+// https://elthen.itch.io/2d-pixel-art-cat-sprites
+
+window "responsive" true
+window "hide"
+
+window.no_desktop = true
+
+window.width = screensize_x / 3
+window.height = 70
+window "y" screensize_y / -2 + 95
+
+// Initializing car sprites
+
+def initialize(ref, link) (
+  local init = []
+  for i ref.len (
+    void init.append(link.replace("@", ref[i]))
+    image init[-1] 0 0
+  )
+  return init
+)
+
+sprite = {
+  idle: initialize(["00", "01", "02", "03"], "https://raw.githubusercontent.com/NexusKitten/images/main/nekonline/assets/car_@.png"),
+  spawn: initialize(1 to 6, "https://raw.githubusercontent.com/NexusKitten/images/main/nekonline/assets/spawn@.png"),
+  walk: initialize(1 to 8, "https://raw.githubusercontent.com/NexusKitten/images/main/nekonline/assets/walkies@.png")
+}
+
+// Managing cat ai
+
+catsN = 0
+cats = {}
+def newCat(name) (
+  catsN ++
+  local spawnpoint = random(window.left + 80, window.right - 40)
+  cats[name] ??= {
+    name:      name,
+    anim:      "spawn",
+    animstart: frameN,
+    animlen:   6,
+    z:         catsN,
+    x:         spawnpoint,
+    target_x:  spawnpoint,
+    idleTime:  timestamp,
+    nextTime:  random(3000, 10000),
+    direction: 1
+  }
+)
+
+def renderCats() (
+  catNames = cats.getValues().sortBy("z", "ascending")
+  catNames = catNames.map(def(item) -> (
+    return item.name
+  ))
+  for i catNames.len (
+    local catMeta @= cats[catNames[i]]
+
+    // Determine a cats animation state
+    switch catMeta.anim (
+      case "spawn"
+        if frameN == catMeta.animstart + catMeta.animlen (
+          catMeta.anim = "idle"
+        )
+        break
+      case "walk"
+        if catMeta.x == catMeta.target_x (
+          catMeta.anim = "idle"
+        )
+        break
+      case "idle"
+        break
+    )
+
+    // Determine whether a cat should move
+    if catMeta.idleTime + catMeta.nextTime < timestamp (
+      catMeta.target_x = random(window.left + 80, window.right - 40)
+      catMeta.idleTime = timestamp
+      catMeta.nextTime = random(3000, 30000)
+    )
+    // Calculate any movement
+    if dragging == catMeta.name (
+      catMeta.x = mouse_x.clamp(window.left + 80, window.right - 40)
+      catMeta.target_x = catMeta.x
+      catMeta.anim = "grabbed"
+      if mouse_down.not (
+        dragging = ""
+        catMeta.anim = "idle"
+      )
+      cursor "grabbing"
+    ) else (
+      if catMeta.x != catMeta.target_x (
+        catMeta.anim = "walk"
+        local xvel = catMeta.target_x - catMeta.x
+        catMeta.direction = xvel.clamp(-1, 1)
+        catMeta.x += catMeta.direction 
+      )
+    )
+    
+    // Draw cat on window
+    set_x catMeta.x
+    set_y 0
+    local carSprite = ""
+    switch catMeta.anim (
+      case "grabbed"
+        carSprite = sprite.spawn[2]
+        change_y 3
+        break
+      case "spawn"
+        carSprite = sprite.spawn[frameN - catMeta.animstart + 1]
+        change_y (frameN - catMeta.animstart).clamp(0, 3) * 5 - 15
+        break
+      case "walk"
+        carSprite = sprite.walk[(frameN / 2).floor() % 8 + 1]
+        break
+      case "idle"
+        carSprite = sprite.idle[(frameN / 2).floor() % 4 + 1]
+        break
+    )
+    image carSprite catMeta.direction > 0 ? 70 -70 70
+    
+    // If car is touching mouse pointer, display it in front
+    square 30 60 0 0 1
+    if mouse_touching and (dragging == "") (
+      cursor "grab"
+      catMeta.z = catsN
+      catsN ++
+      if onclick (
+        catMeta.anim = "dragging"
+        dragging = catMeta.name
+      )
+    )
+    
+    // Draw nametag
+    local tagcolor = (friendslist.contains(catMeta.name) or (catMeta.name === username)) ? user.theme.accent user.theme.text
+    square catMeta.name.len * 5 + 10 10 5 : chy#5 c#user.theme.background
+    centext catMeta.name 5 : c#tagcolor
+  )
+)
+
+dragging = ""
+onlineTick = timestamp - 2900
+prevFrame = timestamp
+frameN = 0
+
+// The networking parts :sob:
+
+friendslist = user["sys.friends"]
+
+def updateCatche() (
+  local online = network.online
+  for i online.len (
+    if online[i] !== null (
+      newCat(online[i])
+    )
+  )
+  local keys = cats.getKeys()
+  for i keys.len (
+    if online.contains(keys[i]).not (
+      void cats.delete(keys[i])
+    )
+  )
+)
+
+mainloop:
+window.width = screensize_x / 3
+window.callRender()
+
+if prevFrame + 100 < timestamp (
+  prevFrame = timestamp
+  frameN ++
+)
+
+if onlineTick + 3000 < timestamp (
+  onlineTick = timestamp
+  updateCatche()
+)
+
+renderCats()
+
+if "Control".isKeyDown() (
+  if "ArrowDown".onKeyDown() (
+    window.close()
+  )
+)// -------------------------------------
+//  Nekonline - Kitty Cat Online Counter
+//             Version 0.9
+//  Contributors: NamelessCat (nameless)
+// -------------------------------------
+
+// Sprites were created by Elthen on itch.io:
+// https://elthen.itch.io/2d-pixel-art-cat-sprites
+
+file "open" my_uuid
+file "set" 11 icon
+
+window "responsive" true
+window "hide"
+
+window.no_desktop = true
+
+window.width = screensize_x / 3
+window.height = 70
+window "y" screensize_y / -2 + 95
+
+// Initializing car sprites
+
+def initialize(ref, link) (
+  local init = []
+  for i ref.len (
+    void init.append(link.replace("@", ref[i]))
+    image init[-1] 0 0
+  )
+  return init
+)
+
+sprite = {
+  idle: initialize(["00", "01", "02", "03"], "https://raw.githubusercontent.com/NexusKitten/images/main/nekonline/assets/car_@.png"),
+  spawn: initialize(1 to 6, "https://raw.githubusercontent.com/NexusKitten/images/main/nekonline/assets/spawn@.png"),
+  walk: initialize(1 to 8, "https://raw.githubusercontent.com/NexusKitten/images/main/nekonline/assets/walkies@.png")
+}
+
+// Managing cat ai
+
+catsN = 0
+cats = {}
+def newCat(name) (
+  catsN ++
+  local spawnpoint = random(window.left + 80, window.right - 40)
+  cats[name] ??= {
+    name:      name,
+    anim:      "spawn",
+    animstart: frameN,
+    animlen:   6,
+    z:         catsN,
+    x:         spawnpoint,
+    target_x:  spawnpoint,
+    idleTime:  timestamp,
+    nextTime:  random(3000, 10000),
+    direction: 1
+  }
+)
+
+def renderCats() (
+  catNames = cats.getValues().sortBy("z", "ascending")
+  catNames = catNames.map(def(item) -> (
+    return item.name
+  ))
+  for i catNames.len (
+    local catMeta @= cats[catNames[i]]
+
+    // Determine a cats animation state
+    switch catMeta.anim (
+      case "spawn"
+        if frameN == catMeta.animstart + catMeta.animlen (
+          catMeta.anim = "idle"
+        )
+        break
+      case "walk"
+        if catMeta.x == catMeta.target_x (
+          catMeta.anim = "idle"
+        )
+        break
+      case "idle"
+        break
+    )
+
+    // Determine whether a cat should move
+    if catMeta.idleTime + catMeta.nextTime < timestamp (
+      catMeta.target_x = random(window.left + 80, window.right - 40)
+      catMeta.idleTime = timestamp
+      catMeta.nextTime = random(3000, 30000)
+    )
+    // Calculate any movement
+    if dragging == catMeta.name (
+      catMeta.x = mouse_x.clamp(window.left + 80, window.right - 40)
+      catMeta.target_x = catMeta.x
+      catMeta.anim = "grabbed"
+      if mouse_down.not (
+        dragging = ""
+        catMeta.anim = "idle"
+      )
+      cursor "grabbing"
+    ) else (
+      if catMeta.x != catMeta.target_x (
+        catMeta.anim = "walk"
+        local xvel = catMeta.target_x - catMeta.x
+        catMeta.direction = xvel.clamp(-1, 1)
+        catMeta.x += catMeta.direction 
+      )
+    )
+    
+    // Draw cat on window
+    set_x catMeta.x
+    set_y 0
+    local carSprite = ""
+    switch catMeta.anim (
+      case "grabbed"
+        carSprite = sprite.spawn[2]
+        change_y 3
+        break
+      case "spawn"
+        carSprite = sprite.spawn[frameN - catMeta.animstart + 1]
+        change_y (frameN - catMeta.animstart).clamp(0, 3) * 5 - 15
+        break
+      case "walk"
+        carSprite = sprite.walk[(frameN / 2).floor() % 8 + 1]
+        break
+      case "idle"
+        carSprite = sprite.idle[(frameN / 2).floor() % 4 + 1]
+        break
+    )
+    image carSprite catMeta.direction > 0 ? 70 -70 70
+    
+    // If car is touching mouse pointer, display it in front
+    square 30 60 0 0 1
+    if mouse_touching and (dragging == "") (
+      cursor "grab"
+      catMeta.z = catsN
+      catsN ++
+      if onclick (
+        catMeta.anim = "dragging"
+        dragging = catMeta.name
+      )
+    )
+    
+    // Draw nametag
+    local tagcolor = (friendslist.contains(catMeta.name) or (catMeta.name === username)) ? user.theme.accent user.theme.text
+    square catMeta.name.len * 5 + 10 10 5 : chy#5 c#user.theme.background
+    centext catMeta.name 5 : c#tagcolor
+  )
+)
+
+dragging = ""
+onlineTick = timestamp - 2900
+prevFrame = timestamp
+frameN = 0
+
+// The networking parts :sob:
+
+friendslist = user["sys.friends"]
+
+def updateCatche() (
+  local online = network.online
+  for i online.len (
+    if online[i] !== null (
+      newCat(online[i])
+    )
+  )
+  local keys = cats.getKeys()
+  for i keys.len (
+    if online.contains(keys[i]).not (
+      void cats.delete(keys[i])
+    )
+  )
+)
+
+mainloop:
+window.width = screensize_x / 3
+window.callRender()
+
+if prevFrame + 100 < timestamp (
+  prevFrame = timestamp
+  frameN ++
+)
+
+if onlineTick + 3000 < timestamp (
+  onlineTick = timestamp
+  updateCatche()
+)
+
+renderCats()
+
+if "Control".isKeyDown() (
+  if "ArrowDown".onKeyDown() (
+    window.close()
+  )
+)
