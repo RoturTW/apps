@@ -21,7 +21,7 @@
     "script": {
       "scriptSize": 3145,
       "scriptLines": 194,
-      "lastModified": 1751570040316
+      "lastModified": 1751659261084
     }
   },
   "arrow": {
@@ -45,7 +45,7 @@
     "script": {
       "scriptSize": 17969,
       "scriptLines": 783,
-      "lastModified": 1751570040317
+      "lastModified": 1751659261085
     }
   },
   "ceslum": {
@@ -71,7 +71,7 @@
     "script": {
       "scriptSize": 1210,
       "scriptLines": 46,
-      "lastModified": 1751570040318
+      "lastModified": 1751659261086
     }
   },
   "claw": {
@@ -105,7 +105,7 @@
     "script": {
       "scriptSize": 14790,
       "scriptLines": 619,
-      "lastModified": 1751570040320
+      "lastModified": 1751659261088
     }
   },
   "crl": {
@@ -131,7 +131,7 @@
     "script": {
       "scriptSize": 907,
       "scriptLines": 30,
-      "lastModified": 1751570040320
+      "lastModified": 1751659261088
     }
   },
   "dock themer": {
@@ -158,7 +158,7 @@
     "script": {
       "scriptSize": 916,
       "scriptLines": 43,
-      "lastModified": 1751570040320
+      "lastModified": 1751659261088
     }
   },
   "flappy bird": {
@@ -183,7 +183,7 @@
     "script": {
       "scriptSize": 2960,
       "scriptLines": 146,
-      "lastModified": 1751570040321
+      "lastModified": 1751659261089
     }
   },
   "fluficord": {
@@ -213,7 +213,7 @@
     "script": {
       "scriptSize": 33067,
       "scriptLines": 1104,
-      "lastModified": 1751570040339
+      "lastModified": 1751659261107
     }
   },
   "focuser": {
@@ -235,7 +235,7 @@
     "script": {
       "scriptSize": 393,
       "scriptLines": 20,
-      "lastModified": 1751570040339
+      "lastModified": 1751659261107
     }
   },
   "fortnite skibidi 2024": {
@@ -263,7 +263,7 @@
     "script": {
       "scriptSize": 4773,
       "scriptLines": 214,
-      "lastModified": 1751570040346
+      "lastModified": 1751659261116
     }
   },
   "goose": {
@@ -288,7 +288,7 @@
     "script": {
       "scriptSize": 2332,
       "scriptLines": 95,
-      "lastModified": 1751570040349
+      "lastModified": 1751659261118
     }
   },
   "jump and run": {
@@ -313,7 +313,7 @@
     "script": {
       "scriptSize": 3956,
       "scriptLines": 194,
-      "lastModified": 1751570040349
+      "lastModified": 1751659261119
     }
   },
   "lights out": {
@@ -338,7 +338,7 @@
     "script": {
       "scriptSize": 1110,
       "scriptLines": 71,
-      "lastModified": 1751570040349
+      "lastModified": 1751659261119
     }
   },
   "mallet": {
@@ -362,7 +362,32 @@
     "script": {
       "scriptSize": 29643,
       "scriptLines": 1128,
-      "lastModified": 1751570040350
+      "lastModified": 1751659261119
+    }
+  },
+  "nekonline": {
+    "title": "Nekonline",
+    "description": "A virtual pet widget that sits above the OriginOS dock, displaying all online users as cute lil kitty cats.\nControls:\n- Each cat cooresponds to a user actively on OriginOS. You and your Rotur friends are highlighted.\n- Cats can be dragged around by clicking and holding them.",
+    "author": "Nameless",
+    "version": "0.9",
+    "genre": "Desktop Pet, Utility, Multiplayer",
+    "game_modes": [
+      "Multiplayer"
+    ],
+    "permissions": [],
+    "supports": [
+      "originOS"
+    ],
+    "icon": "w 20 c #a88 dot 0 0 w 18 c #daa dot 0 0 image https://raw.githubusercontent.com/NexusKitten/images/main/nekonline/mrmowmow.png 16\n",
+    "size": {
+      "bytes": 5354,
+      "kilobytes": "5.23",
+      "megabytes": "0.01"
+    },
+    "script": {
+      "scriptSize": 4725,
+      "scriptLines": 195,
+      "lastModified": 1751659261119
     }
   },
   "oft": {
@@ -389,7 +414,7 @@
     "script": {
       "scriptSize": 877,
       "scriptLines": 43,
-      "lastModified": 1751570040356
+      "lastModified": 1751659261125
     }
   },
   "origincord": {
@@ -416,7 +441,7 @@
     "script": {
       "scriptSize": 39359,
       "scriptLines": 1530,
-      "lastModified": 1751570040357
+      "lastModified": 1751659261126
     }
   },
   "originfy": {
@@ -440,7 +465,7 @@
     "script": {
       "scriptSize": 7187,
       "scriptLines": 298,
-      "lastModified": 1751570040359
+      "lastModified": 1751659261128
     }
   },
   "originkill": {
@@ -470,7 +495,7 @@
     "script": {
       "scriptSize": 40752,
       "scriptLines": 1431,
-      "lastModified": 1751570040375
+      "lastModified": 1751659261144
     }
   },
   "ping pong": {
@@ -495,7 +520,7 @@
     "script": {
       "scriptSize": 1735,
       "scriptLines": 100,
-      "lastModified": 1751570040375
+      "lastModified": 1751659261144
     }
   },
   "slider": {
@@ -520,7 +545,7 @@
     "script": {
       "scriptSize": 2201,
       "scriptLines": 86,
-      "lastModified": 1751570040375
+      "lastModified": 1751659261144
     }
   },
   "snake": {
@@ -545,7 +570,7 @@
     "script": {
       "scriptSize": 2245,
       "scriptLines": 123,
-      "lastModified": 1751570040376
+      "lastModified": 1751659261144
     }
   },
   "super slime bros": {
@@ -575,7 +600,7 @@
     "script": {
       "scriptSize": 22766,
       "scriptLines": 895,
-      "lastModified": 1751570040380
+      "lastModified": 1751659261148
     }
   },
   "timer": {
@@ -597,7 +622,7 @@
     "script": {
       "scriptSize": 463,
       "scriptLines": 28,
-      "lastModified": 1751570040380
+      "lastModified": 1751659261149
     }
   },
   "todo": {
@@ -624,7 +649,7 @@
     "script": {
       "scriptSize": 1166,
       "scriptLines": 54,
-      "lastModified": 1751570040380
+      "lastModified": 1751659261149
     }
   },
   "wosle": {
@@ -654,7 +679,7 @@
     "script": {
       "scriptSize": 24916,
       "scriptLines": 254,
-      "lastModified": 1751570040384
+      "lastModified": 1751659261153
     }
   },
   "youtube": {
@@ -679,7 +704,7 @@
     "script": {
       "scriptSize": 3423,
       "scriptLines": 123,
-      "lastModified": 1751570040384
+      "lastModified": 1751659261153
     }
   },
   "youwutube": {
@@ -704,7 +729,7 @@
     "script": {
       "scriptSize": 20872,
       "scriptLines": 683,
-      "lastModified": 1751570040385
+      "lastModified": 1751659261153
     }
   }
 }
