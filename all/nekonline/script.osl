@@ -187,8 +187,8 @@ if onlineTick + 3000 < timestamp (
 
 renderCats()
 
-if "Control".isKeyDown() (
-  if "ArrowDown".onKeyDown() (
-    window.close()
-  )
-)
+//if "Control".isKeyDown() (
+//  if "ArrowDown".onKeyDown() (
+//    window.close()
+//  )
+//)
