@@ -1,0 +1,78 @@
+import "window_tools" as "wt"
+
+ojff = open("~/fonts/origin.ojff").JsonParse()
+
+cur = 1
+
+object components = {
+  char_sidebar: def() -> (
+    goto 0 frame.top - 50 + scroll_y
+    local i = floor(frame.scroll / 100)
+    change_y i * -100
+    loop ceil(frame.height / 100) (
+      i ++
+      square 80 80 10 : c#prim
+      if onclick (
+        cur = i
+      )
+      if i == cur (
+        square 80 80 5 : c#seco
+      )
+      change -15 -15
+      icon ojff[chars[i]] 1 : c#txtc
+      change 15 15
+      change_y -100
+    )
+  ),
+  editor: def() -> (
+    goto frame.right - 150 0
+    square 300 frame.height 0 : c#prim
+    change -120 -150
+    c seco
+    icon "w 2 line 5 5 5 40 cont 25 40 cont 25 5 cont 5 5" 8
+    c txtc
+    icon ojff[char] 8
+    goto -150 0
+    inputs[cur] = ojff[char].split("\n")
+    c seco
+    textbox frame.width - 300 frame.height cur 0 {
+      line_numbers: {
+        bg_colour: prim
+      },
+      sel_colour: seco,
+      text_colour: txtc
+    }
+    ojff[char] = inputs[cur].join("\n")
+  )
+}
+
+mainloop:
+wt:load_theme
+
+chars = ojff.getKeys()
+char = chars[cur]
+c prim
+frame window.left window.top - 40 window.left + 110 window.bottom chars.len * 100 (
+  components.char_sidebar()
+)
+c prim
+frame window.left + 110 window.top - 40 window.right window.bottom (
+  components.editor()
+)
+goto 0 window.top - 20
+square window.width 40 0 : c#prim
+loc 2 2 20 -20
+text "OJFF editor" 10 : c#txtc
+
+change_x 50
+text "copy ojff" 10
+if onclick (
+  clipboard "set" ojff.JsonFormat()
+)
+
+change_x 50
+text "paste ojff" 10
+if onclick (
+  ojff = clipboard.JsonParse()
+)
+import "win-buttons"
