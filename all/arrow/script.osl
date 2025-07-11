@@ -506,8 +506,8 @@ for i particles.len (
   icon particle.costume s s
   if paused.not() (
     particle.frames ++
-    particle.x += particle.dir.sin * s * -3
-    particle.y += particle.dir.cos * s * -3
+    particle.x += particle.dir.sin() * s * -3
+    particle.y += particle.dir.cos() * s * -3
     if particle.frames > 20 (
       particles.delete(i)
       i --
@@ -571,7 +571,7 @@ arrows_del = []
 for i arrows.len (
   arrow @= arrows[i]
   if paused.not (
-    arrow.x += arrow.dir.sin() * arrow.vel
+    arrow.x += arrow.dir() * arrow.vel
     arrow.y += arrow.dir.cos() * arrow.vel
   )
   direction arrow.dir
