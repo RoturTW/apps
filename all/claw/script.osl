@@ -5,7 +5,7 @@ permission "request" "rotur token"
 
 token = roturToken()
 
-current_version = 2.7
+current_version = 2.8
 
 // automatically update claw
 promise.new(def() -> (
@@ -64,7 +64,7 @@ def getAvatar(username) (
 
 def "send_post" "attachment" (
   void promise.new(def() -> (
-    local url = "https://claw.rotur.dev/post?os=originOS&auth=" ++ token
+    local url = api ++ "post?os=originOS&auth=" ++ token
     url ++= "&content=" ++ encodeURIComponent(inputs.claw.join("\n"))
     if attachment != "" (
       url ++= "&attachment=" ++ encodeURIComponent(attachment)
@@ -79,17 +79,17 @@ def "send_post" "attachment" (
 )
 
 def "repost" "id" (
-  local url = "https://claw.rotur.dev/repost?auth=" ++ token ++ "&id=" ++ id
+  local url = api ++ "repost?auth=" ++ token ++ "&id=" ++ id
   void url.getAsync()
 )
 
 def "delete_post" "id" (
-  local url = "https://claw.rotur.dev/delete?auth=" ++ token ++ "&id=" ++ id
+  local url = api ++ "delete?auth=" ++ token ++ "&id=" ++ id
   void url.getAsync()
 )
 
 def "set_rating" "id, rating" (
-  local url = "https://claw.rotur.dev/rate?auth=" ++ token ++ "&id=" ++ id ++ "&rating=" ++ rating.toNum()
+  local url = api ++ "rate?auth=" ++ token ++ "&id=" ++ id ++ "&rating=" ++ rating.toNum()
   void url.getAsync()
 )
 
@@ -546,7 +546,7 @@ if url.startsWith("profile").not() and url.startsWith("Post_").not() (
   )
 
   set_x w.left + 10 : chy#-30
-  text (user.bio ?? "You can set a bio in originOS settings").wrapText(25) 9
+  text (user.bio ?? "You can set a bio in originOS settings").wrapText(22) 9
 ) else if posts.got (
   set_x w.left + 110
   set_y w.top - 150
@@ -560,7 +560,7 @@ if url.startsWith("profile").not() and url.startsWith("Post_").not() (
   centext posts.data.username 10 : c#txtc
     
   set_x w.left + 10 : chy#-30
-  text (posts.data.bio ?? "").wrapText(25) 9
+  text (posts.data.bio ?? "").wrapText(22) 9
   
   if url.startsWith("Post_") (
     set_x x : chy#-50
@@ -576,13 +576,13 @@ if url.startsWith("profile").not() and url.startsWith("Post_").not() (
     set_x x : chy#-50
     if posts.data.followed (
       side_button "tick" "Unfollow" def() -> (
-        local url = api ++ "/unfollow?auth=" ++ token ++ "&username=" ++ posts.data.username
+        local url = api ++ "unfollow?auth=" ++ token ++ "&username=" ++ posts.data.username
         posts.data.followed = false
         void url.getAsync()
       )
     ) else (
       side_button "tick" "Follow" def() -> (
-        local url = api ++ "/follow?auth=" ++ token ++ "&username=" ++ posts.data.username
+        local url = api ++ "follow?auth=" ++ token ++ "&username=" ++ posts.data.username
         posts.data.followed = true
         void url.getAsync()
       )
