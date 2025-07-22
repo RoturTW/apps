@@ -21,7 +21,7 @@
     "script": {
       "scriptSize": 3145,
       "scriptLines": 194,
-      "lastModified": 1753199340988
+      "lastModified": 1753199454905
     }
   },
   "arrow": {
@@ -45,7 +45,7 @@
     "script": {
       "scriptSize": 17762,
       "scriptLines": 770,
-      "lastModified": 1753199340989
+      "lastModified": 1753199454906
     }
   },
   "ceslum": {
@@ -71,14 +71,14 @@
     "script": {
       "scriptSize": 1210,
       "scriptLines": 46,
-      "lastModified": 1753199340990
+      "lastModified": 1753199454906
     }
   },
   "claw": {
     "title": "Claw",
     "description": "Claw is a rotur-based and easy to use social platform! Post small messages on your account! No algorithms here, just browse the latest posts by people on rotur.",
     "author": "Mist",
-    "version": "2.8",
+    "version": "2.9",
     "genre": "Social, Communication, Networking",
     "game_modes": [
       "Single-Player"
@@ -98,14 +98,14 @@
     ],
     "icon": "w 10 c #353b64 square 0 0 5 5 w 8 c #111 square 0 0 5 5 dot 0 0 c #fff w 1.5 cutcircle 3 -6.4 9 -3.5 45 w 3 cutcircle 3 -6.4 9 -2 35 w 4 cutcircle 3 -6.4 9 0 15",
     "size": {
-      "bytes": 209336,
+      "bytes": 209337,
       "kilobytes": "204.43",
       "megabytes": "0.20"
     },
     "script": {
-      "scriptSize": 14724,
-      "scriptLines": 619,
-      "lastModified": 1753199340991
+      "scriptSize": 14725,
+      "scriptLines": 618,
+      "lastModified": 1753199454908
     }
   },
   "crl": {
@@ -131,7 +131,7 @@
     "script": {
       "scriptSize": 907,
       "scriptLines": 30,
-      "lastModified": 1753199340991
+      "lastModified": 1753199454908
     }
   },
   "dock themer": {
@@ -158,7 +158,7 @@
     "script": {
       "scriptSize": 916,
       "scriptLines": 43,
-      "lastModified": 1753199340991
+      "lastModified": 1753199454908
     }
   },
   "flappy bird": {
@@ -183,7 +183,7 @@
     "script": {
       "scriptSize": 2960,
       "scriptLines": 146,
-      "lastModified": 1753199340992
+      "lastModified": 1753199454909
     }
   },
   "fluficord": {
@@ -213,7 +213,7 @@
     "script": {
       "scriptSize": 33067,
       "scriptLines": 1104,
-      "lastModified": 1753199341009
+      "lastModified": 1753199454926
     }
   },
   "focuser": {
@@ -235,7 +235,7 @@
     "script": {
       "scriptSize": 393,
       "scriptLines": 20,
-      "lastModified": 1753199341009
+      "lastModified": 1753199454926
     }
   },
   "fortnite skibidi 2024": {
@@ -263,7 +263,7 @@
     "script": {
       "scriptSize": 4773,
       "scriptLines": 214,
-      "lastModified": 1753199341017
+      "lastModified": 1753199454933
     }
   },
   "goose": {
@@ -288,7 +288,7 @@
     "script": {
       "scriptSize": 2332,
       "scriptLines": 95,
-      "lastModified": 1753199341020
+      "lastModified": 1753199454936
     }
   },
   "jump and run": {
@@ -313,7 +313,7 @@
     "script": {
       "scriptSize": 3956,
       "scriptLines": 194,
-      "lastModified": 1753199341020
+      "lastModified": 1753199454936
     }
   },
   "lights out": {
@@ -338,7 +338,7 @@
     "script": {
       "scriptSize": 1110,
       "scriptLines": 71,
-      "lastModified": 1753199341020
+      "lastModified": 1753199454936
     }
   },
   "mallet": {
@@ -362,7 +362,7 @@
     "script": {
       "scriptSize": 29643,
       "scriptLines": 1128,
-      "lastModified": 1753199341020
+      "lastModified": 1753199454937
     }
   },
   "nekonline": {
@@ -387,7 +387,7 @@
     "script": {
       "scriptSize": 4725,
       "scriptLines": 195,
-      "lastModified": 1753199341020
+      "lastModified": 1753199454937
     }
   },
   "oft": {
@@ -414,7 +414,7 @@
     "script": {
       "scriptSize": 877,
       "scriptLines": 43,
-      "lastModified": 1753199341027
+      "lastModified": 1753199454943
     }
   },
   "origincord": {
@@ -444,7 +444,7 @@
     "script": {
       "scriptSize": 39649,
       "scriptLines": 1540,
-      "lastModified": 1753199341027
+      "lastModified": 1753199454944
     }
   },
   "originfy": {
@@ -468,7 +468,7 @@
     "script": {
       "scriptSize": 7238,
       "scriptLines": 301,
-      "lastModified": 1753199341030
+      "lastModified": 1753199454946
     }
   },
   "originkill": {
@@ -498,7 +498,7 @@
     "script": {
       "scriptSize": 40752,
       "scriptLines": 1431,
-      "lastModified": 1753199341045
+      "lastModified": 1753199454962
     }
   },
   "ping pong": {
@@ -523,7 +523,7 @@
     "script": {
       "scriptSize": 1735,
       "scriptLines": 100,
-      "lastModified": 1753199341045
+      "lastModified": 1753199454962
     }
   },
   "slider": {
@@ -548,7 +548,7 @@
     "script": {
       "scriptSize": 2201,
       "scriptLines": 86,
-      "lastModified": 1753199341046
+      "lastModified": 1753199454962
     }
   },
   "snake": {
@@ -573,7 +573,7 @@
     "script": {
       "scriptSize": 2245,
       "scriptLines": 123,
-      "lastModified": 1753199341046
+      "lastModified": 1753199454962
     }
   },
   "super slime bros": {
@@ -603,7 +603,7 @@
     "script": {
       "scriptSize": 22766,
       "scriptLines": 895,
-      "lastModified": 1753199341050
+      "lastModified": 1753199454966
     }
   },
   "timer": {
@@ -625,7 +625,7 @@
     "script": {
       "scriptSize": 463,
       "scriptLines": 28,
-      "lastModified": 1753199341050
+      "lastModified": 1753199454966
     }
   },
   "todo": {
@@ -652,7 +652,7 @@
     "script": {
       "scriptSize": 1166,
       "scriptLines": 54,
-      "lastModified": 1753199341050
+      "lastModified": 1753199454966
     }
   },
   "wosle": {
@@ -682,7 +682,7 @@
     "script": {
       "scriptSize": 24916,
       "scriptLines": 254,
-      "lastModified": 1753199341054
+      "lastModified": 1753199454971
     }
   },
   "youtube": {
@@ -707,7 +707,7 @@
     "script": {
       "scriptSize": 3423,
       "scriptLines": 123,
-      "lastModified": 1753199341055
+      "lastModified": 1753199454971
     }
   }
 }
