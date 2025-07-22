@@ -1,4 +1,3 @@
-// asset urls
 player_eye = "w 2 c #000 dot -8 0 w 1 square -8 0 1 1 c #777 w 1 line 5 3.5 -4 11 cont -9 12 cont -8 13.5 cont 0 13 w 3 line 6 5 -3 12 w 2 cont -7.5 13 w 1 line 5 -3.5 -4 -11 cont -9 -12 cont -8 -13.5 cont 0 -13 w 3 line 6 -5 -3 -12 w 2 cont -7.5 -13 c #666 w 1 line 5 12.5 -4 17.4 cont -6 16 cont -1 13 cont 5 3.5 cont 7 4 w 3 line 6 5 1 13 w 2 cont -4.2 16 w 1 line 5 -12.5 -4 -17.4 cont -6 -16 cont -1 -13 cont 5 -3.5 cont 7 -4 w 3 line 6 -5 1 -13 w 2 cont -4.2 -16 c #444 w 1 line 9.5 3 6 15 cont 1 19 cont -1 18.5 cont 2.5 15 cont 6 4 cont 9.5 3 w 3 line 7.6 4.6 4 15 w 2 cont 0.5 18 w 1 line 9.5 -3 6 -15 cont 1 -19 cont -1 -18.5 cont 2.5 -15 cont 6 -4 cont 9.5 -3 w 3 line 7.6 -4.6 4 -15 w 2 cont 0.5 -18"
 
 arrow_base = "w 0.5 line -4 0 4.5 0 w 0.2 line 3.9 0.6 5 0 cont 3.9 -0.6 w 0.3 c #444 line 3.5 0.6 4.7 0 cont 3.5 -0.6 w 0.3 c #777 line -4.6 0.6 -4.3 0.5 cont -3.7 0 cont -4.3 -0.5 cont -4.5 -0.6 w 0.3 c #444 line -4.8 0.6 -4.5 0.5 cont -3.9 0 cont -4.5 -0.5 cont -4.8 -0.6 w 0.2 line -4.9 0 4.5 0"
@@ -19,6 +18,7 @@ if gamepads.len > 0 (
   say "Gamepad mode enabled"
 )
 
+start_timer = timer
 last_timer = timer
 game_timer = timer
 
@@ -31,6 +31,9 @@ object io = {
   ),
   down: def() -> (
     // right trigger
+    if timer - start_timer < 0.5 (
+      return false
+    )
     return gamepads.len > 0 ? gamepad.buttons[8]["pressed"] mouse_down
   ),
   x: def() -> (
@@ -297,8 +300,8 @@ def "movement" "speed" (
   local d = dist(0,0,player.x,player.y) - 1730
   if d > 0 (
     pointat -player.x -player.y
-    player.x += direction.sin * d
-    player.y += direction.cos * d
+    player.x += direction.sin() * d
+    player.y += direction.cos() * d
   )
 )
 
@@ -311,7 +314,7 @@ def "move_player" "speed" (
 def "create_random_enemy" "level" (
   goto player.x player.y
   direction random(-180,180)
-  create_enemy direction.sin * random(300,2000) direction.cos * random(300,2000) level level
+  create_enemy direction.sin() * random(300,2000) direction.cos() * random(300,2000) level level
 )
 
 def "go" "x, y" (
@@ -335,14 +338,12 @@ def "apply_upgrade" "upgrade" (
 
 object renderer = {
   drawPlayer: def() -> (
-    stretch [100,100]
     icon player_body 2.3 * s
     pointat io.x() io.y()
     move 40 * s
     icon player_eye 4.7 * s
     move 30 * s
     move -30 * s
-    effect "clear"
   )
 }
 
@@ -366,7 +367,7 @@ ability_sel_icn += addLine(0)
 ability_sel_icn += addLine(360 / abilities.len)
 ability_sel_icn += "cont 123 123 cont 3 123 cutcircle 3 3 60" + (18 / abilities.len) + (180 / abilities.len)
 
-Number.wrap = def(low, high) -> (
+number.wrap = def(low, high) -> (
   return ((self - low) % (high - low + 1) + (high - low + 1)) % (high - low + 1) + low
 )
 
@@ -387,7 +388,7 @@ s += s_target - s / 5
 c #fff
 direction 90
 
-if current_wave == 0 and ability.name == "" (
+if current_wave == 0 and ability.name == null (
   goto 0 window.top - 20
   centext "Pick your ability\n\n" 10
   
@@ -417,6 +418,7 @@ if current_wave == 0 and ability.name == "" (
       icn_s = 1.7
       if io.down() (
         ability = abilities[cur_ability]
+        ability.last_used = game_timer
         exit
       )
     )
@@ -458,22 +460,7 @@ if game_timer > (particle_timer + 0.02) and paused.not() (
   particle_timer = game_timer
 )
 
-if load_queue.len > 0 (
-  for i load_queue.len (
-    image load_queue[i] 0 0
-    if load_queue[i].imageinfo("loaded") (
-      load_queue.delete(i)
-    )
-    i --
-  )
-  loc 2 2 10 -20
-  direction 90
-  text load_queue.len + "Remaining" 10 : c#fff
-  import "win-buttons"
-  exit
-)
-
-w = window
+w @= window
 
 if paused.not() (
   movement player.speed
@@ -530,7 +517,7 @@ player.damage_multiplier = 1
 if paused.not() (
   if game_timer - ability.last_used < ability.cooldown / 2 (
     if ability.name == "Ghost" or ability.name == "Dash" (
-      effect "transparency" 50
+      pen "opacity" 50
       player.damage_multiplier = 0
     )
     if ability.name == "Gunner" and cycles % 5 == 0 (
@@ -571,7 +558,7 @@ arrows_del = []
 for i arrows.len (
   arrow @= arrows[i]
   if paused.not (
-    arrow.x += arrow.dir() * arrow.vel
+    arrow.x += arrow.dir.sin() * arrow.vel
     arrow.y += arrow.dir.cos() * arrow.vel
   )
   direction arrow.dir
