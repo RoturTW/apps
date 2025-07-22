@@ -4,13 +4,13 @@ object base = {
     "token": "", 
     "intents": 4194303,
     "properties": {
-      "$os": "originOS",
+      "$os": "originOaS",
       "$browser": system_browser.destr,
       "$device": system_os.destr
     }
   },
-  "s":null,
-  "t":null
+  "s": null,
+  "t": null
 }
 // base packet
 
@@ -191,10 +191,12 @@ def "focusChannel" "id" (
     guild = current_guild[4]
     local packet = {
       "op":37,
-      "d":{}
+      "d":{
+        subscriptions:{}
+      }
     }
-    
-    local packet.d.subscriptions[guild].channels[id] = [[0,99]]
+    packet.d.subscriptions[guild] = {channels:{}}
+    packet.d.subscriptions[guild].channels[id] @= [[0,99]]
     discord.wsSend(packet)
   )
   guilds_last_channels[guild] = current_channel
@@ -238,11 +240,9 @@ def "handle_message" "msg, ping" (
       msg.author.name = displayNameOf(msg.author)
     )
     
-    channel = msg.channel_id
+    local channel = msg.channel_id.toStr()
     // channel is passed as global
-    if messages[channel] == "" (
-      messages[channel] = []
-    )
+    messages[channel] ??= []
     msg_cha @= messages[channel]
     
     content = msg.content
@@ -252,9 +252,11 @@ def "handle_message" "msg, ping" (
     if isreply (
       local referenced = msg.referenced_message
       
+      local mem = memFromId(referenced.author.id)
+      
       msg_cha.append([
         "",
-        memFromId(referenced.author.id).user.name + referenced.content.replace("\n"," "),
+        mem.user.name + referenced.content.replace("\n"," "),
         "reply",
         false,
         "",
@@ -264,7 +266,7 @@ def "handle_message" "msg, ping" (
 
       authid = ""
     )
-    local date_diff = msg_cha.last().timestamp.timestamp("to-date").trim(1,-4) != msg_data.timestamp.timestamp("to-date").trim(1,-4)
+    local date_diff = msg_cha[-1].timestamp.timestamp("to-date").trim(1,-4) != msg_data.timestamp.timestamp("to-date").trim(1,-4)
     if previous_author[channel] != authid or isreply or date_diff (
       void msg_cha.append("")
       previous_author[channel] = authid
@@ -295,7 +297,7 @@ def "handle_message" "msg, ping" (
         if cur_content.len == 1 and cur_content[1].startsWith("<").not() (
           local cur_content = cur_content[1]
         )
-          
+        
         msg_cha.append(["",cur_content,"",ping,"",msg])
         messages[channel] @= msg_cha
       )
@@ -357,7 +359,7 @@ def "handle_guild" "dat" (
     members[i].user.name = displayNameOf(members[i].user)
     members[i].user.pfp = makepfp(members[i].user)
   )
-  members = members.sortBy("order").reverse()
+  members @= members.sortBy("order").reverse()
   
   each presence dat.presences (
     presences[presence.user.id] = presence
@@ -374,7 +376,7 @@ def "handle_guild" "dat" (
   guilds.append(arr)
 
   local id = dat.id
-  if id (
+  if id != null (
     all_members[id] = members
     all_member_ids[id] = members.getKeys("user").getKeys("id")
     stickers[id] = dat.stickers
@@ -399,7 +401,7 @@ def renderGuild(guild) (
   )
   if guild == "@me" (
     icon origincord_logo 2
-  ) else if guild[2] (
+  ) else if guild[2] != null (
     image guild[2] 40 40
   ) else (
     icon "w 30 dot 0 0" 1.3 : c#seco
@@ -450,7 +452,12 @@ def "draw_guilds" (
           )
         )
       ) else (
-        renderGuild(guild_objects[folder.guild_ids[1]])
+        local g @= guild_objects[folder.guild_ids[1]]
+        if g == null (
+          y += 50
+          continue
+        )
+        renderGuild(g)
       )
     )
   )
@@ -464,11 +471,11 @@ def "draw_channels" (
   local ih = 45
   
   frame window.left + 50 guild_info_shift window.left + 360 window.bottom + 50 len - 0.5 * ih "channels"
-    count = scroll_ychannels // ih
+    count = floor(scroll_ychannels / ih)
     w = frame.width - 25
     y = scroll_ychannels % ih + (ih * 0.5 - 5)
   
-    loop (window_height // ih).clamp(0,len) (
+    loop floor(window_height / ih).clamp(0,len) (
       count ++
       chnl @= cur[count]
       if chnl.istype("object").not() (
@@ -479,7 +486,7 @@ def "draw_channels" (
    
       id = chnl.id
       local current_channel = current_channel == id
-      if id (
+      if id != null (
         if chnl["type"] !== 4 (
           if current_channel (
             square w 25 15 : c#seco
@@ -526,7 +533,7 @@ def "draw_channels" (
           change_x 10
           break
         case 3
-          if chnl.icon (
+          if chnl.icon != null (
             change_x 10
             image doProxy("https://cdn.discordapp.com/channel-icons/" ++ id ++ "/" ++ chnl.icon ++ ".png?size=80") 30 30
             icon circle_pfp 0.975 : c#window_colour
@@ -576,6 +583,10 @@ def "draw_chat" "cur_msgs" (
   w = frame.width
   for count len (
     msg @= cur_msgs[count]
+    if msg == "" (
+      y -= ih
+      continue
+    )
     
     loc 999 2 0 y
     if msg[4] == true (
@@ -779,7 +790,7 @@ def "draw_chat" "cur_msgs" (
 def "draw_members" "cur_mem" (
   local roles = roles[current_guild[4]]
   local ih = 35
-  sidebar_ih = 35
+  sidebar_ih = 30
   len = cur_mem.len
   sidebar_len = len
  
@@ -788,7 +799,7 @@ def "draw_members" "cur_mem" (
   last_rolename = ""
   w = frame.width
   each this.user cur_mem (
-    if user.group != "" (
+    if user.group != null (
       loc 2 2 20 y
       local role = roles[user.group.id]
       c role.color == 0 ? txtc role.color
@@ -930,7 +941,7 @@ def "setup" (
   number attachment_offset = 40
   current_guild = ""
   current_channel = ""
-  current_attachment = ""
+  string current_attachment = ""
   
   object shown = {
     "sidebar": true,
@@ -1058,7 +1069,7 @@ if discord.wsOpen().not() (
 
 if discord.wsHasnew() (
   msg = discord.wsGetnext()
-  string cmd = msg.t
+  string cmd = msg.t.toStr()
   dat = msg.d
   switch cmd (
     case "ready"
@@ -1103,7 +1114,6 @@ if discord.wsHasnew() (
           new_messages[read.id] = false
           pings[read.id] = read.mention_count
         )
-        
         array guild_folders = dat.user_settings.guild_folders
       )
       break
@@ -1117,7 +1127,7 @@ if discord.wsHasnew() (
       })
       break
     case "TYPING_START"
-      number channel = dat.channel_id
+      number channel = dat.channel_id.toNum()
       temp = dat.member.user
       
       typing[channel] ??= []
@@ -1130,7 +1140,7 @@ if discord.wsHasnew() (
 
       break
     case "MESSAGE_CREATE"
-      channel = dat.channel_id
+      number channel = dat.channel_id.toNum()
       content = dat.content.toStr()
       author = dat.author
       
@@ -1230,8 +1240,8 @@ if discord.wsHasnew() (
       )
       break
     case "CHANNEL_UNREAD_UPDATE"
-      each this.channel dat.channel_unread_updates (
-        new_messages[this.channel.id] = true
+      each this.chl dat.channel_unread_updates (
+        new_messages[chl.id] = true
         new_messages[dat.guild_id] = true
       )
       break
@@ -1263,7 +1273,7 @@ if current_guild != "@me" (
   current_member_ids @= all_member_ids[current_guild[4]]
 )
 
-if current_channel != "" and current_channel != 0 (
+if current_channel != "" and current_channel != "0" (
   new_messages[current_channel] = false
   if loaded.contains(current_channel).not() (
     data = ("https://apps.mistium.com/get-discord-messages?channelid=" ++ current_channel ++ "&token=" ++ token ++ "&user_account=" ++ discord_isUser).getAsync()
@@ -1274,7 +1284,7 @@ if current_channel != "" and current_channel != 0 (
     direction 90
     if data != "Loading" (
       data @= data.JsonClean().reverse()
-      channel = current_channel
+      number channel = current_channel.toNum()
       typing = {}
       each load_msg data (
         handle_message load_msg false
@@ -1490,7 +1500,7 @@ change_x w / 2
 icon "send" 0.8 : c#txtc
 
 send = inputs.message.join("\n").strip()
-if "enter".isKeyDown() or onclick and "shift".isKeyDown().not() and send != null (
+if "enter".isKeyDown() or onclick and "shift".isKeyDown().not() and send != "" (
   spl = send.split(" ")
   if send.startsWith(".eval") (
     local func = def() -> ()
@@ -1503,12 +1513,12 @@ if "enter".isKeyDown() or onclick and "shift".isKeyDown().not() and send != null
     exit
   )
   if send.startsWith(".version") (
-    async_msg "originCord v5.83" current_channel
+    async_msg "originCord v6.0" current_channel
     inputs.message = ""
     exit
   )
-  if current_attachment == null (
-    if current_reply == null (
+  if current_attachment == "" (
+    if current_reply == "" (
       async_msg send current_channel
     ) else (
       link = "https://apps.mistium.com/discord-send-reply?token=" ++ token ++ "&channelid=" ++ current_channel ++ "&content=" ++ encodeURIComponent(send.toStr()) ++ "&messageid=" ++ current_reply.id ++ "&user_account=" ++ discord_isUser
