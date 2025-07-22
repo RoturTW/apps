@@ -5,7 +5,7 @@ permission "request" "rotur token"
 
 token = roturToken()
 
-current_version = 2.8
+current_version = 2.9
 
 // automatically update claw
 promise.new(def() -> (
@@ -192,7 +192,7 @@ def "render_post" "w, h, post, offset_y, reply" (
       )
     )
   )
-  if post.attachment == "" (
+  if post.attachment == null (
     local offset = 0
   ) else (
     local offset = 10
