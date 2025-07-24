@@ -1,0 +1,14 @@
+{
+    "title": "Clicker Game",
+    "description": "A simple clicker game",
+    "author": "Allucat1000",
+    "version":"1.0",
+    "genre": "Arcade, Casual",
+    "game_modes": [
+      "Single-Player"
+    ],
+    "permissions": [],
+    "supports" [
+      "originOS"
+    ]
+}
