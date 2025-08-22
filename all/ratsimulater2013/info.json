@@ -1,0 +1,10 @@
+{
+  "title": "Rat Simulater: 2013",
+  "description": "Live the life of a great rat soldier and face your foes head on in this realistic simulator experience. Featuring stunning handcrafted pixel artstyle and a hollywood soundtrack, this experience will leave you in awe. Use the mouse to attack enemies and navigate the vast world with this simplified yet engaging control style.",
+  "author": "RattusDong",
+  "version": "1.0",
+  "genre": "Arcade",
+  "game_modes": ["Single-player"],
+  "permissions": [],
+  "supports":["originOS"]
+}
