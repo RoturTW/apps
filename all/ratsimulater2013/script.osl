@@ -1,0 +1,249 @@
+window.width = 600
+path = "https://raw.githubusercontent.com/RoturTW/apps/refs/heads/main/all/ratsimulater2013/assets/"
+sound path ++ "bgm.mp3" "load" "bgm"
+sound path ++ "hurt.mp3" "load" "hurt"
+sound path ++ "attack.mp3" "load" "attack"
+sound path ++ "inflict.mp3" "load" "inflict"
+pickedcontrol = 1
+array gamepads = getGamepads()
+if gamepads.len > 0 (
+  gamepad @= gamepads[1]
+  pickedcontrol = 0
+)
+thexvalue = -250
+thextogoto = -250
+thexvalueoftheenemy = 220
+enemyhealthpoints = 3
+thesizeoftheenemy = 2
+clickingcooldown = 60
+window.height = 400
+theroomcounter = 1
+loadingest = 50
+hp = 10 + random(0,1)
+theenemyispresent = true
+gethurtcooldown = 0
+enemyhurtcooldown = 0
+attackingcooldown = 0
+window.setResizable(false)
+themousex = 0
+themousey = 0
+def didclick() (
+  if pickedcontrol == 1 (
+    if mouse_ondown and clickingcooldown < 0 (
+      return true
+    )
+  )
+  if pickedcontrol == 2 (
+    if abuttonhasbeenpressed and clickingcooldown < 0 (
+      return true
+    )
+  )
+  return false
+)
+def didclickenemy() (
+  if dist(themousex, themousey, thexvalueoftheenemy, -204 + (27 * thesizeoftheenemy)) < 25 * thesizeoftheenemy and attackingcooldown <= 0 (
+    if pickedcontrol == 1 and mouse_down (
+      return true
+    )
+    if pickedcontrol == 2 and abuttonhasbeenpressed (
+      return true
+    )
+  )
+  return false
+)
+mainloop:
+array gamepads = getGamepads()
+if gamepads.len > 0 (
+  gamepad @= gamepads[1]
+)
+if "bgm".soundinfo("playing").not (
+  sound "bgm" "start" 0
+)
+sound "bgm" "volume" 65
+if pickedcontrol == 1 (
+  themousex = mouse_x
+  themousey = mouse_y
+)
+if loadingest <= 0 and hp >= 0 (
+  goto 0 0
+  image path ++ "bg.png" window.width window.height
+  goto thexvalue -150
+  if attackingcooldown > 0 (
+    direction attackingcooldown / 60 * -360 + 90 
+  )
+  if gethurtcooldown < 0 or gethurtcooldown % 4 >= 2 (
+    image path ++ "player.png" 108
+  )
+  direction 90
+  goto -300 180
+  text theroomcounter 25 : c#000
+  if didclick() (
+    if random(0,100) < 96 (
+      thextogoto = themousex
+    )
+    thexvalue ++
+    clickingcooldown = random(38,66)
+  )
+  if clickingcooldown > -16 (
+    if dist(thextogoto,-150,thexvalue,-150) > 12 (
+      if thextogoto < thexvalue (
+        thexvalue -= 0.6 + random(0,0.2)
+      ) else (
+        thexvalue += 1 + random(0,0.2)
+      )
+    )
+  )
+  if thexvalue > 250 (
+    theroomcounter ++
+    thexvalue = -250
+    thextogoto = -250
+    loadingest = random(25,50 + theroomcounter)
+    randomnumber = random(0,50 + theroomcounter)
+    if randomnumber > 35 (
+      theenemyispresent = true
+      enemyhealthpoints = 3
+      thesizeoftheenemy = 2
+      enemyhurtcooldown = 0
+      if randomnumber > 48 (
+        enemyhealthpoints = 6
+        thesizeoftheenemy = 3
+      )
+      if randomnumber > 64 (
+        enemyhealthpoints = 10
+        thesizeoftheenemy = 4
+      )
+    ) else (
+      theenemyispresent = false
+    )
+  )
+  if theenemyispresent (
+    goto thexvalueoftheenemy -204 + (27 * thesizeoftheenemy)
+    if enemyhurtcooldown < 0 or enemyhurtcooldown % 4 >= 2 (
+      image path ++ "enemy.png" 54 * thesizeoftheenemy
+    )
+    if didclickenemy() (
+      attackingcooldown = 60 + random(-2,2)
+      sound "attack" "start" 0
+    )
+    if dist(thexvalue, -150, thexvalueoftheenemy, -150) < 32 * thesizeoftheenemy and gethurtcooldown <= 0 and attackingcooldown < 8 and enemyhurtcooldown <= 6 (
+      log "ouch!"
+      gethurtcooldown = 50
+      hp --
+      sound "hurt" "start" 0
+    )
+    if dist(thexvalue, -150, thexvalueoftheenemy, -150) < 52 * thesizeoftheenemy + 12 and enemyhurtcooldown <= -10 and attackingcooldown > 16 (
+      enemyhurtcooldown = 50 + thesizeoftheenemy + random(-2,2)
+      enemyhealthpoints -= 1
+      sound "inflict" "start" 0
+    )
+    
+    if enemyhealthpoints == 0 (
+      theenemyispresent = false
+    )
+    randomnumber = random(0,100) 
+    if randomnumber <= 20 (
+      thexvalueoftheenemy -= thesizeoftheenemy / 2
+    ) else if randomnumber <= 40 (
+      thexvalueoftheenemy -= thesizeoftheenemy / 4
+    ) else if randomnumber <= 58 (
+      thexvalueoftheenemy += thesizeoftheenemy / 1.8
+    ) else if randomnumber <= 76 (
+      thexvalueoftheenemy += thesizeoftheenemy / 3.8
+    )
+    enemyhurtcooldown --
+  )
+  attackingcooldown --
+  gethurtcooldown --
+  clickingcooldown --
+  if pickedcontrol == 0 (
+    sound "bgm" "start" 0
+    goto 0 0 
+    square 1000 1000 : c#000
+    goto -180 150
+    text "CHOOSE PLAY METHOD" 20 : c#fff
+    goto -49 40
+    text "GAMEPAD" 14 : c#fff
+    if onclick or gamepad.buttons[1]["pressed"] (
+      pickedcontrol = 2
+      sound "bgm" "start" 0.1
+      loadingest = 50
+    )
+    goto -35 -40
+    text "MOUSE" 14 : c#fff
+    if onclick (
+      pickedcontrol = 1
+      sound "bgm" "start" 0.1
+      loadingest = 60
+    )
+  ) 
+) else (
+  goto -175 0
+  text "LOADING" 50 : c#fff
+  thexvalueoftheenemy = 220
+)
+if hp < 0 (
+  if theroomcounter < 10 (
+    bonustext = "BAD"
+  ) else if theroomcounter < 20 (
+    bonustext = "TRY"
+  ) else if theroomcounter < 30 (
+    bonustext = "OKAY"
+  ) else if theroomcounter < 40 (
+    bonustext = "NICE"
+  ) else if theroomcounter < 50 (
+    bonustext = "GREAT"
+  ) else if theroomcounter < 60 (
+    bonustext = "EXCELLENT"
+  ) else if theroomcounter < 70 (
+    bonustext = "RATAHOLIC"
+  ) else if theroomcounter < 80 (
+    bonustext = "A LOYAL KIN"
+  ) else if theroomcounter < 90 (
+    bonustext = "SAGE OF LIGHT"
+  ) else if theroomcounter < 100 (
+    bonustext = "ON THE CUSP OF GLORY"
+  ) else (
+    bonustext = "CHAMPION OF RATS, RATTUS WORTHY"
+  )
+  say "GAME OVER \n SCORE: " ++ theroomcounter ++ "\n" ++ bonustext
+  window.close()
+)
+loadingest --
+import "win-buttons"
+if pickedcontrol == 2 (
+  cursor "hide"
+  goto themousex + 6 themousey + 6
+  image path ++ "cursor.png" 16
+  f = 3
+  if gamepad.buttons[1]["pressed"] (
+    if whymustyouholdmehere == false (
+      abuttonhasbeenpressed = true
+    ) else (
+      abuttonhasbeenpressed = false
+    )
+    whymustyouholdmehere = true
+  ) else (
+    abuttonhasbeenpressed = false
+    whymustyouholdmehere = false
+  )
+  if gamepad.buttons[2]["pressed"] (
+    f = 6
+  )
+  if gamepad.buttons[10]["pressed"] (
+    window.close()
+  )
+  if gamepad.buttons[13]["pressed"] (
+    themousey += f
+  )
+  if gamepad.buttons[14]["pressed"] (
+    themousey -= f
+  )
+  if gamepad.buttons[15]["pressed"] (
+    themousex -= f
+  )
+  if gamepad.buttons[16]["pressed"] (
+    themousex += f
+  )
+  themousex = themousex.clamp(window.width / -2,window.width / 2)
+  themousey = themousey.clamp(window.height / -2,window.height / 2)
+)

@@ -209,6 +209,7 @@
       "scriptSize": 2960,
       "scriptLines": 146,
       "lastModified": 1755900690779
+
     }
   },
   "fluficord": {
@@ -548,7 +549,32 @@
     "script": {
       "scriptSize": 1735,
       "scriptLines": 100,
-      "lastModified": 1755900690833
+      "lastModified": 1755900062808
+    }
+  },
+  "ratsimulater2013": {
+    "title": "Rat Simulater: 2013",
+    "description": "Live the life of a great rat soldier and face your foes head on in this realistic simulator experience. Featuring stunning handcrafted pixel artstyle and a hollywood soundtrack, this experience will leave you in awe. Use the mouse to attack enemies and navigate the vast world with this simplified yet engaging control style.",
+    "author": "RattusDong",
+    "version": "1.0",
+    "genre": "Arcade",
+    "game_modes": [
+      "Single-player"
+    ],
+    "permissions": [],
+    "supports": [
+      "originOS"
+    ],
+    "icon": "image https://raw.githubusercontent.com/Mistium/apps/main/all/ratsimulater2013/assets/player.png 25",
+    "size": {
+      "bytes": 831460,
+      "kilobytes": "811.97",
+      "megabytes": "0.79"
+    },
+    "script": {
+      "scriptSize": 4504,
+      "scriptLines": 161,
+      "lastModified": 1755900062812
     }
   },
   "slider": {
