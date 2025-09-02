@@ -699,12 +699,54 @@ def "draw_chat" "cur_msgs" (
                     h = w / aspect_ratio
                   )
                   change w / 2 h / -2
-                  image url h * aspect_ratio h
+                  image doProxy(url) h * aspect_ratio h
                   change w / -2 h / -2
                 )
                 break
             )
           )
+        )
+      )
+      
+      local attachments @= msg_data.attachments
+      if attachments.len > 0 (
+        att @= attachments[1]
+        file_type = att.content_type.split("/")[1]
+        local h = att.height
+        url = doProxy(att.url)
+        local aspect_ratio = att.width / att.height
+        local w = h * aspect_ratio
+        
+        if w > frame.width / 1.5 (
+          w = frame.width / 1.5
+          h = w / aspect_ratio
+        )
+        switch file_type (
+          case "image"
+            set_x frame.left + 60 + (w / 2)
+            change_y h / -2 - 20
+            image url w h
+            change w / -2 h / -2 - 10
+            break
+          case "video"
+            change w / 2 h / -2
+            video url w h
+            change_y h / -2 - 20
+            square w - 10 20 10 : c#prim
+            change_x w / -2 + 20
+            c txtc
+            if url.videoinfo("playing") (
+              icon "pause" 0.7
+              if onclick (
+                video url "pause"
+              )
+            ) else (
+              icon "play" 0.7
+              if onclick (
+                video url "play"
+              )
+            )
+            break
         )
       )
       
@@ -738,45 +780,6 @@ def "draw_chat" "cur_msgs" (
       )
       
       y += y_position - oy
-      
-      local attachments = msg_data.attachments
-      if attachments.len > 0 (
-        att @= attachments[1]
-        file_type = att.content_type.split("/")[1]
-        local h = att.content_height * 2
-        url = att.url
-        switch file_type (
-          case "image"
-            local aspect_ratio = url.imageinfo("width") / url.imageinfo("height")
-            local w = h * aspect_ratio
-            change w / 2 h / -2
-            image url w h
-            change w / -2 h / -2
-            break
-          case "video"
-            local aspect_ratio = url.videoinfo("width") / url.videoinfo("height")
-            local h -= 20
-            local w = h * aspect_ratio
-            change w / 2 h / -2
-            video url w h
-            change_y h / -2 - 20
-            square w - 10 20 10 : c#prim
-            change_x w / -2 + 20
-            c txtc
-            if url.videoinfo("playing") (
-              icon "pause" 0.7
-              if onclick (
-                video url "pause"
-              )
-            ) else (
-              icon "play" 0.7
-              if onclick (
-                video url "play"
-              )
-            )
-            break
-        )
-      )
     )
     y -= ih
   )
@@ -1513,7 +1516,7 @@ if "enter".isKeyDown() or onclick and "shift".isKeyDown().not() and send != "" (
     exit
   )
   if send.startsWith(".version") (
-    async_msg "originCord v6.0" current_channel
+    async_msg "originCord v6.1" current_channel
     inputs.message = ""
     exit
   )
