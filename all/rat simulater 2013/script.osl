@@ -1,5 +1,5 @@
 window.width = 600
-path = "https://raw.githubusercontent.com/RoturTW/apps/refs/heads/main/all/ratsimulater2013/assets/"
+path = "https://raw.githubusercontent.com/roturTW/apps/main/all/rat%20simulater%202013/assets/"
 sound path ++ "bgm.mp3" "load" "bgm"
 sound path ++ "hurt.mp3" "load" "hurt"
 sound path ++ "attack.mp3" "load" "attack"
