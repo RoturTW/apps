@@ -21,7 +21,7 @@
     "script": {
       "scriptSize": 3145,
       "scriptLines": 194,
-      "lastModified": 1755900062655
+      "lastModified": 1755900690775
     }
   },
   "arrow": {
@@ -45,7 +45,7 @@
     "script": {
       "scriptSize": 17762,
       "scriptLines": 770,
-      "lastModified": 1755900062656
+      "lastModified": 1755900690776
     }
   },
   "ceslum": {
@@ -71,7 +71,7 @@
     "script": {
       "scriptSize": 1210,
       "scriptLines": 46,
-      "lastModified": 1755900062657
+      "lastModified": 1755900690777
     }
   },
   "claw": {
@@ -105,7 +105,32 @@
     "script": {
       "scriptSize": 14725,
       "scriptLines": 618,
-      "lastModified": 1755900062658
+      "lastModified": 1755900690778
+    }
+  },
+  "clicker game": {
+    "title": "Clicker Game",
+    "description": "A simple clicker game",
+    "author": "Allucat1000",
+    "version": "1.0",
+    "genre": "Arcade, Casual",
+    "game_modes": [
+      "Single-Player"
+    ],
+    "permissions": [],
+    "supports": [
+      "originOS"
+    ],
+    "icon": "w 10 c #858585 dot 0 0 w 1 c #fff line -1.5 -1.5 -1.5 3 cont 1.5 -1 cont -1.5 -1.5 line 0 -1.5 0.5 -3 line 0 -1.5 0 1 line -0.5 -1 -0.75 1\n",
+    "size": {
+      "bytes": 3560,
+      "kilobytes": "3.48",
+      "megabytes": "0.00"
+    },
+    "script": {
+      "scriptSize": 3125,
+      "scriptLines": 125,
+      "lastModified": 1755900690778
     }
   },
   "crl": {
@@ -131,7 +156,7 @@
     "script": {
       "scriptSize": 907,
       "scriptLines": 30,
-      "lastModified": 1755900062658
+      "lastModified": 1755900690778
     }
   },
   "dock themer": {
@@ -158,7 +183,7 @@
     "script": {
       "scriptSize": 916,
       "scriptLines": 43,
-      "lastModified": 1755900062659
+      "lastModified": 1755900690778
     }
   },
   "flappy bird": {
@@ -183,7 +208,8 @@
     "script": {
       "scriptSize": 2960,
       "scriptLines": 146,
-      "lastModified": 1755900062660
+      "lastModified": 1755900690779
+
     }
   },
   "fluficord": {
@@ -213,7 +239,7 @@
     "script": {
       "scriptSize": 33067,
       "scriptLines": 1104,
-      "lastModified": 1755900062677
+      "lastModified": 1755900690796
     }
   },
   "focuser": {
@@ -235,7 +261,7 @@
     "script": {
       "scriptSize": 393,
       "scriptLines": 20,
-      "lastModified": 1755900062677
+      "lastModified": 1755900690796
     }
   },
   "fortnite skibidi 2024": {
@@ -263,7 +289,7 @@
     "script": {
       "scriptSize": 4773,
       "scriptLines": 214,
-      "lastModified": 1755900062685
+      "lastModified": 1755900690804
     }
   },
   "goose": {
@@ -288,7 +314,7 @@
     "script": {
       "scriptSize": 2332,
       "scriptLines": 95,
-      "lastModified": 1755900062779
+      "lastModified": 1755900690807
     }
   },
   "jump and run": {
@@ -313,7 +339,7 @@
     "script": {
       "scriptSize": 3956,
       "scriptLines": 194,
-      "lastModified": 1755900062780
+      "lastModified": 1755900690807
     }
   },
   "lights out": {
@@ -338,7 +364,7 @@
     "script": {
       "scriptSize": 1110,
       "scriptLines": 71,
-      "lastModified": 1755900062780
+      "lastModified": 1755900690807
     }
   },
   "mallet": {
@@ -362,7 +388,7 @@
     "script": {
       "scriptSize": 29643,
       "scriptLines": 1128,
-      "lastModified": 1755900062780
+      "lastModified": 1755900690807
     }
   },
   "nekonline": {
@@ -387,7 +413,7 @@
     "script": {
       "scriptSize": 4725,
       "scriptLines": 195,
-      "lastModified": 1755900062781
+      "lastModified": 1755900690807
     }
   },
   "oft": {
@@ -414,7 +440,7 @@
     "script": {
       "scriptSize": 877,
       "scriptLines": 43,
-      "lastModified": 1755900062789
+      "lastModified": 1755900690814
     }
   },
   "origincord": {
@@ -444,7 +470,7 @@
     "script": {
       "scriptSize": 39649,
       "scriptLines": 1540,
-      "lastModified": 1755900062789
+      "lastModified": 1755900690814
     }
   },
   "originfy": {
@@ -468,7 +494,7 @@
     "script": {
       "scriptSize": 7238,
       "scriptLines": 301,
-      "lastModified": 1755900062792
+      "lastModified": 1755900690817
     }
   },
   "originkill": {
@@ -498,7 +524,7 @@
     "script": {
       "scriptSize": 40752,
       "scriptLines": 1431,
-      "lastModified": 1755900062808
+      "lastModified": 1755900690833
     }
   },
   "ping pong": {
@@ -573,7 +599,7 @@
     "script": {
       "scriptSize": 2201,
       "scriptLines": 86,
-      "lastModified": 1755900062813
+      "lastModified": 1755900690833
     }
   },
   "snake": {
@@ -598,7 +624,7 @@
     "script": {
       "scriptSize": 2245,
       "scriptLines": 123,
-      "lastModified": 1755900062813
+      "lastModified": 1755900690833
     }
   },
   "super slime bros": {
@@ -628,7 +654,7 @@
     "script": {
       "scriptSize": 22766,
       "scriptLines": 895,
-      "lastModified": 1755900062817
+      "lastModified": 1755900690837
     }
   },
   "timer": {
@@ -650,7 +676,7 @@
     "script": {
       "scriptSize": 463,
       "scriptLines": 28,
-      "lastModified": 1755900062817
+      "lastModified": 1755900690837
     }
   },
   "todo": {
@@ -677,7 +703,7 @@
     "script": {
       "scriptSize": 1166,
       "scriptLines": 54,
-      "lastModified": 1755900062817
+      "lastModified": 1755900690838
     }
   },
   "wosle": {
@@ -707,7 +733,7 @@
     "script": {
       "scriptSize": 24916,
       "scriptLines": 254,
-      "lastModified": 1755900062824
+      "lastModified": 1755900690842
     }
   },
   "youtube": {
@@ -732,7 +758,7 @@
     "script": {
       "scriptSize": 3423,
       "scriptLines": 123,
-      "lastModified": 1755900062824
+      "lastModified": 1755900690842
     }
   }
 }
