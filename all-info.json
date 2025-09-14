@@ -21,14 +21,14 @@
     "script": {
       "scriptSize": 3145,
       "scriptLines": 194,
-      "lastModified": 1756850321601
+      "lastModified": 1757828032198
     }
   },
   "arrow": {
     "title": "Arrow",
     "description": "Arrow is a wave based survival game where you must defeat enemies and level up your character.",
     "author": "Mist",
-    "version": "1.2",
+    "version": "1.3",
     "genre": "Action, Arcade, Shooter",
     "game_modes": [
       "Single-PLayer"
@@ -38,14 +38,14 @@
     ],
     "icon": "image https://raw.githubusercontent.com/RoturTW/apps/refs/heads/main/all/arrow/assets/icon.png 20\n",
     "size": {
-      "bytes": 50788,
-      "kilobytes": "49.60",
+      "bytes": 50943,
+      "kilobytes": "49.75",
       "megabytes": "0.05"
     },
     "script": {
-      "scriptSize": 17762,
-      "scriptLines": 770,
-      "lastModified": 1756850321602
+      "scriptSize": 17917,
+      "scriptLines": 789,
+      "lastModified": 1757828032199
     }
   },
   "ceslum": {
@@ -71,7 +71,7 @@
     "script": {
       "scriptSize": 1210,
       "scriptLines": 46,
-      "lastModified": 1756850321603
+      "lastModified": 1757828032200
     }
   },
   "claw": {
@@ -105,7 +105,7 @@
     "script": {
       "scriptSize": 14725,
       "scriptLines": 618,
-      "lastModified": 1756850321604
+      "lastModified": 1757828032201
     }
   },
   "clicker game": {
@@ -130,7 +130,7 @@
     "script": {
       "scriptSize": 3125,
       "scriptLines": 125,
-      "lastModified": 1756850321604
+      "lastModified": 1757828032201
     }
   },
   "crl": {
@@ -156,7 +156,7 @@
     "script": {
       "scriptSize": 907,
       "scriptLines": 30,
-      "lastModified": 1756850321605
+      "lastModified": 1757828032201
     }
   },
   "dock themer": {
@@ -183,7 +183,7 @@
     "script": {
       "scriptSize": 916,
       "scriptLines": 43,
-      "lastModified": 1756850321605
+      "lastModified": 1757828032202
     }
   },
   "flappy bird": {
@@ -208,7 +208,7 @@
     "script": {
       "scriptSize": 2960,
       "scriptLines": 146,
-      "lastModified": 1756850321606
+      "lastModified": 1757828032202
     }
   },
   "fluficord": {
@@ -238,7 +238,7 @@
     "script": {
       "scriptSize": 33067,
       "scriptLines": 1104,
-      "lastModified": 1756850321623
+      "lastModified": 1757828032220
     }
   },
   "focuser": {
@@ -260,7 +260,7 @@
     "script": {
       "scriptSize": 393,
       "scriptLines": 20,
-      "lastModified": 1756850321623
+      "lastModified": 1757828032220
     }
   },
   "fortnite skibidi 2024": {
@@ -288,7 +288,7 @@
     "script": {
       "scriptSize": 4773,
       "scriptLines": 214,
-      "lastModified": 1756850321630
+      "lastModified": 1757828032227
     }
   },
   "goose": {
@@ -313,7 +313,7 @@
     "script": {
       "scriptSize": 2332,
       "scriptLines": 95,
-      "lastModified": 1756850321633
+      "lastModified": 1757828032230
     }
   },
   "jump and run": {
@@ -338,7 +338,7 @@
     "script": {
       "scriptSize": 3956,
       "scriptLines": 194,
-      "lastModified": 1756850321633
+      "lastModified": 1757828032231
     }
   },
   "lights out": {
@@ -363,7 +363,7 @@
     "script": {
       "scriptSize": 1110,
       "scriptLines": 71,
-      "lastModified": 1756850321634
+      "lastModified": 1757828032231
     }
   },
   "mallet": {
@@ -387,7 +387,7 @@
     "script": {
       "scriptSize": 29643,
       "scriptLines": 1128,
-      "lastModified": 1756850321634
+      "lastModified": 1757828032231
     }
   },
   "nekonline": {
@@ -412,7 +412,7 @@
     "script": {
       "scriptSize": 4725,
       "scriptLines": 195,
-      "lastModified": 1756850321634
+      "lastModified": 1757828032231
     }
   },
   "oft": {
@@ -439,7 +439,7 @@
     "script": {
       "scriptSize": 877,
       "scriptLines": 43,
-      "lastModified": 1756850321640
+      "lastModified": 1757828032237
     }
   },
   "origincord": {
@@ -469,7 +469,7 @@
     "script": {
       "scriptSize": 39642,
       "scriptLines": 1543,
-      "lastModified": 1756850321641
+      "lastModified": 1757828032238
     }
   },
   "originfy": {
@@ -493,7 +493,7 @@
     "script": {
       "scriptSize": 7238,
       "scriptLines": 301,
-      "lastModified": 1756850321643
+      "lastModified": 1757828032240
     }
   },
   "originkill": {
@@ -523,7 +523,7 @@
     "script": {
       "scriptSize": 40752,
       "scriptLines": 1431,
-      "lastModified": 1756850321659
+      "lastModified": 1757828032256
     }
   },
   "ping pong": {
@@ -548,7 +548,7 @@
     "script": {
       "scriptSize": 1735,
       "scriptLines": 100,
-      "lastModified": 1756850321659
+      "lastModified": 1757828032256
     }
   },
   "rat simulater 2013": {
@@ -573,7 +573,7 @@
     "script": {
       "scriptSize": 6760,
       "scriptLines": 249,
-      "lastModified": 1756850321663
+      "lastModified": 1757828032260
     }
   },
   "slider": {
@@ -598,7 +598,7 @@
     "script": {
       "scriptSize": 2201,
       "scriptLines": 86,
-      "lastModified": 1756850321663
+      "lastModified": 1757828032260
     }
   },
   "snake": {
@@ -623,7 +623,7 @@
     "script": {
       "scriptSize": 2245,
       "scriptLines": 123,
-      "lastModified": 1756850321663
+      "lastModified": 1757828032260
     }
   },
   "super slime bros": {
@@ -653,7 +653,7 @@
     "script": {
       "scriptSize": 22766,
       "scriptLines": 895,
-      "lastModified": 1756850321667
+      "lastModified": 1757828032264
     }
   },
   "timer": {
@@ -675,7 +675,7 @@
     "script": {
       "scriptSize": 463,
       "scriptLines": 28,
-      "lastModified": 1756850321667
+      "lastModified": 1757828032264
     }
   },
   "todo": {
@@ -702,7 +702,7 @@
     "script": {
       "scriptSize": 1166,
       "scriptLines": 54,
-      "lastModified": 1756850321667
+      "lastModified": 1757828032264
     }
   },
   "wosle": {
@@ -732,7 +732,7 @@
     "script": {
       "scriptSize": 24916,
       "scriptLines": 254,
-      "lastModified": 1756850321672
+      "lastModified": 1757828032269
     }
   },
   "youtube": {
@@ -757,7 +757,7 @@
     "script": {
       "scriptSize": 3423,
       "scriptLines": 123,
-      "lastModified": 1756850321672
+      "lastModified": 1757828032269
     }
   }
 }
