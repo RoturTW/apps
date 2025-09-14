@@ -1,3 +1,4 @@
+// asset urls
 player_eye = "w 2 c #000 dot -8 0 w 1 square -8 0 1 1 c #777 w 1 line 5 3.5 -4 11 cont -9 12 cont -8 13.5 cont 0 13 w 3 line 6 5 -3 12 w 2 cont -7.5 13 w 1 line 5 -3.5 -4 -11 cont -9 -12 cont -8 -13.5 cont 0 -13 w 3 line 6 -5 -3 -12 w 2 cont -7.5 -13 c #666 w 1 line 5 12.5 -4 17.4 cont -6 16 cont -1 13 cont 5 3.5 cont 7 4 w 3 line 6 5 1 13 w 2 cont -4.2 16 w 1 line 5 -12.5 -4 -17.4 cont -6 -16 cont -1 -13 cont 5 -3.5 cont 7 -4 w 3 line 6 -5 1 -13 w 2 cont -4.2 -16 c #444 w 1 line 9.5 3 6 15 cont 1 19 cont -1 18.5 cont 2.5 15 cont 6 4 cont 9.5 3 w 3 line 7.6 4.6 4 15 w 2 cont 0.5 18 w 1 line 9.5 -3 6 -15 cont 1 -19 cont -1 -18.5 cont 2.5 -15 cont 6 -4 cont 9.5 -3 w 3 line 7.6 -4.6 4 -15 w 2 cont 0.5 -18"
 
 arrow_base = "w 0.5 line -4 0 4.5 0 w 0.2 line 3.9 0.6 5 0 cont 3.9 -0.6 w 0.3 c #444 line 3.5 0.6 4.7 0 cont 3.5 -0.6 w 0.3 c #777 line -4.6 0.6 -4.3 0.5 cont -3.7 0 cont -4.3 -0.5 cont -4.5 -0.6 w 0.3 c #444 line -4.8 0.6 -4.5 0.5 cont -3.9 0 cont -4.5 -0.5 cont -4.8 -0.6 w 0.2 line -4.9 0 4.5 0"
@@ -21,6 +22,9 @@ if gamepads.len > 0 (
 start_timer = timer
 last_timer = timer
 game_timer = timer
+
+object abilities = {}
+object ability = {}
 
 object io = {
   x_vel: 0,
@@ -126,7 +130,7 @@ for i 3 (
 
 // the queue to handle loading images
 
-window.framerate = 90
+window.framerate = 60
 
 load_queue = []
 
@@ -138,10 +142,16 @@ def "load" "url" (
   load_queue.append(url)
 )
 
+object player = {}
+
+array notifs = []
+number notif_y = 20
+
+
 // this command is run to reset the game
 def "setup" (
   // setup the player object
-  object player = {
+  player = {
     "x": 0,
     "y": 0,
     "xvel": 0,
@@ -152,15 +162,15 @@ def "setup" (
     "died": false,
   }
   
-  array notifs = []
-  number notif_y = 20
+  notifs = []
+  notif_y = 20
 
   // handle the arrow pullback charge feature
   mouse_down_start = game_timer
   
   // wave timer and text notification data
   current_wave = 0
-  object wave_popup = {
+  wave_popup = {
     "y": 60
   }
   wave_popup.time = game_timer
@@ -169,19 +179,19 @@ def "setup" (
   damaged = game_timer - 2
   
   // setup the max number of each thing that can exist
-  number enemy_cap = 40
-  number arrow_cap = 10
-  number particle_cap = 50
-  number bullet_cap = 1000
+  enemy_cap = 40
+  arrow_cap = 10
+  particle_cap = 50
+  bullet_cap = 1000
 
   // the arrays of each item to be rendered
-  array arrows = []
-  array enemies = []
-  array particles = []
-  array bullets = []
-  boolean upgrade_mode = false
+  arrows = []
+  enemies = []
+  particles = []
+  bullets = []
+  upgrade_mode = false
   
-  object abilities = {
+  abilities @= {
     "Dash":{
       "name":"Dash",
       "cooldown":0.5,
@@ -204,7 +214,7 @@ def "setup" (
     }
   }
   
-  object ability = {}
+  ability @= {}
 )
 
 // run the setup
@@ -373,9 +383,18 @@ number.wrap = def(low, high) -> (
 
 can = mouse_down.not()
 
+temp_fps = 0
+last_fps = timestamp
+
 mainloop:
 
 cycles ++
+temp_fps ++
+if timestamp - last_fps > 1000 (
+  fps = temp_fps
+  temp_fps = 0
+  last_fps = timestamp
+)
 
 gamepads @= getGamepads()
 
