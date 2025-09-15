@@ -2,17 +2,16 @@
 window.framerate = 60
 window.no_desktop = true
 window "responsive" true
-window "fullscreen" false
 if passed_data == "" (
   window "set_dragbox" [[0,0,0,0],[0,0,0,0]]
   window "resizable" false
-  window "dimensions" 800 800
+  window.resize(800, 800)
 )
 window "min_size" 100 100
 window.x = 0
 window.y = 0
 
-wintype = passed_data.str
+wintype = passed_data.toStr()
 
 urlback = "https://raw.githubusercontent.com/ThePandaDever/AssetStore/refs/heads/main/OriginWindowKill/"
 
@@ -181,11 +180,11 @@ def "newGoopGroup" "amt,x,y" (
     if m > .1 * amt (
       m = .1 * amt
     )
-    l = (m * 0.2).round
+    l = round(m * 0.2)
     if l < 1 (
       l = 1
     )
-    takeamt = random(l,m).round
+    takeamt = round(random(l,m))
     newGoop takeamt x y
     left -= takeamt
   )
@@ -209,13 +208,13 @@ def "entDie" "id" (
   stat_enemies ++
   switch id (
     case "tri"
-      newGoopGroup random(4,10).round * currencymult ex ey
+      newGoopGroup round(random(4,10)) * currencymult ex ey
       break
     case "circle"
-      newGoopGroup random(8,16).round * currencymult ex ey
+      newGoopGroup round(random(8,16)) * currencymult ex ey
       break
     case "spiker"; case "wyrm"
-      newGoopGroup random(20,30).round * currencymult ex ey
+      newGoopGroup round(random(20,30)) * currencymult ex ey
       break
   )
 )
@@ -354,6 +353,7 @@ if passed_data == "" (
 
   shop_open = false
   pause_open = false
+  dead_open = false
   opened_shop_before = false
   winrestart = false
   realrestart = false
@@ -492,7 +492,7 @@ def "mainloop_main" (
   framei ++
   // sets stat_time for the death screen
   if player_health != -9999 (
-    stat_time = (timer - timerstart).round
+    stat_time = round(timer - timerstart)
   )
   // player movement
   if player_health != -9999 (
@@ -560,25 +560,25 @@ def "mainloop_main" (
       case "tri"
         edir = lookat(ex,ey,player_x,player_y)
         
-        ex += edir.sin * 1.5
-        ey += edir.cos * 1.5
+        ex += edir.sin() * 1.5
+        ey += edir.cos() * 1.5
         break
       case "circle"
         entity[8]["time"] --
         if entity[8]["time"] < 0 (
           edir = lookat(ex,ey,player_x,player_y)
           entity[8]["time"] = 50
-          entity[8]["tarx"] = ex + (edir.sin * 300)
-          entity[8]["tary"] = ey + (edir.cos * 300)
-          entity[8]["varx"] = edir.sin * 20
-          entity[8]["vary"] = edir.cos * 20
+          entity[8]["tarx"] = ex + (edir.sin() * 300)
+          entity[8]["tary"] = ey + (edir.cos() * 300)
+          entity[8]["varx"] = edir.sin() * 20
+          entity[8]["vary"] = edir.cos() * 20
         ) else (
           vx += entity[8]["varx"] - vx * .05
           vy += entity[8]["vary"] - vy * .05
         )
         break
       case "spiker"
-        if entity[8].getKeys().contains("timer").not (
+        if entity[8].getKeys().contains("timer").not() (
           entity[8]["timer"] = 0
         ) 
         if entity[8]["timer"] == 0 (
@@ -671,8 +671,8 @@ def "mainloop_main" (
               pointat ex ey
               dir = direction
               
-              vx += dir.sin * d * -0.1 * performance_skipamt
-              vy += dir.cos * d * -0.1 * performance_skipamt
+              vx += dir.sin() * d * -0.1 * performance_skipamt
+              vy += dir.cos() * d * -0.1 * performance_skipamt
             )
           )
         )
@@ -691,11 +691,11 @@ def "mainloop_main" (
         pointat ex ey
         dir = direction
         
-        player_raw_x = dir.sin * -90 + player_x
-        player_raw_y = dir.cos * -90 + player_y
+        player_raw_x = dir.sin() * -90 + player_x
+        player_raw_y = dir.cos() * -90 + player_y
         
-        vx = dir.sin * 40
-        vy = dir.cos * 40
+        vx = dir.sin() * 40
+        vy = dir.cos() * 40
         entTouch eid
         sound "enemyHit" "play"
       )
@@ -723,8 +723,8 @@ def "mainloop_main" (
   delbullets = []
   delbulletkeys = []
   each bulleti bullet bullets (
-    bullets[bulleti][1] += bullet[3].sin * 10
-    bullets[bulleti][2] += bullet[3].cos * 10
+    bullets[bulleti][1] += bullet[3].sin() * 10
+    bullets[bulleti][2] += bullet[3].cos() * 10
     
     x = bullets[bulleti][1]
     y = bullets[bulleti][2]
@@ -803,8 +803,8 @@ def "mainloop_main" (
   // the bullets
   endelbullets = []
   each enbulleti enbullet enbullets (
-    enbullets[enbulleti][1] += enbullet[3].sin * enbullet[6]
-    enbullets[enbulleti][2] += enbullet[3].cos * enbullet[6]
+    enbullets[enbulleti][1] += enbullet[3].sin() * enbullet[6]
+    enbullets[enbulleti][2] += enbullet[3].cos() * enbullet[6]
     
     x = enbullets[enbulleti][1]
     y = enbullets[enbulleti][2]
@@ -853,8 +853,8 @@ def "mainloop_main" (
     )
     if m > 0 (
       dir = lookat(bx,by,player_x,player_y)
-      goop[blobi][2] += dir.sin * m / 15 / (blob[1] / 9 + 1) * (blobi * .247536 % 1 + .5) * (player_speed / 3)
-      goop[blobi][3] += dir.cos * m / 15 / (blob[1] / 9 + 1) * (blobi * .247536 % 1 + .5) * (player_speed / 3)
+      goop[blobi][2] += dir.sin() * m / 15 / (blob[1] / 9 + 1) * (blobi * .247536 % 1 + .5) * (player_speed / 3)
+      goop[blobi][3] += dir.cos() * m / 15 / (blob[1] / 9 + 1) * (blobi * .247536 % 1 + .5) * (player_speed / 3)
       if d < 25 (
         delgoop.append(blobi)
         currency += blob[1]
@@ -910,8 +910,7 @@ def "mainloop_main" (
       bul_dir = dir
       bul_dir += (spreadi - 1 * 2 * sp) + sp - 1 * 20
       stat_bullets ++
-      // mist hasnt added [player_x,player_y,bul_dir,ouidNew(),0] so :/
-      bullets.append([].append(player_x).append(player_y).append(bul_dir).append(ouidNew()).append(0))
+      bullets.append([player_x, player_y, bul_dir, ouidNew(), 0])
     )
     
     sound "shoot" "play"
@@ -1008,33 +1007,33 @@ window "show"
 mouse_right_last = false
 framecounter2 = 0
 mainloop:
-  window "refresh_bg"
+  window.callRender()
   framecounter2 ++
-  click_right = mouse_right and mouse_right_last.not
+  click_right = mouse_right and mouse_right_last.not()
   mouse_right_last = mouse_right
   window_colour = #040404
   win_setup
   // basically if the main window is saying its dying, die youself
   if window.parent.file_uuid == window.file.uuid (
     if window.parent.variables.winrestart (
-      window "stop"
+      window.close()
     )
   ) else (
     if realrestart (
       // restart the window :P
       window "add" window.file.uuid
-      window "stop"
+      window.close()
     ) else (
       if winrestart (
-        window "stop"
+        window.close()
       )
     )
   )
-  if window.parent (
-    if window.parent.variables.framecounter2 (
+  if window.parent != null (
+    if window.parent.variables.framecounter2 != null (
       if window.parent.variables.framecounter2 > 10 and framecounter2 > 2 (
         if lastframe1 == lastframe2 and lastframe2 == lastframe3 and lastframe3 == lastframe4 and lastframe4 == lastframe5 (
-          window "stop"
+          window.close()
         )
         lastframe5 = lastframe4
         lastframe4 = lastframe3
@@ -1050,7 +1049,7 @@ mainloop:
       player_health = player_max_health
     )
     // run the game logic if ur not in a menu
-    if shop_open.not and pause_open.not (
+    if shop_open.not() and pause_open.not() (
       mainloop_main
     )
     // quick note: player_health != -9999 or if its -9999 it means the
@@ -1061,20 +1060,20 @@ mainloop:
       drawScene entities bullets enbullets goop 9999 9999 particles timer
     )
     // spawn the menus if u press the buttons
-    if dead_open.not (
-      if "space".isKeyDown() and space_last.not (
-        if shop_open.not (
+    if dead_open.not() (
+      if "space".isKeyDown() and space_last.not() (
+        if shop_open.not() (
           window "add" window.file.uuid "shop"
           opened_shop_before = true
         )
-        shop_open = shop_open.not
+        shop_open = shop_open.not()
       )
       space_last = "space".isKeyDown()
-      if "escape".isKeyDown() and pause_last.not (
-        if pause_open.not (
+      if "escape".isKeyDown() and pause_last.not() (
+        if pause_open.not() (
           window "add" window.file.uuid "pause"
         )
-        pause_open = pause_open.not
+        pause_open = pause_open.not()
       )
       pause_last = "escape".isKeyDown()
     )
@@ -1097,12 +1096,12 @@ mainloop:
       )
       text t 12
       
-      if shop_open.not and pause_open.not (
+      if shop_open nor pause_open (
         win_update
       )
     )
     
-    if opened_shop_before.not (
+    if opened_shop_before.not() (
       if timer - timerstart > 15 and currency > 0 (
         presstoopenshopT ??= 0
         presstoopenshopT += 1 - presstoopenshopT * .05
@@ -1126,15 +1125,16 @@ mainloop:
       player_health = -9999
     )
     // music
-    if "ost1".soundinfo("playing").not and play_ost (
+    if "ost1".soundinfo("playing").not() and play_ost (
       sound "ost1" "play"
     )
   )    
   if wintype == "shop" (
     // window boilerplate
     v @= window.parent.variables
-    if v.shop_open.not (
-      window "stop"
+    log window.parent
+    if v.shop_open.not() (
+      window.close()
     )
     // render the game in this window
     game_goto v.win_px v.win_py
@@ -1151,7 +1151,7 @@ mainloop:
     pen "up"
     
     // currency
-    loc 9999 9999 (v.currency ++ "").len * -10 - 5 150
+    loc 9999 9999 v.currency.toStr().len * -10 - 5 150
     icon "c #a935ff w 10 dot 0 0" 1
     text v.currency 20 : c#a935ff chx#10
     
@@ -1174,7 +1174,7 @@ mainloop:
           shopsmooth[panel_i] = 0
           v.shopitems[panel_i] = upgrades.getKeys()[random(1,upgrades.len)]
           v.upgrades[itm][1] *= random(18,35) / 10
-          v.upgrades[itm][1] = v.upgrades[itm][1].round
+          v.upgrades[itm][1] = round(v.upgrades[itm][1])
           arr = []
           v.shoplocked[panel_i] = false
           if upgrade[2].type == "array" (
@@ -1189,7 +1189,7 @@ mainloop:
       )
       
       if click_right and mouse_touching (
-        v.shoplocked[panel_i] = v.shoplocked[panel_i].not
+        v.shoplocked[panel_i] = v.shoplocked[panel_i].not()
       )
       
       l = v.shoplockedlerp[panel_i]
@@ -1218,7 +1218,7 @@ mainloop:
       change_y 90
       
       // lv. label
-      if actions.contains(itm).not (
+      if actions.contains(itm).not() (
         sx = x_position
         txt = "lv." + v.upgrade_levels[itm]
         change_x (txt ++ "").len * -6
@@ -1282,7 +1282,7 @@ mainloop:
         v.shopitems = shopitems
         restocksmooth = 0
         v.restockcost *= 1.4
-        v.restockcost = v.restockcost.round
+        v.restockcost = round(v.restockcost)
       )
     )
     restocksmooth += (mouse_touching ? 1 0) - restocksmooth * .3
@@ -1303,14 +1303,14 @@ mainloop:
     text v.restockcost 12 : chx#10
     set_x sx
     
-    window "dimensions" 700 450
+    window.resize(700, 450)
     window "resizable" false
   )
   if wintype == "dead" (
     // window boilerplate
     v @= window.parent.variables
-    if v.dead_open.not (
-      window "stop"
+    if v.dead_open.not() (
+      window.close()
     )
     
     // render the game in this window
@@ -1351,7 +1351,7 @@ mainloop:
     loc 9999 9999 txt.len * -4.5 80
     text txt 9 : c#555 chy#-170
     
-    window "dimensions" 480 400
+    window.resize(480, 400)
     window "resizable" false
     
     if "space".isKeyDown() (
@@ -1362,8 +1362,8 @@ mainloop:
   if wintype == "pause" (
     // window boilerplate
     v @= window.parent.variables
-    if v.pause_open.not (
-      window "stop"
+    if v.pause_open.not() (
+      window.close()
     )
 
     // render the game in this window
@@ -1416,15 +1416,15 @@ mainloop:
     // code
     followEnt = v.entities[wintype.split(":")[2]]
     if followEnt == "" (
-      window "stop"
+      window.close()
     )
     //log followEnt
     drawScene v.entities v.bullets v.enbullets v.goop v.player_x v.player_y v.particles timer
     s = v.entity_width[followEnt[1]] * 2 + 50 * followEnt[5]
-    window "dimensions" s s
+    window.resize(s, s)
     window.x = followEnt[2]
     window.y = followEnt[3]
     window "set_dragbox" [[0,0,0,0],[0,0,0,0]]
     window "resizable" false
   )
-window "show"
+window.show()
