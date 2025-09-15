@@ -5,7 +5,7 @@ permission "request" "rotur token"
 
 token = roturToken()
 
-current_version = 2.9
+current_version = 3.0
 
 // automatically update claw
 promise.new(def() -> (
@@ -314,7 +314,7 @@ if owns_premium (
 
 if social.wsOpen() (
   if social.wsHasnew() (
-    local object current = social.wsGetnext()
+    object current = social.wsGetnext()
     switch current.cmd (
       case "posts"
         main_feed = current.val
@@ -538,7 +538,7 @@ if url.startsWith("profile").not() and url.startsWith("Post_").not() (
   set_x w.left + 110
   set_y w.top - 150
   
-  image user.pfp 200 200
+  image getAvatar(username) 200 200
   change_y -120
   centext user.username 10 : c#txtc
   if onclick (
