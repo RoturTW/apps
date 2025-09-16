@@ -191,7 +191,7 @@ class Net (
             notifyCustom data["text"] data["icon"] data["title"]
           )
           break
-        case "isMod"
+        case "is_mod"
           self.isMod = data["data"]
           break
         
@@ -227,7 +227,8 @@ class Net (
           break
         
         case "comb"
-          each this.i this.packet2 data["packets"] (
+          for i data["packets"].len (
+            local packet2 @= data["packets"][i]
             self.handlePacket({"data":packet2})
           )
           break
@@ -319,7 +320,7 @@ class UI (
   
   def drawEmote(emote, size) (
     local e = Net.emotes[emote]
-    if e["text"] (
+    if e["text"] != null (
       change size * -20 + .75 size * .5 + .75
       text e["text"] size * 35 : c#txtc
     ) else (
@@ -364,6 +365,11 @@ class UI (
   )
   
   def gradText(text, size, a, b) (
+    if Settings.performance (
+      c lerpColor(a,b,.5)
+      text text size
+      return
+    )
     local len = text.len
     local chari = 0
     while chari < len (
@@ -520,19 +526,20 @@ class UI (
         isConnectedCache ??= {}
         each this.msgi this.msg messages (
           local msgData @= Net.messages[msg]
-          local content = msgData.content.wrapText(frame.width / self.messageSize - 4)
+          local content = msgData.content.wrapText(frame.width / self.messageSize - 4).strip()
           local Muser = msgData.user
           local cacheID = msgData.cacheID
           //temp = {}
-          local doTitle = (messages[msgi + 1] != null) ? isConnected(msgData,Net.messages[messages[msgi + 1]]).not true
+          local doTitle = (messages[msgi + 1] != null) ? isConnected(msgData,Net.messages[messages[msgi + 1]]).not() true
           local connected = (messages[msgi - 1] != null) ? isConnected(Net.messages[messages[msgi - 1]],msgData) false
           local height = 0
-          emotes = msgData["emotes"]
+          local emotes @= msgData["emotes"]
           local emoteKeys = emotes.getKeys()
+          local isreply = msgData["reply"] != null and msgData["reply"] != ""
           height += content.split("\n").len * self.messageSize * 2.3
           height += doTitle ? (connected ? (self.messageSize * 2) 25) 0
-          height += emotes.len > 0 ? 37.5 0
-          height += msgData["reply"] != null ? 20 0
+          height += (emotes.getValues().filter(e -> (e.len > 0)).len > 0) ? 37.5 0
+          height += isreply ? 20 0
           total_h += height
           if y > frame.top (
             y += height
@@ -607,26 +614,33 @@ class UI (
             )
           )
           
-          if msgData["reply"] != null (
+          if isreply (
             goto frame.left + 50 y + (height / 2 - 13.5)
             local replyMessage @= Net.messages[msgData["reply"]]
-            if replyMessage == null (
+            if replyMessage == null or replyMessage == "" (
               Net.getMessage(msgData["reply"])
             )
+            //log replyMessage
             drawPFP(replyMessage.user, 14, 14)
-            drawUser(replyMessage.user, self.messageSize * .8, "@") : chx#16 c#txtc chx#-6.25
-            drawText(replyMessage.content.replace("\n"," ").trimText(frame.width / (self.messageSize * .8) - 16), self.messageSize * .8, txtc) : chx#5
+            change_x 16 - 6.25
+            c txtc
+            drawUser(replyMessage.user, self.messageSize * .8, "@")
+            change_x 5
+            drawText(replyMessage.content.replace("\n"," ").trimText(frame.width / (self.messageSize * .8) - 16), self.messageSize * .8, txtc)
             y -= 20
           )
           
           if doTitle (
             goto frame.left y + (height / 2 - 20)
-            drawPFP(Muser, 25, 25) : chx#17.5 chy#0
+            change 17.5 0
+            drawPFP(Muser, 25, 25)
             local roleColor = UI.user_list.roleColorUsers[Muser]
+            change 25 - 6.25 6.25
+            c roleColor
             if typeof(roleColor) == "string" (
-              drawUser(Muser, self.messageSize) : chx#25 c#roleColor chx#-6.25 chy#6.25
+              drawUser(Muser, self.messageSize)
             ) else (
-              UI.gradText(Muser, self.messageSize, roleColor[1], roleColor[2]) : chx#25 c#roleColor chx#-6.25 chy#6.25
+              UI.gradText(Muser, self.messageSize, roleColor[1], roleColor[2])
             )
             //log msgData.timestamp
             change_x -6
@@ -635,7 +649,7 @@ class UI (
               change_x -2
             )
             local tagi = 0
-            for this.tagi tags.len (
+            for tagi tags.len (
               local tag @= tags[tagi]
               square 20 20 0 0 1 : chx#22 tooltip#tag.tooltip
               c txtc
@@ -649,7 +663,8 @@ class UI (
           )
           
           goto frame.left y + (height / 2 - (doTitle ? (self.messageSize * 2) -2.5))
-          drawText(content,self.messageSize,txtc) : chx#36.5 chy#-15
+          change 36.5 -15
+          drawText(content,self.messageSize,txtc)
           
           y += msgData["reply"] != null ? 20 0
           
@@ -658,7 +673,8 @@ class UI (
             local spacing = 27.5
             local y2 = y - (height * .5) + 20.5
             local showUsers = Settings["showEmoteUsers"]
-            each this.emote emoteKeys (
+            for emotei emoteKeys.len (
+              local emote @= emoteKeys[emotei]
               local emoteUsers @= emotes[emote]
               if emoteUsers.len > 0 (
                 local w3 = sizeFunction(emote, spacing)
@@ -683,8 +699,11 @@ class UI (
                 text emoteUsers.len 10 : c#txtc
                 if showUsers (
                   goto x2 + 57.5 - (w3 * .5 - 25) y2
-                  each this.user emoteUsers (
-                    drawPFP(user, 20, 20) : chx#25
+                  for userI emoteUsers.len (
+                    local userN @= emoteUsers[userI]
+                    change_x 25
+                    drawPFP(userN, 20, 20)
+                    square 20 20 0 0 1 : c#fff tooltip#userN
                   )
                   x2 += w4 / 2
                 )
@@ -845,7 +864,7 @@ class UI (
               if roleName != lastRole (
                 local role @= Net.roles[roleName]
                 roleColor = self.getRoleColor(role)
-                y -= 4
+                y -= 10
                 goto frame.left + 10 y
                 if typeof(roleColor) == "string" (
                   text roleName 10 : c#roleColor
@@ -859,16 +878,25 @@ class UI (
               )
               lastRole = roleName
               
-              y -= 10
+              if y - 25 > frame.top (
+                y -= 30
+                Continue
+              )
+              if y + 30 < frame.bottom (
+                y -= 30
+                Continue
+              )
+              
+              y -= 12.5
               
               goto 0 y
-              square frame.width - 20 25 10 : c#prim
+              square frame.width - 20 25 10 : c#window_colour hover_c#prim
               set_x frame.left + 22
               UI.drawPFP(user, 25, 25)
               //icon "square 0 0 25 25" .5 : c#fff
               change 10 -10
               
-              local back = "c" + prim + "w 30 dot 0 0"
+              local back = "w 30 dot 0 0"
               if Net.onlineUsers == null (
                 icon back .5
                 text "?" 6 : c#txtc chx#-3
@@ -1008,6 +1036,9 @@ class UI (
           
           settingKey = "showEmoteUsers"
           self.setting("show emote users", "accounts", Settings[settingKey], toggle, settingKey)
+        
+          settingKey = "performance"
+          self.setting("performance mode", "stopwatch", Settings[settingKey], toggle, settingKey)
         )
       )
     )
