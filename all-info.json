@@ -21,7 +21,7 @@
     "script": {
       "scriptSize": 3145,
       "scriptLines": 194,
-      "lastModified": 1757971166342
+      "lastModified": 1758049479740
     }
   },
   "arrow": {
@@ -45,7 +45,7 @@
     "script": {
       "scriptSize": 17917,
       "scriptLines": 789,
-      "lastModified": 1757971166344
+      "lastModified": 1758049479741
     }
   },
   "claw": {
@@ -79,7 +79,7 @@
     "script": {
       "scriptSize": 14730,
       "scriptLines": 618,
-      "lastModified": 1757971166346
+      "lastModified": 1758049479743
     }
   },
   "clicker game": {
@@ -104,7 +104,7 @@
     "script": {
       "scriptSize": 3125,
       "scriptLines": 125,
-      "lastModified": 1757971166346
+      "lastModified": 1758049479743
     }
   },
   "dock themer": {
@@ -131,7 +131,7 @@
     "script": {
       "scriptSize": 916,
       "scriptLines": 43,
-      "lastModified": 1757971166346
+      "lastModified": 1758049479743
     }
   },
   "flappy bird": {
@@ -156,14 +156,14 @@
     "script": {
       "scriptSize": 2960,
       "scriptLines": 146,
-      "lastModified": 1757971166347
+      "lastModified": 1758049479744
     }
   },
   "fluficord": {
     "title": "Fluficord",
     "description": "A funny silly communication app (inspired by discord as you could probably tell) :P",
     "author": "Flufi",
-    "version": "0.7a",
+    "version": "0.8a",
     "genre": "Social, Communication, Messaging",
     "game_modes": [
       "Single-player"
@@ -179,14 +179,14 @@
     ],
     "icon": "w 10 c #9800f0 square 0 0 5 5 c #111 w 8 square 0 0 5 5 dot 0 0  w 2.7 c #fff line -6.3 -2.7 -3.6 3.6 line -6.3 -2.7 -4.73 -4.05 line -4.73 -4.05 -2.7 -4.5 line -2.7 -4.5 0 -1.8 line 6.3 -2.7 3.6 3.6 line 6.3 -2.7 4.73 -4.05 line 4.73 -4.05 2.7 -4.5 line 2.7 -4.5 0 -1.8  cutcircle -2.07 1.71 2.48 1 45 cutcircle 2.07 1.71 2.48 -1 45  w 4.5 line -3.6 -0.9 -1.8 0.9 line 3.6 -0.9 1.8 0.9  w 1.8 c #111 dot -2.47 2.25 dot 2.48 2.25  cutcircle -1.89 0 -2.02 -.2 70 cutcircle 1.89 0 -2.02 .2 70\n",
     "size": {
-      "bytes": 3455554,
-      "kilobytes": "3374.56",
+      "bytes": 3456436,
+      "kilobytes": "3375.43",
       "megabytes": "3.30"
     },
     "script": {
-      "scriptSize": 33067,
-      "scriptLines": 1104,
-      "lastModified": 1757971166364
+      "scriptSize": 33949,
+      "scriptLines": 1135,
+      "lastModified": 1758049479761
     }
   },
   "focuser": {
@@ -208,7 +208,7 @@
     "script": {
       "scriptSize": 393,
       "scriptLines": 20,
-      "lastModified": 1757971166364
+      "lastModified": 1758049479761
     }
   },
   "fortnite skibidi 2024": {
@@ -236,7 +236,7 @@
     "script": {
       "scriptSize": 4773,
       "scriptLines": 214,
-      "lastModified": 1757971166371
+      "lastModified": 1758049479769
     }
   },
   "goose": {
@@ -261,7 +261,7 @@
     "script": {
       "scriptSize": 2332,
       "scriptLines": 95,
-      "lastModified": 1757971166374
+      "lastModified": 1758049479772
     }
   },
   "jump and run": {
@@ -286,7 +286,7 @@
     "script": {
       "scriptSize": 3956,
       "scriptLines": 194,
-      "lastModified": 1757971166374
+      "lastModified": 1758049479772
     }
   },
   "lights out": {
@@ -311,7 +311,7 @@
     "script": {
       "scriptSize": 1110,
       "scriptLines": 71,
-      "lastModified": 1757971166375
+      "lastModified": 1758049479772
     }
   },
   "mallet": {
@@ -335,7 +335,7 @@
     "script": {
       "scriptSize": 29643,
       "scriptLines": 1128,
-      "lastModified": 1757971166375
+      "lastModified": 1758049479772
     }
   },
   "nekonline": {
@@ -360,7 +360,7 @@
     "script": {
       "scriptSize": 4725,
       "scriptLines": 195,
-      "lastModified": 1757971166375
+      "lastModified": 1758049479773
     }
   },
   "oft": {
@@ -387,7 +387,7 @@
     "script": {
       "scriptSize": 877,
       "scriptLines": 43,
-      "lastModified": 1757971166381
+      "lastModified": 1758049479779
     }
   },
   "origincord": {
@@ -417,7 +417,7 @@
     "script": {
       "scriptSize": 39642,
       "scriptLines": 1543,
-      "lastModified": 1757971166382
+      "lastModified": 1758049479779
     }
   },
   "originfy": {
@@ -441,7 +441,7 @@
     "script": {
       "scriptSize": 7238,
       "scriptLines": 301,
-      "lastModified": 1757971166384
+      "lastModified": 1758049479782
     }
   },
   "originkill": {
@@ -471,7 +471,7 @@
     "script": {
       "scriptSize": 40739,
       "scriptLines": 1431,
-      "lastModified": 1757971166400
+      "lastModified": 1758049479797
     }
   },
   "ping pong": {
@@ -496,7 +496,7 @@
     "script": {
       "scriptSize": 1735,
       "scriptLines": 100,
-      "lastModified": 1757971166400
+      "lastModified": 1758049479797
     }
   },
   "rat simulater 2013": {
@@ -521,7 +521,7 @@
     "script": {
       "scriptSize": 6760,
       "scriptLines": 249,
-      "lastModified": 1757971166403
+      "lastModified": 1758049479801
     }
   },
   "slider": {
@@ -546,7 +546,7 @@
     "script": {
       "scriptSize": 2201,
       "scriptLines": 86,
-      "lastModified": 1757971166404
+      "lastModified": 1758049479801
     }
   },
   "snake": {
@@ -571,7 +571,7 @@
     "script": {
       "scriptSize": 2245,
       "scriptLines": 123,
-      "lastModified": 1757971166404
+      "lastModified": 1758049479801
     }
   },
   "super slime bros": {
@@ -601,7 +601,7 @@
     "script": {
       "scriptSize": 22766,
       "scriptLines": 895,
-      "lastModified": 1757971166408
+      "lastModified": 1758049479805
     }
   },
   "timer": {
@@ -623,7 +623,7 @@
     "script": {
       "scriptSize": 463,
       "scriptLines": 28,
-      "lastModified": 1757971166408
+      "lastModified": 1758049479805
     }
   },
   "todo": {
@@ -650,7 +650,7 @@
     "script": {
       "scriptSize": 1166,
       "scriptLines": 54,
-      "lastModified": 1757971166408
+      "lastModified": 1758049479806
     }
   },
   "wosle": {
@@ -680,7 +680,7 @@
     "script": {
       "scriptSize": 24916,
       "scriptLines": 254,
-      "lastModified": 1757971166412
+      "lastModified": 1758049479810
     }
   },
   "youtube": {
@@ -705,7 +705,7 @@
     "script": {
       "scriptSize": 3423,
       "scriptLines": 123,
-      "lastModified": 1757971166413
+      "lastModified": 1758049479810
     }
   }
 }
