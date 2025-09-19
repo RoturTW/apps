@@ -1,0 +1,11 @@
+{
+  "title": "Ultimate Monster Collector",
+  "description": "A small game where you collect different flavours of monster by random chance.",
+  "author": "Mist",
+  "version": "1.0",
+  "genre": "Casual",
+  "game_modes": ["Single-player"],
+  "permissions": [],
+  "supports":["originOS"],
+  "screenshots":[]
+}

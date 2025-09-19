@@ -1,0 +1,283 @@
+ws = "monstercollector.mistium.com:443".newWebsocket()
+
+window.setResizable(false)
+
+number clock = 0
+array monsters = []
+array crates = []
+object rarity = {}
+object save_data = {}
+number page_len = 0
+number offset_idx = 0
+object winning_monster = {}
+object monster_obj = {}
+object collection = {}
+
+number ui_offset = 0
+number ui_offset_target = 0
+
+object authed = {
+  none: 0,
+  waiting: 1,
+  is: 2
+}
+
+object state = {
+  authed: authed.none,
+  popup: null,
+  buying_key: false,
+  purchase: null
+}
+
+array monster_wheel = []
+number monster_offset = 0
+number monster_velocity = 0
+
+def drawMenuBar() (
+  goto 0 window.top - 20
+  square window.width 40 : c#333
+  set_x window.left + 10
+  text "Ultimate Monster Collector" 10 : c#fff
+  
+  import "win-buttons"
+)
+
+def sortMonsterByRarity(object collection) (
+  array names @= collection.getKeys()
+  object out = {}
+  array rarities @= rarity.getKeys()
+  for i rarities.len (
+    out[rarities[i]] = []
+  )
+  
+  for i names.len (
+    object cur @= monster_obj[names[i]]
+    void out[cur.rarity].append(cur)
+  )
+  
+  array rarities @= out.getKeys()
+  for i rarities.len (
+    if out[rarities[i]].len == 0 (
+      void out.delete(rarities[i])
+    )
+  )
+  
+  return out
+)
+
+def popup(type, data) (
+  state.popup = {
+    t: type,
+    d: data
+  }
+)
+
+def openCrate(number id) (
+  ws.wsSend({
+    cmd: "open",
+    id,
+  })
+)
+
+window_colour = #111
+
+mainloop:
+
+ui_offset += ui_offset_target - ui_offset / 10
+
+if ws.wsOpen() (
+  if ws.wsHasnew() (
+    msg = ws.wsGetnext()
+    switch msg.cmd (
+      case "init"
+        monsters = msg.data.monsters
+        monster_obj = {}
+        for i monsters.len (
+          monster_obj[monsters[i].name] @= monsters[i]
+        )
+        rarity = msg.data.rarity
+        save_data = msg.data.save_data
+        spin_key = msg.data.spin_key
+        monster_wheel = 50.newArray()
+          .map(v -> monsters.randomOf())
+          
+        collection @= sortMonsterByRarity(save_data.collection)
+        break
+      case "auth"
+        if msg.success (
+          state.authed = authed.is
+        ) else (
+          say "Failed to authenticate"
+          window.close()
+        )
+        break
+      case "spin"
+        winning_monster @= msg.monster
+        monster_velocity = 100
+        save_data.collection[winning_monster.name] ??= 0
+        save_data.collection[winning_monster.name] ++
+        collection @= sortMonsterByRarity(save_data.collection)
+        monster_wheel[28] = msg.monster
+        break
+      case "error"
+        say msg.message
+        break
+    )
+  )
+  if state.authed == authed.none (
+    ws.wsSend({
+      cmd: "auth",
+      data: requestRoturValidator("umcpog")
+    })
+    state.authed = authed.waiting
+  )
+) else (
+  say "Lost websocket connection"
+  window.restart()
+)
+
+if state.authed != authed.is (
+  goto 0 0
+  centext "Waiting for Authentication" 10 : c#fff
+  drawMenuBar()
+  exit
+)
+
+if state.popup != null (
+  goto 0 window.top - 100
+  centext "You Won!" 20 : c#fff
+  goto 0 0
+  direction (timer * 100).sin() * 20 + 90
+  image state.popup.d.img null 200 + ((timer * 10).sin() * 10)
+  direction 90
+  
+  goto 0 window.bottom + 30
+  square 200 20 20 : c#333 hover_c#444
+  if onclick (
+    state.popup = null
+  )
+  centext "Claim" 10 : c#fff
+  drawMenuBar()
+  exit
+)
+
+c #333
+frame window.left + ui_offset window.top - 40 window.right + ui_offset window.bottom (
+  goto 0 frame.top - 40 + frame.scroll
+  centext "Spin" 20 : c#fff
+  change_y -50
+  c #333
+  frame frame.left + 10 y_position frame.right - 10 y_position - 220 (
+    goto -frame.scroll_h 0
+    square frame.width - 20 frame.height - 20 10 : c#333
+    monster_offset += monster_velocity
+    monster_velocity = max(0, monster_velocity / 1.004)
+    goto frame.left - 100 - (monster_offset % 200) 0
+    off_i = floor(monster_offset / 200)
+    local middle_monster @= null
+    local idx = 0
+    local out_idx = 0
+    for i 7 (
+      change_x 200
+      idx = i + off_i % 50 + 1
+      local cur @= monster_wheel[idx]
+      local rarity_col @= rarity[cur.rarity].clr
+      c rarity_col
+      square 170 170 20
+      if x_position > -100 and x_position < 100 (
+        c #888
+        out_idx = i + off_i
+        middle_monster @= cur
+      ) else (
+        c #555
+      )
+      square 170 170 10
+      image cur.img null 100
+      change_y -75
+      square 170 20 10 : c#222
+      centext "[" ++ cur.rarity ++ "]" 10 : c#rarity_col
+      change_y 75
+    )
+    
+    if monster_velocity < 0.5 and monster_velocity != 0 (
+      monster_velocity = 0
+      popup("win", winning_monster)
+      monster_offset = 0
+      monster_wheel = 50.newArray()
+        .map(v -> monsters.randomOf())
+    )
+  )
+  set_x 0
+  change_y 120
+  centext middle_monster.name 10 : c#fff
+  change_y -130
+  
+  change_y -100
+  square 200 30 10 : c#222 hover_c#444
+  if onclick (
+    state.buying_key = true
+    state.purchase = false
+  )
+  centext "Spin for 5 credits" 10 : c#fff
+)
+c #333
+if ui_offset < -5 (
+  frame window.right + ui_offset window.top - 40 window.width * 1.5 + ui_offset window.bottom page_len (
+    page_len = 80
+    goto 0 frame.top - 40 + frame.scroll
+    centext "Collection" 20 : c#fff
+    change_y -40
+    collections @= collection.getKeys()
+    local w = frame.width - 20
+    for j collections.len (
+      local m @= collection[collections[j]]
+      local rare_clr = rarity[m[1].rarity].clr
+      set_x frame.left + 20
+      text m[1].rarity 10 : c#fff
+      change_y -50
+      page_len += 50
+      for i m.len (
+        cur @= m[i]
+        set_x 0
+        square w 30 15 : c#rare_clr
+        square w 30 10 : c#444
+        set_x frame.left + 20
+        image cur.img null 35
+        change_x 20
+        text cur.name 10 : c#fff
+        set_x frame.right - 20
+        rigtext save_data.collection[cur.name] 10
+        change_y -50
+        page_len += 50
+      )
+    )
+    change_y -70
+    page_len += 70
+  )
+)
+
+if popups.len == 0 and state.purchase (
+  ws.wsSend({ cmd: "spin" })
+  state.purchase = null
+)
+if state.buying_key and state.purchase == false and !mouse_down (
+  rotur "key_buy" spin_key
+  state.purchase = true
+)
+
+if monster_velocity == 0 (
+  c ui_offset > -350 ? #fff #666
+  loc 2 -2 30 30
+  icon "dice_5" 1.5
+  if onclick (
+    ui_offset_target = 0
+  )
+  c ui_offset <= -350 ? #fff #666
+  change_x 40
+  icon "list" 1.3
+  if onclick (
+    ui_offset_target = -700
+  )
+)
+
+drawMenuBar()
