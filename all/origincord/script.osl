@@ -4,9 +4,9 @@ object base = {
     "token": "", 
     "intents": 4194303,
     "properties": {
-      "$os": "originOaS",
-      "$browser": system_browser.destr,
-      "$device": system_os.destr
+      "$os": "originOS",
+      "$browser": system_browser,
+      "$device": system_os
     }
   },
   "s": null,
@@ -81,7 +81,7 @@ def doProxy(url) (
 def "login" "token" (
   status = "online"
   
-  base.d.token = token.destr
+  base.d.token = token
   
   discord.wsSend(base)
   heartbeat_msg = {
@@ -266,7 +266,7 @@ def "handle_message" "msg, ping" (
 
       authid = ""
     )
-    local date_diff = msg_cha[-1].timestamp.timestamp("to-date").trim(1,-4) != msg_data.timestamp.timestamp("to-date").trim(1,-4)
+    local date_diff = msg_cha[-1][5].timestamp.timestamp("to-date").trim(1,-4) != msg_data.timestamp.timestamp("to-date").trim(1,-4)
     if previous_author[channel] != authid or isreply or date_diff (
       void msg_cha.append("")
       previous_author[channel] = authid
@@ -485,10 +485,9 @@ def "draw_channels" (
       loc 999 2 0 y
    
       id = chnl.id
-      local current_channel = current_channel == id
       if id != null (
         if chnl["type"] !== 4 (
-          if current_channel (
+          if current_channel == id (
             square w 25 15 : c#seco
             square w 25 10 : c#window_colour
           ) else if new_messages[id] == true (
@@ -515,20 +514,26 @@ def "draw_channels" (
           )
         )
       )
-      loc 2 2 20 y
+      loc 2 2 25 y
+      if chnl["type"] != 4 (
+        square 25 25 10 : c#prim
+      )
+      log chnl
       c txtc
       switch chnl["type"] (
         case 0
+          // text channel
           text "#" 15 : chx#-7
           change_x 5
           break
         case 1
-          change_x 10
+          // direct message
           image makepfp(chnl.recipients[1]) 30 30
           icon circle_pfp 0.975 : c#window_colour
-          change_x 30
+          change_x 10
           break
         case 2
+          // voice channel
           icon "microphone" 0.7 : chx#0.2
           change_x 10
           break
@@ -544,14 +549,24 @@ def "draw_channels" (
             break
           )
           break
+        case 4
+          // category name
+          change_x -20
+          break
         case 5
+          // announcements
           icon "send" 0.7 : chx#0.2
+          change_x 10
+          break
+        case 13
+          // stage
+          icon "w 5 dot 0 0 w 2 cutcircle 0 0 5.7 0 130 cutcircle 0 0 10 0 130 line 1 -5.7 -1 -5.7 cont -5 -10 cont 5 -10 cont 1 -5.7 w 6 dot 0 -8" 0.7
           change_x 10
           break
         default
           break
       )
-      text chnl.name 10 : c#txtc
+      text chnl.name 10 : c#txtc chx#20
     )
   frame "clear"
 )
@@ -931,8 +946,7 @@ def "draw_sidebar" (
 )
 
 loaded_cord = false
-
-def "setup" (
+setup = () -> (
   array guilds = []
   object new_messages = {}
   object all_messages = {}
@@ -983,20 +997,6 @@ c window_colour
 pen "size" window.width + window.height
 pen "opacity" 60
 
-if window.width > 700 (
-  glass:frame window.left + 50 window.top window.right window.bottom
-    goto 0 0
-    pen "down"
-    pen "up"
-  frame "clear"
-
-  frame window.left + 360 window.top window.right window.bottom (
-    goto 0 0
-    pen "down"
-    pen "up"
-  )
-)
-
 if loaded_cord.not() (
   array contents = saveContents().JsonParse()
   
@@ -1014,7 +1014,7 @@ if loaded_cord.not() (
         square frame.width - 80 30 5 : c#prim
         if onclick (
           token_in = token_file.saveGet()
-          setup
+          setup()
         )
       )
       change_x frame.width / -2 + 45
@@ -1516,7 +1516,7 @@ if "enter".isKeyDown() or onclick and "shift".isKeyDown().not() and send != "" (
     exit
   )
   if send.startsWith(".version") (
-    async_msg "originCord v6.1" current_channel
+    async_msg "originCord v6.0" current_channel
     inputs.message = ""
     exit
   )

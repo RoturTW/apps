@@ -2,7 +2,7 @@
   "title": "OriginCord",
   "description": "An osl based discord client",
   "author": "Mist",
-  "version": "6.1",
+  "version": "6.2",
   "genre": "Social, Communication, Messaging",
   "game_modes": ["Single-player"],
   "permissions": ["notifications"],
