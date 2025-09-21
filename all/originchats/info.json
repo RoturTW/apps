@@ -1,0 +1,11 @@
+{
+  "title": "originChats",
+  "description": "A simple, self hostable discord alternative for originOS.",
+  "author": "Mist",
+  "version": "1",
+  "genre": "Social, Communication, Messaging",
+  "game_modes": ["Single-player"],
+  "permissions": ["notifications"],
+  "supports":["originOS"],
+  "requires": {"originOS": "600"}
+}

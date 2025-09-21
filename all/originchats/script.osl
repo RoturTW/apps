@@ -1,0 +1,573 @@
+import "window_tools" as "wt"
+import "save/v1" from "packages" as "save"
+import as "glass" from "packages"
+
+wt:seticon "c #AF78F7 w 10 square 0 0 5 5 c #0a0303 w 8 square 0 0 5 5 dot 0 0 c #AF78F7 w 4 square 0 1 4 2 line -4 0 -4 -3 cont 0 0 w 5 line -2 1 2 1"
+
+permission "request" "rotur token"
+
+save.init("chats@mistium")
+
+window.resize(1000, 600)
+
+class serverList (
+  def getSave() (
+    local data = save.getItem("servers.json")
+    if data.exists and typeof(data.data) == "array" (
+      return data.data
+    )
+    return []
+  )
+  
+  def add(server) (
+    local data @= self.getSave()
+    local urls @= data.map(v -> (v.url))
+    if urls.contains(server.url) (
+      for i data.len (
+        if data[i].url == server.url (
+          data[i] @= server
+          break
+        )
+      )
+    ) else (
+      void data.append(server)
+    )
+    state.servers @= data
+    save.setItem("servers.json", data)
+  )
+  
+  def remove(url) (
+    local data @= self.getSave()
+    for i data.len (
+      if data[i].url == url (
+        void data.delete(i)
+        break
+      )
+    )
+    state.servers @= data
+    save.setItem("servers.json", data)
+  )
+  
+  def moveUp(url) (
+    local data = self.getSave()
+    for i data.len (
+      if i > 2 and data[i].url == url (
+        void data.swap(i, i - 1)
+        break
+      )
+    )
+    state.servers @= data
+    save.setItem("servers.json", data)
+  )
+  
+  def moveDown(url) (
+    local data = self.getSave()
+    for i data.len (
+      if i < data.len - 1 and data[i].url == url (
+        void data.swap(i, i + 1)
+        break
+      )
+    )
+    state.servers @= data
+    save.setItem("servers.json", data)
+  )
+  
+  def load() (
+    state.servers @= self.getSave()
+  )
+)
+
+def checkAbleTo(name) (
+  local perms @= state.channel.permissions[name]
+  local roles @= state.users[user.username.toLower()].roles
+  if perms == null (
+    return ["edit_own", "delete_own"].contains(name)
+  )
+  for i perms.len (
+    if perms.contains(roles[i]) (
+      return true
+    )
+  )
+  return false
+)
+
+def genMsgMenu(msg) (
+  local del @= {"Delete Message": def(msg) -> (
+    ws.wsSend({
+      cmd: "message_delete",
+      channel: state.channel.name,
+      id: msg.id
+    })
+  )}
+  local edt @= {"Edit Message": def(msg) -> (
+    state.editing[state.channel.name] @= msg
+  )}
+  local rpl @= {"Reply": def(msg) -> (
+    state.reply_to[state.channel.name] @= msg
+  )}
+  
+  local menu = [msg.user,"-"]
+  local mine = msg.user == user.username
+  if (mine and checkAbleTo("delete_own")) or checkAbleTo("delete") (
+    void menu.append(del)
+  )
+  if mine and checkAbleTo("edit_own") (
+    void menu.append(edt)
+  )
+  void menu.append(rpl)
+  
+  local keys @= msg.getKeys()
+  local copy_menu = ["Copy"]
+  for i keys.len (
+    local key = keys[i]
+    local obj = {}
+    obj[key] @= function("msg", "clipboard \"set\" msg." ++ key)
+    void copy_menu.append(obj)
+  )
+  void menu.append(copy_menu)
+  return menu
+)
+
+def resetState() (
+  state = {
+    validator: null,
+    online_users: {},
+    users: {},
+    channel: null,
+    channels: [],
+    server: {},
+    servers: [],
+    messages: {},
+    all_messages: {},
+    reply_to: {},
+    widths: {
+      messages: 0
+    }
+  }
+  page_len = 0
+  page_len_msg = 0
+  scroll_v = 0
+  
+  serverList.load()
+  state.url = state.servers[1].url ?? "chats.mistium.com"
+)
+
+class handle (
+  def msg(msg) (
+    state.all_messages[msg.id] @= msg
+    msg.urls = msg.content.match("/https?:\/\/[^\s\"']+\.\w+\/?[^ ]*/gm")
+    return msg
+  )
+)
+
+resetState()
+
+ws = state.url.newWebsocket()
+
+def handleWs() (
+  state.connected = ws.wsOpen()
+  if state.connected (
+    if ws.wsHasnew().not() (
+      return
+    )
+    local msg = ws.wsGetnext()
+    switch msg.cmd (
+      case "handshake"
+        local base_url = "https://social.rotur.dev/generate_validator?key=" ++ msg.val.validator_key
+        state.server = msg.val.server
+        state.server.url = state.url
+        state.validator = (base_url ++ "&auth=" ++ roturToken()).httpGet().validator
+        ws.wsSend({
+          cmd: "auth",
+          validator: state.validator
+        })
+        break
+      
+      case "ready"
+        state.user @= msg.user
+        break
+        
+      case "error"
+      case "auth_error"
+        say msg.val
+        break
+        
+      case "auth_success"
+        ws.wsSend({
+          cmd: "channels_get"
+        })
+        ws.wsSend({
+          cmd: "users_list"
+        })
+        ws.wsSend({
+          cmd: "users_online"
+        })
+        state.authed = true
+        serverlist.add(state.server)
+        break
+      
+      case "users_list"
+        local arr @= msg.users
+        for i arr.len (
+          local cur @= arr[i]
+          cur.online = false
+          state.users[cur.username] @= cur
+        )
+        break
+      
+      case "users_online"
+        local arr @= msg.users
+        for i arr.len (
+          local cur @= arr[i]
+          cur.online = true
+          state.online_users[cur.username] @= cur
+          state.users[cur.username] @= cur
+        )
+        break
+        
+      case "user_connect"
+        local name = msg.user.username
+        msg.user.online = true
+        state.online_users[name] @= msg.user
+        state.users[name] @= msg.user
+        break
+        
+      case "user_disconnect"
+        state.online_users @= state.online_users.delete(msg.username)
+        state.users[msg.username].online = false
+        break
+        
+      case "channels_get"
+        state.channels @= msg.val
+        if state.channel.name == null (
+          state.channel @= msg.val[1]
+        ) else (
+          state.channel @= msg.val[state.channels
+            .map(v -> (v.name))
+            .index(state.channel.name)]
+        )
+        break
+      
+      case "messages_get"
+        state.messages[msg.channel] @= msg.messages.map(handle.msg)
+        break
+        
+      case "message_new"
+        local chl @= state.messages[msg.channel]
+        if typeof(chl) != "array" (
+          chl = []
+          state.messages[msg.channel] @= chl
+        )
+        void chl.append(handle.msg(msg.message))
+        break
+        
+      case "message_delete"
+        local chl @= state.messages[msg.channel]
+        if typeof(chl) != "array" (
+          break
+        )
+        for i chl.len (
+          if chl[i].id == msg.id (
+            chl.delete(i)
+          )
+        )
+        break
+       
+      case "message_edit"
+        state.all_messages[msg.id] @= msg
+        break
+    )
+  ) else if timestamp - state.last_reconnect > 2000 (
+    resetState()
+    state.url = cur.url
+    ws.wsClose()
+    state.last_reconnect = timestamp
+    ws = state.url.newWebsocket()
+  )
+)
+
+page_len = 0
+mainloop:
+wt:load_theme
+
+handleWs()
+
+frame window.left window.top window.left + 50 window.bottom state.servers.len * 50 (
+  local srv @= state.servers
+  set_x 0
+  set_y frame.top - 25
+  for i srv.len (
+    cur @= srv[i]
+    image cur.icon 40 40
+    if onclick (
+      if state.server.url != cur.url (
+        resetState()
+        state.url = cur.url
+        ws.wsClose()
+        ws = state.url.newWebsocket()
+      )
+    ) else (
+      rightclick [
+        cur.name,
+        cur.url ?? "No url found",
+        "-",
+        ["Actions",
+          {"Move Up": def(server) -> (
+            serverlist.moveUp(server.url)
+          )},
+          {"Move Down": def(server) -> (
+            serverlist.moveDown(server.url)
+          )},
+          {"Remove Server": def(server) -> (
+            serverlist.remove(server.url)
+          )}
+        ]
+      ] cur
+    )
+    change_y -50
+  )
+  square 35 35 10 : c#prim
+  if onclick (
+    resetState()
+    state.url = "Enter a originChats server url like: chats.mistium.com".ask()
+    ws.wsClose()
+    ws = state.url.newWebsocket()
+  )
+  icon "add" 0.7 : c#txtc
+)
+
+local sidebar_right = window.left + 355
+local members_left = window.right - 250
+
+glass:frame window.left + 55 window.top sidebar_right window.bottom; frame "clear"
+c prim
+frame window.left + 55 window.top sidebar_right window.bottom page_len (
+  goto 0 0
+  page_len = 0
+  local cha @= state.channels
+  local w = frame.width - 25
+  set_x 0
+  set_y frame.top - 33.5 + frame.scroll
+  square w 40 15 : c#window_colour
+  set_x frame.left + 32
+  image state.server.icon 35 35
+  text state.server.name 10 : chx#30 c#txtc
+  
+  if cha.len == 0 (
+    goto 0 0
+    direction timer * 600
+    icon "w 2 cutcircle 0 0 10 10 60" 2
+    direction 90
+  )
+  change_y -50
+  page_len += 80
+  for i cha.len (
+    cur @= cha[i]
+    switch cur["type"] (
+      case "text"
+        set_x 0
+        if state.channel.name == cur.name (
+          square w 20 20 : c#seco
+        )
+        square w 20 15 : c#window_colour
+        if onclick (
+          scroll_v = 0
+          state.channel @= cur
+        )
+        set_x frame.left + 15
+        text "#" 13 : c#txtc
+        text cur.name 10 : chx#10
+        change_y -40
+        page_len += 40
+        break
+      case "separator"
+        change_y -cur.size
+        page_len += cur.size
+        break
+    )
+  )
+)
+
+local chl @= state.channel
+local msg = state.messages[chl.name]
+if msg == null and state.authed and chl.name != null (
+  state.messages[chl.name] = []
+  ws.wsSend({
+    cmd: "messages_get",
+    channel: chl.name
+  })
+  msg = []
+)
+
+message_box_height = min(inputs.message.len + 1 * 23, frame.height / 2)
+
+frame sidebar_right window.bottom + message_box_height members_left window.bottom (
+  goto 0 0
+  square frame.width frame.height : c#prim
+  inputs.message ??= []
+  local content = inputs.message.join("\n")
+  local send = false
+  if inputs.selected.id == "message" and content.len > 0 (
+    if "enter".onKeyDown() and "shift".isKeyDown().not() (
+      send = true
+      local msg @= {
+        cmd: "message_new",
+        channel: chl.name,
+        content
+      }
+      local nme = chl.name
+      if state.reply_to[nme] != null (
+        msg.reply_to @= state.reply_to[nme].id
+        state.reply_to[nme] = null
+      )
+      ws.wsSend(msg)
+    )
+  )
+  textbox frame.width frame.height "message" 10 {
+    line_numbers: false,
+    text_colour: txtc,
+    default_text: {
+      data: "Send a message in " ++ chl.name,
+      colour: seco
+    }
+  }
+  if send (
+    inputs.message = [""]
+  )
+)
+local rpl @= state.reply_to
+local name = state.channel.name
+if rpl[name] != null (
+  frame sidebar_right window.bottom + message_box_height + 50 members_left window.bottom + message_box_height + 10 (
+    goto 0 0
+    square frame.width frame.height : c#prim
+    set_x frame.left + 25
+    image "https://avatars.rotur.dev/" ++ rpl[name].user ++ "?radius=256" 25 25
+    text ("Replying to " ++ rpl[name].user ++ ": " ++ rpl[name].content).trimText(frame.width / 8 - 20) 8 : c#txtc chx#30
+    set_x frame.right - 25
+    icon "close" 0.7
+    if onclick (
+      rpl[name] = null
+    )
+  )
+  message_box_height += 50
+)
+local users = state.users
+c prim
+frame sidebar_right window.top - 40 members_left window.bottom + message_box_height (
+  w = frame.width / 10 - 15
+  scroll_v += scroll.y.velocity
+  if scroll_v > 0 (
+    scroll_v -= scroll_v / 2
+  )
+  
+  goto 0 frame.bottom + 20 + scroll_v
+  local i = msg.len + 1
+  local fw = frame.width
+  loop msg.len (
+    i --
+    local cur = msg[i]
+    local name = cur.user
+    local content = cur.content.wrapText(w)
+    local lines = content.count("\n") + 1
+    change_y lines * 11.5 + 10
+    set_x 0
+    local h = lines * 23
+    square fw h + 20 10 0 1
+    if mouse_touching (
+      square fw h + 20 10 : c#prim
+      rightclick genMsgMenu(cur) cur
+    )
+    change_y lines * 11.5 - 10
+    set_x frame.left + 40
+    image "https://avatars.rotur.dev/" ++ cur.user ++ "?radius=128" 40 40
+    change 40 10
+    c users[name].color ?? txtc
+    text name 10
+    text (1000 * cur.timestamp).timestamp("to-time") 8 : c#seco chx#20
+    local y_pos = y_position
+    set_x frame.left + 80
+    text content 10 : c#txtc chy#-20
+    set_y y_pos + 20
+    if cur.reply_to != null (
+      local rpl @= cur.reply_to
+      set_x frame.left + 40
+      text ">>" 10 : c#seco chy#10
+      image "https://avatars.rotur.dev/" ++ rpl.user ++ "?radius=128" 25 25 : chx#20
+      text rpl.user 8 : chx#20 c#txtc
+      text (state.all_messages[rpl.id].content ?? "Could not find message").trimText(frame.width / 8 - rpl.user.len - 20) 8 : chx#10 c#seco
+      change_y 20
+    )
+    if y_position > frame.top (
+      break
+    )
+  )
+)
+frame sidebar_right window.top window.right window.top - 40 (
+  goto 0 frame.top - 20
+  square frame.width 30 10 : c#prim
+  goto frame.left + 20 frame.top - 20
+  text chl.description.trimText(frame.width / 10 - 15) 10 : c#txtc
+)
+frame members_left window.top - 40 window.right window.bottom (
+  channel_perms @= state.channel.permissions.view
+  local users @= state.users.getValues().sortBy("online")
+    .filter(v -> v.roles.some(v2 -> channel_perms.contains(v2)))
+  
+  local owner = users.getKeys("roles").map(v -> v.contains("owner")).index(true)
+  local owner_data = users[owner]
+  
+  local i = users.len
+  local w = frame.width - 15
+  goto frame.left + 10 frame.top - 20
+  local online = true
+  if owner_data.online (
+    text "Owner" 10 : c#txtc
+    change_y -35
+    set_x 0
+    square w 30 10 : c#prim
+    set_x frame.left + 25
+    image "https://avatars.rotur.dev/" ++ owner_data.username ++ "?radius=128" 30 30
+    text owner_data.username 10 : chx#20 c#(owner_data.color ?? txtc)
+    change_y -40
+    void users.delete(owner)
+    i --
+  )
+  local idx = users.getKeys("online").index(false)
+  set_x frame.left + 10
+  text "Online: " ++ idx 10 : c#txtc
+  change_y -35
+  loop i (
+    local cur @= users[i]
+    if online and cur.online.not() (
+      set_x frame.left + 10
+      change_y 5
+      text "Offline: " ++ i 10 : c#seco
+      change_y -35
+      online = false
+    )
+    set_x 0
+    square w 30 10 : c#prim
+    set_x frame.left + 25
+    image "https://avatars.rotur.dev/" ++ cur.username ++ "?radius=128" 30 30
+    text cur.username 10 : chx#20 c#(cur.color ?? txtc)
+    change_y -45
+    if y_position < window.bottom (
+      break
+    )
+    i --
+  )
+)
+
+if !state.connected (
+  goto 0 0
+  square window.width window.height 20 : c#prim
+  change_y 30
+  direction timer * 600
+  icon "w 2 cutcircle 0 0 10 10 60" 4 : c#txtc
+  direction 90
+  change_y -60
+  centext "Disconnected, trying to connect" 10
+)
+
+import "win-buttons"
