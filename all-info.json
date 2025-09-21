@@ -21,7 +21,7 @@
     "script": {
       "scriptSize": 3145,
       "scriptLines": 194,
-      "lastModified": 1758334509409
+      "lastModified": 1758494673108
     }
   },
   "arrow": {
@@ -45,7 +45,7 @@
     "script": {
       "scriptSize": 17917,
       "scriptLines": 789,
-      "lastModified": 1758334509410
+      "lastModified": 1758494673109
     }
   },
   "claw": {
@@ -79,7 +79,7 @@
     "script": {
       "scriptSize": 14730,
       "scriptLines": 618,
-      "lastModified": 1758334509412
+      "lastModified": 1758494673111
     }
   },
   "clicker game": {
@@ -104,7 +104,7 @@
     "script": {
       "scriptSize": 3125,
       "scriptLines": 125,
-      "lastModified": 1758334509413
+      "lastModified": 1758494673111
     }
   },
   "dock themer": {
@@ -131,7 +131,7 @@
     "script": {
       "scriptSize": 916,
       "scriptLines": 43,
-      "lastModified": 1758334509413
+      "lastModified": 1758494673112
     }
   },
   "flappy bird": {
@@ -156,7 +156,7 @@
     "script": {
       "scriptSize": 2960,
       "scriptLines": 146,
-      "lastModified": 1758334509414
+      "lastModified": 1758494673113
     }
   },
   "fluficord": {
@@ -186,7 +186,7 @@
     "script": {
       "scriptSize": 33949,
       "scriptLines": 1135,
-      "lastModified": 1758334509427
+      "lastModified": 1758494673126
     }
   },
   "focuser": {
@@ -208,7 +208,7 @@
     "script": {
       "scriptSize": 393,
       "scriptLines": 20,
-      "lastModified": 1758334509427
+      "lastModified": 1758494673126
     }
   },
   "fortnite skibidi 2024": {
@@ -236,7 +236,7 @@
     "script": {
       "scriptSize": 4773,
       "scriptLines": 214,
-      "lastModified": 1758334509434
+      "lastModified": 1758494673133
     }
   },
   "goose": {
@@ -261,7 +261,7 @@
     "script": {
       "scriptSize": 2332,
       "scriptLines": 95,
-      "lastModified": 1758334509437
+      "lastModified": 1758494673136
     }
   },
   "jump and run": {
@@ -286,7 +286,7 @@
     "script": {
       "scriptSize": 3956,
       "scriptLines": 194,
-      "lastModified": 1758334509437
+      "lastModified": 1758494673136
     }
   },
   "lights out": {
@@ -311,7 +311,7 @@
     "script": {
       "scriptSize": 1110,
       "scriptLines": 71,
-      "lastModified": 1758334509438
+      "lastModified": 1758494673136
     }
   },
   "mallet": {
@@ -335,7 +335,7 @@
     "script": {
       "scriptSize": 29643,
       "scriptLines": 1128,
-      "lastModified": 1758334509438
+      "lastModified": 1758494673137
     }
   },
   "nekonline": {
@@ -360,7 +360,7 @@
     "script": {
       "scriptSize": 4725,
       "scriptLines": 195,
-      "lastModified": 1758334509438
+      "lastModified": 1758494673137
     }
   },
   "oft": {
@@ -387,7 +387,37 @@
     "script": {
       "scriptSize": 877,
       "scriptLines": 43,
-      "lastModified": 1758334509444
+      "lastModified": 1758494673143
+    }
+  },
+  "originchats": {
+    "title": "originChats",
+    "description": "A simple, self hostable discord alternative for originOS.",
+    "author": "Mist",
+    "version": "1",
+    "genre": "Social, Communication, Messaging",
+    "game_modes": [
+      "Single-player"
+    ],
+    "permissions": [
+      "notifications"
+    ],
+    "supports": [
+      "originOS"
+    ],
+    "requires": {
+      "originOS": "600"
+    },
+    "icon": "c #AF78F7 w 10 square 0 0 5 5 c #0a0303 w 8 square 0 0 5 5 dot 0 0 c #AF78F7 w 4 square 0 1 4 2 line -4 0 -4 -3 cont 0 0 w 5 line -2 1 2 1",
+    "size": {
+      "bytes": 14701,
+      "kilobytes": "14.36",
+      "megabytes": "0.01"
+    },
+    "script": {
+      "scriptSize": 14238,
+      "scriptLines": 573,
+      "lastModified": 1758494673143
     }
   },
   "origincord": {
@@ -417,7 +447,7 @@
     "script": {
       "scriptSize": 39802,
       "scriptLines": 1543,
-      "lastModified": 1758334509445
+      "lastModified": 1758494673144
     }
   },
   "originfy": {
@@ -441,7 +471,7 @@
     "script": {
       "scriptSize": 7238,
       "scriptLines": 301,
-      "lastModified": 1758334509447
+      "lastModified": 1758494673146
     }
   },
   "originkill": {
@@ -471,7 +501,7 @@
     "script": {
       "scriptSize": 40739,
       "scriptLines": 1431,
-      "lastModified": 1758334509463
+      "lastModified": 1758494673162
     }
   },
   "ping pong": {
@@ -496,7 +526,7 @@
     "script": {
       "scriptSize": 1735,
       "scriptLines": 100,
-      "lastModified": 1758334509463
+      "lastModified": 1758494673162
     }
   },
   "rat simulater 2013": {
@@ -521,7 +551,7 @@
     "script": {
       "scriptSize": 6760,
       "scriptLines": 249,
-      "lastModified": 1758334509467
+      "lastModified": 1758494673165
     }
   },
   "slider": {
@@ -546,7 +576,7 @@
     "script": {
       "scriptSize": 2201,
       "scriptLines": 86,
-      "lastModified": 1758334509467
+      "lastModified": 1758494673165
     }
   },
   "snake": {
@@ -571,7 +601,7 @@
     "script": {
       "scriptSize": 2245,
       "scriptLines": 123,
-      "lastModified": 1758334509467
+      "lastModified": 1758494673166
     }
   },
   "super slime bros": {
@@ -601,7 +631,7 @@
     "script": {
       "scriptSize": 22766,
       "scriptLines": 895,
-      "lastModified": 1758334509471
+      "lastModified": 1758494673170
     }
   },
   "timer": {
@@ -623,7 +653,7 @@
     "script": {
       "scriptSize": 463,
       "scriptLines": 28,
-      "lastModified": 1758334509471
+      "lastModified": 1758494673170
     }
   },
   "todo": {
@@ -650,7 +680,7 @@
     "script": {
       "scriptSize": 1166,
       "scriptLines": 54,
-      "lastModified": 1758334509471
+      "lastModified": 1758494673170
     }
   },
   "wosle": {
@@ -680,7 +710,7 @@
     "script": {
       "scriptSize": 24916,
       "scriptLines": 254,
-      "lastModified": 1758334509485
+      "lastModified": 1758494673183
     }
   },
   "youtube": {
@@ -705,7 +735,7 @@
     "script": {
       "scriptSize": 3423,
       "scriptLines": 123,
-      "lastModified": 1758334509485
+      "lastModified": 1758494673183
     }
   }
 }
