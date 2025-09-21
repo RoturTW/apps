@@ -7,5 +7,6 @@
   "game_modes": ["Single-player"],
   "permissions": [],
   "supports":["originOS"],
+  "requires": {"originOS": "601"},
   "screenshots":[]
 }
