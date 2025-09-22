@@ -218,7 +218,16 @@ frame window.left + ui_offset window.top - 40 window.right + ui_offset window.bo
     state.buying_key = true
     state.purchase = false
   )
-  centext save_data.free_spin_available ? "Daily free spin!!!" "Spin for 5 credits" 10 : c#fff
+  centext save_data.free_spin_available ? "Daily free spin!!!" "Spin for monster!" 10 : c#fff
+  
+  number ms = save_data.last_free_spin.toNum() * 1000 + 86400000 - timestamp
+  if ms < 0 (
+    save_data.free_spin_available = true
+  )
+  if !save_data.free_spin_available and save_data.last_free_spin > 0 (
+    change_y -40
+    centext "Next free spin in: " ++ floor(ms / 60000 / 60) ++ " hrs, " ++ (round(ms / 60000) % 60) ++ " mins" 10
+  )
 )
 c #333
 if ui_offset < -5 (
