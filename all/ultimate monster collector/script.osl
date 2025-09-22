@@ -218,7 +218,7 @@ frame window.left + ui_offset window.top - 40 window.right + ui_offset window.bo
     state.buying_key = true
     state.purchase = false
   )
-  centext "Spin for 5 credits" 10 : c#fff
+  centext save_data.free_spin_available ? "Daily free spin!!!" "Spin for 5 credits" 10 : c#fff
 )
 c #333
 if ui_offset < -5 (
@@ -261,7 +261,12 @@ if popups.len == 0 and state.purchase (
   state.purchase = null
 )
 if state.buying_key and state.purchase == false and !mouse_down (
-  rotur "key_buy" spin_key
+  if save_data.free_spin_available (
+    save_data.free_spin_available = false
+    // this is enforced on the backend, changing this does nothing lol
+  ) else (
+    rotur "key_buy" spin_key
+  )
   state.purchase = true
 )
 
