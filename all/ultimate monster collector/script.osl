@@ -214,7 +214,7 @@ frame window.left + ui_offset window.top - 40 window.right + ui_offset window.bo
   
   change_y -100
   square 200 30 10 : c#222 hover_c#444
-  if onclick (
+  if onclick and monster_velocity == 0 and monster_offset == 0 (
     state.buying_key = true
     state.purchase = false
   )
@@ -270,12 +270,8 @@ if popups.len == 0 and state.purchase (
   state.purchase = null
 )
 if state.buying_key and state.purchase == false and !mouse_down (
-  if save_data.free_spin_available (
-    save_data.free_spin_available = false
-    // this is enforced on the backend, changing this does nothing lol
-  ) else (
-    rotur "key_buy" spin_key
-  )
+  save_data.free_spin_available = false
+  rotur "key_buy" spin_key
   state.purchase = true
 )
 
