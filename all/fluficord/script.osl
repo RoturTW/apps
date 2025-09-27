@@ -1069,8 +1069,9 @@ mainloop:
     Net.update()
     window.hide()
     window.resize(0,0)
+    window "responsive" true
     return
-  )
+  ) else (
   
   wt:load_theme
   Net.update()
@@ -1132,3 +1133,4 @@ mainloop:
     )
     centext "funny message" 10 : c#txtc
   )
+)
