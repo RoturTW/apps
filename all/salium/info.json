@@ -2,7 +2,7 @@
   "title": "Salium",
   "description": "A simple, convienent gallery of custom system themes and wallpapers that applies customization directly from the app.",
   "author": "iris",
-  "version": "1.0",
+  "version": "1.00001",
   "genre": "Utility, Customization, System",
   "game_modes": ["Single-player","Multiplayer"],
   "permissions": ["Account"],
