@@ -1,0 +1,197 @@
+//
+// For contributing wallpapers and themes, please visit:
+//         https://github.com/antiviiris/salium
+//
+//                                        Thanks! - iris
+
+permission "request" "account"
+import "window_tools" as "wt"
+import as "glass" from "packages"
+win @= window
+title = "Salium"
+wt:seticon "c #f99 w 20 dot 0 0 c #211 w 18 dot 0 0 c #f99 w 1 square 0 3 4 3 square 0 -1.5 4 .8 line 4 -1.5 -4 -1.5 line -2 6 -2 3 line -0.5 6 -0.5 4 w 3 line 0 -2 0 -6 c #211 w 1 dot 0 -6"
+
+win.resize(800, 600)
+window "min_size" 800 400
+
+searchMode = "theme"
+
+Promise.new(def() -> (
+  themes = "https://raw.githubusercontent.com/antiviiris/salium/main/themes.json".httpGet()
+  list = themes
+))
+
+Promise.new(def() -> (
+  wallpapers = "https://raw.githubusercontent.com/antiviiris/salium/main/wallpapers.json".httpGet()
+))
+
+comps = [
+  "text",
+  "background",
+  "primary",
+  "secondary",
+  "tertiary",
+  "accent"
+]
+
+def filterItems() (
+  local target = searchMode == "theme" ? themes wallpapers
+  if input_search.len == 0 (
+    list = target
+    return
+  )
+  list = target.filter((item)->(
+    local query = (item.name ?? "") + (item.author ?? "") + (item.tags ?? "")
+    return query.count(input_search) != 0
+  ))
+)
+
+def copyData(c) (
+  if c.item == "theme" (
+    local clippy = {
+      background: c.background,
+      text: c.text,
+      primary: c.primary,
+      secondary: c.secondary,
+      tertiary: c.tertiary,
+      accent: c.accent
+    }.JsonStringify()
+  ) else (
+    local clippy = c.src
+  )
+  clipboard "set" clippy
+)
+
+def updateWallpaper(data) (
+  if window.hasPermission("account") (
+    network "update" "wallpaper" data.src
+  )
+)
+
+def updateTheme(c) (
+  local palette = {
+    background: c.background,
+    text: c.text,
+    primary: c.primary,
+    secondary: c.secondary,
+    tertiary: c.tertiary,
+    accent: c.accent
+  }
+  if window.hasPermission("account") (
+    network "update" "theme" palette
+  )
+)
+
+def drawButton(text, color, func, args) (
+  square 80 10 40 : c#color
+  if mouse_touching (
+    cursor "pointer"
+    if onclick (
+      func(args)
+    )
+  )
+  centext text 10 : c#txtc
+)
+
+def drawItem(x, y, data) (
+  hovered = null
+  goto x y
+  square 250 300 40 : c#window_colour
+  frame x - 120 y + 145 x + 120 y - 35 (
+    switch data.item (
+      case "theme"
+        goto frame.left - 20 0
+        for i 6 (
+          c data[comps[i]]
+          square 40 frame.height : chx#40
+          if mouse_touching (
+            hovered = comps[i]
+          )
+        )
+        break
+      case "wallpaper"
+        goto 0 0
+        image data.src null frame.height
+        break
+      default
+        break
+    )
+  )
+  goto x y - 60
+  if hovered != null (
+    centext hovered 14 : c#txtc
+  ) else (
+    centext data.name ?? "Untitled" 14 : c#txtc
+  )
+  centext "Submitted by:" + (data.author ?? "Anon") 8 : c#txtc chy#-25
+  change -65 -45
+  drawButton("Use This", accent, data.item == "theme" ? updateTheme updateWallpaper, data)
+  change_x 130
+  drawButton("Copy Data", prim, copyData, data)
+)
+
+scrollMax = 0
+
+mainloop:
+wt:load_theme
+accent = user.theme.accent
+
+glass:frame win.left win.top win.right win.bottom 
+
+goto win.left win.top
+square win.width * 2 160 : c#seco
+square win.width * 2 80 : c#prim
+text title 10 : chx#12 chy#-20 c#txtc
+import "win-buttons"
+
+searchWidth = min(500, win.width / 2)
+goto win.left + 27 win.top - 60
+square searchWidth 0 30 : chx#(searchWidth/2) c#prim
+icon "search" .7 : chx#(searchWidth / -2 + 5) c#txtc
+
+goto win.left + 25 + (searchWidth / 2) win.top - 60
+input searchWidth - 50 25 "search" "Search for the perfect items..." 0 txtc : c#prim
+if oldInput != input_search (
+  filterItems(input_search)
+)
+oldInput = input_search
+
+goto win.right - 70 win.top - 60
+square 80 0 30 : c#(searchMode == "wallpaper" ? accent tert)
+if mouse_touching (
+  cursor "pointer"
+  if onclick (
+    searchMode = "wallpaper"
+    input_search = ""
+    list = wallpapers
+  )
+)
+centext "Wallpapers" 8 : c#txtc
+
+change_x -100
+square 45 0 30 : c#(searchMode == "theme" ? accent tert)
+if mouse_touching (
+  cursor "pointer"
+  if onclick (
+    searchMode = "theme"
+    input_search = ""
+    list = themes
+  )
+)
+centext "Themes" 8 : c#txtc
+
+c seco
+frame win.left win.top - 80 win.right win.bottom scrollMax "content" (
+  if typeOf(list) == "array" (
+    for n list.len (
+      set_x -160 + (320 * (n - 1 % 2))
+      set_y floor(n + 1 / 2) * -360 + frame.scroll + frame.top + 150
+      if n == list.len (
+        scrollMax = y_position - frame.scroll - frame.top - 200 * -1
+      )
+      if ((win.bottom - 160) < y_position and (y_position < (win.top + 160))) (
+        drawItem(x_position, y_position, {...list[n], item: searchMode})
+      )
+    )
+  )
+)
