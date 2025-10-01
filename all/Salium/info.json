@@ -7,5 +7,5 @@
   "game_modes": ["Single-player","Multiplayer"],
   "permissions": ["Account"],
   "supports": ["OriginOS"],
-  "screenshots": ["salium-ss-1", "salium-ss-2","salium-ss-3","salium-ss-4"]
+  "screenshots": ["salium-ss-1.png", "salium-ss-2.png","salium-ss-3.png","salium-ss-4.png"]
 }
