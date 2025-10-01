@@ -1,0 +1,11 @@
+{
+  "title": "Salium",
+  "description": "A simple, convienent gallery of custom system themes and wallpapers that applies customization directly from the app.",
+  "author": "iris",
+  "version": "1.0",
+  "genre": "Utility, Customization, System",
+  "game_modes": ["Single-player","Multiplayer"],
+  "permissions": ["Account"],
+  "supports": ["OriginOS"],
+  "screenshots": ["salium-ss-1", "salium-ss-2","salium-ss-3","salium-ss-4"]
+}
