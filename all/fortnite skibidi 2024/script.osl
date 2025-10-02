@@ -13,10 +13,12 @@ if save_access (
   highscore = 0
 )
 
+assets = "https://raw.githubusercontent.com/RattusDong/apps/main/all/fortnite%20skibidi%202024/assets/"
+
 def shootgun() (
   turnleft 45
-  shotx = -250 + (90 * direction.sin()) 
-  shoty = 0 + (90 * direction.cos())
+  shotx = window.left + (180 + (90 * direction.sin()) * scale)
+  shoty = 90 * direction.cos() * scale
   shotd = direction + 180
   
   sound "shoot" "start" 0
@@ -31,19 +33,18 @@ def shootgun() (
   cooldown = 20
 )
 
-sound "https://github.com/RattusDong/apps/raw/refs/heads/main/all/fortnite%20skibidi%202024/assets/shotgun.mp3" "load" "shoot"
+sound assets ++ "shotgun.mp3" "load" "shoot"
 sound "shoot" "volume" 0.8
-sound "https://github.com/RattusDong/apps/raw/refs/heads/main/all/fortnite%20skibidi%202024/assets/hit.mp3" "load" "kill"
+sound assets ++ "hit.mp3" "load" "kill"
 sound "kill" "volume" 1.0
-window "show"
-window "dimensions" 800 450
-window "resizable" false
+window.show()
+window.resize(800,450)
 
 shotTimer = 0
 
-skibX = 600
-skibY = random(-200,200)
-speed = 1
+skibX = 1000 + random(200,450)
+skibY = random(-1000,1000)
+speed = 2
 score = 0
 dead = false
 dieOff = 0
@@ -64,20 +65,31 @@ if gamepads.len > 0 (
   contr = true
 )
 
-goto 0 0
-image "https://raw.githubusercontent.com/RattusDong/apps/main/all/fortnite%20skibidi%202024/assets/background.png" 850
-goto -300 -100 + dieOff
-image "https://raw.githubusercontent.com/RattusDong/apps/main/all/fortnite%20skibidi%202024/assets/jonsey.png" 500
-
-goto skibX skibY
-image "https://raw.githubusercontent.com/RattusDong/apps/main/all/fortnite%20skibidi%202024/assets/skibidi.png" 80 120
-if mouse_touching (
-  cursor "crosshair"
+local bg_dim = [1600, 900]
+local w = window.width
+local h = window.height
+if w / 1600 < h / 900 (
+  scale = h / 900 * 2
+  w = null
+) else (
+  scale = w / 1600 * 2
+  h = null
 )
-if dist(shotx, shoty, skibX, skibY) < 80 and skibX < 425 (
+if window.height > window.width / 1.5 (
+  scale /= 2
+)
+goto 0 0
+image assets ++ "background.png" w h
+goto window.left + (100 * scale) -100 * scale + dieOff
+image assets ++ "jonsey.png" 500 * scale
+
+goto skibX / 1000 * window.right skibY / 1200 * window.top
+image assets ++ "skibidi.png" 80 * scale 120 * scale
+
+if dist(shotx, shoty, x_position, y_position) < 80 * scale and x_position < window.right (
   sound "kill" "start" 0
-  skibX = 500 + random(0,150)
-  speed += 0.1
+  skibX = 1000 + random(200,450)
+  speed += 0.4
   score ++
   if contr ( 
     void gamepads[1].haptic({
@@ -92,30 +104,28 @@ if dist(shotx, shoty, skibX, skibY) < 80 and skibX < 425 (
     )
     highscore = score
   )
-  skibY = random(-200,200)
+  skibY = random(-1000,1000)
 )
 if skibX < -200 (
   dead = true
 )
 
-
-goto -180 200
-text "Skibidi Kills: " ++ score 20 : c#fff
-goto -150 170
-text "Highest: " ++ highscore 16
-
+goto 0 window.top - 30
+centext "Skibidi Kills: " ++ score 20 : c#fff
+change_y -30
+centext "Highest: " ++ highscore 16
 
 direction shotd
 goto shotx shoty
 effect "transparency" 0 + (cooldown - 16) * 25
-image "https://raw.githubusercontent.com/RattusDong/apps/main/all/fortnite%20skibidi%202024/assets/shotgunproj.png" 10 + (dist(shotx, shoty, -250, 0) * 0.35)
- 
-shotx += -80 * direction.sin
-shoty += -80 * direction.cos
+image assets ++ "shotgunproj.png" 10 + (dist(shotx, shoty, -250, 0) * 0.35)
+
+shotx += -80 * direction.sin()
+shoty += -80 * direction.cos()
 
 effect "transparency" 0
 
-goto -230 0 + dieOff
+goto window.left + (180 * scale) 0 + dieOff
 
 if contr (
   stickX = gamepads[1].axes[1].x
@@ -135,10 +145,10 @@ if contr (
 turnleft 90
 direction direction.clamp(-60,60) + (-10 + ((cooldown - 16) * -1)).clamp(-14,0)
 turnright 135
-image "https://raw.githubusercontent.com/RattusDong/apps/main/all/fortnite%20skibidi%202024/assets/shotgun.png" 180 - sgwidth
+image assets ++ "shotgun.png" 180 - sgwidth * scale
 if cooldown > 8 (
   effect "transparency" 0 + (cooldown - 14) * -16
-  image "https://raw.githubusercontent.com/RattusDong/apps/main/all/fortnite%20skibidi%202024/assets/shotgunshoot.png" 310 320
+  image assets ++ "shotgunshoot.png" 310 320
 )
 effect "transparency" 0
 if mouse_down or gamepad.buttons[8]["pressed"] and cooldown <= 0 (
@@ -157,32 +167,31 @@ if mouse_down or gamepad.buttons[8]["pressed"] and cooldown <= 0 (
   sgwidth = 0
 )
 if contr (
-  if gamepad.buttons[8]["pressed"].not and ready and dead.not() (
+  if gamepad.buttons[8]["pressed"].not() and ready and dead.not() (
     shootgun()
   )
 ) else if mouse_down.not() and ready and dead.not() (
   shootgun()
 )
 
-
 cooldown -= 1
 
 direction 90
 if dead (
   goto 0 -150
-  image "https://raw.githubusercontent.com/RattusDong/apps/main/all/fortnite%20skibidi%202024/assets/fire.png" 800 500
+  image assets ++ "fire.png" 800 * scale 500 * scale
  
-  goto -200 0
+  goto 0 0
   if contr (
-  text "Press A to restart" 15
-
-  void gamepads[1].haptic({
-    duration: 200,
-    weakMagnitude: 1.0,
-    strongMagnitude: 1.0
-  })
+    centext "Press A to restart" 15
+  
+    void gamepads[1].haptic({
+      duration: 200,
+      weakMagnitude: 1.0,
+      strongMagnitude: 1.0
+    })
   ) else (
-  text "Press Space to restart" 15
+    centext "Press Space to restart" 15
   )
 
   dieOff = 2000
@@ -191,13 +200,12 @@ if dead (
     dead = false
     dieOff = 0
     score = 0
-    skibX = 600
+    skibX = 1000 + random(200,450)
     skibY = random(-200,200)
     speed = 1
     ready = false
     cooldown = 0
   )
-
 )
 
 skibX -= speed
@@ -206,9 +214,10 @@ loc -2 2 -20 -20
 square 20 20 10 : c#222
 icon "w 4 line 10 10 -10 -10 line -10 10 10 -10" 0.7 : c#fff
 if clicked (
-  window "stop"
+  window.close()
 )
 
 // special thanks to rattus
 
 // updated by mist to replace old syntax with more modern equivalents
+// updated by mist to make it resizable
