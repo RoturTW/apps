@@ -5,7 +5,7 @@ permission "request" "rotur token"
 
 token = roturToken()
 
-current_version = 3.0
+current_version = 3.1
 
 // automatically update claw
 promise.new(def() -> (
@@ -63,7 +63,7 @@ def getAvatar(username) (
 )
 
 def "send_post" "attachment" (
-  void promise.new(def() -> (
+  void promise.new((def() -> (
     local url = api ++ "post?os=originOS&auth=" ++ token
     url ++= "&content=" ++ encodeURIComponent(inputs.claw.join("\n"))
     if attachment != "" (
@@ -75,7 +75,7 @@ def "send_post" "attachment" (
     ) else (
       inputs.claw = [""]
     )
-  ).bind(this))
+  )).bind(this))
 )
 
 def "repost" "id" (
