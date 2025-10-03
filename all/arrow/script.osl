@@ -1,16 +1,16 @@
 // asset urls
-player_eye = "w 2 c #000 dot -8 0 w 1 square -8 0 1 1 c #777 w 1 line 5 3.5 -4 11 cont -9 12 cont -8 13.5 cont 0 13 w 3 line 6 5 -3 12 w 2 cont -7.5 13 w 1 line 5 -3.5 -4 -11 cont -9 -12 cont -8 -13.5 cont 0 -13 w 3 line 6 -5 -3 -12 w 2 cont -7.5 -13 c #666 w 1 line 5 12.5 -4 17.4 cont -6 16 cont -1 13 cont 5 3.5 cont 7 4 w 3 line 6 5 1 13 w 2 cont -4.2 16 w 1 line 5 -12.5 -4 -17.4 cont -6 -16 cont -1 -13 cont 5 -3.5 cont 7 -4 w 3 line 6 -5 1 -13 w 2 cont -4.2 -16 c #444 w 1 line 9.5 3 6 15 cont 1 19 cont -1 18.5 cont 2.5 15 cont 6 4 cont 9.5 3 w 3 line 7.6 4.6 4 15 w 2 cont 0.5 18 w 1 line 9.5 -3 6 -15 cont 1 -19 cont -1 -18.5 cont 2.5 -15 cont 6 -4 cont 9.5 -3 w 3 line 7.6 -4.6 4 -15 w 2 cont 0.5 -18"
+string player_eye = "w 2 c #000 dot -8 0 w 1 square -8 0 1 1 c #777 w 1 line 5 3.5 -4 11 cont -9 12 cont -8 13.5 cont 0 13 w 3 line 6 5 -3 12 w 2 cont -7.5 13 w 1 line 5 -3.5 -4 -11 cont -9 -12 cont -8 -13.5 cont 0 -13 w 3 line 6 -5 -3 -12 w 2 cont -7.5 -13 c #666 w 1 line 5 12.5 -4 17.4 cont -6 16 cont -1 13 cont 5 3.5 cont 7 4 w 3 line 6 5 1 13 w 2 cont -4.2 16 w 1 line 5 -12.5 -4 -17.4 cont -6 -16 cont -1 -13 cont 5 -3.5 cont 7 -4 w 3 line 6 -5 1 -13 w 2 cont -4.2 -16 c #444 w 1 line 9.5 3 6 15 cont 1 19 cont -1 18.5 cont 2.5 15 cont 6 4 cont 9.5 3 w 3 line 7.6 4.6 4 15 w 2 cont 0.5 18 w 1 line 9.5 -3 6 -15 cont 1 -19 cont -1 -18.5 cont 2.5 -15 cont 6 -4 cont 9.5 -3 w 3 line 7.6 -4.6 4 -15 w 2 cont 0.5 -18"
 
-arrow_base = "w 0.5 line -4 0 4.5 0 w 0.2 line 3.9 0.6 5 0 cont 3.9 -0.6 w 0.3 c #444 line 3.5 0.6 4.7 0 cont 3.5 -0.6 w 0.3 c #777 line -4.6 0.6 -4.3 0.5 cont -3.7 0 cont -4.3 -0.5 cont -4.5 -0.6 w 0.3 c #444 line -4.8 0.6 -4.5 0.5 cont -3.9 0 cont -4.5 -0.5 cont -4.8 -0.6 w 0.2 line -4.9 0 4.5 0"
+string arrow_base = "w 0.5 line -4 0 4.5 0 w 0.2 line 3.9 0.6 5 0 cont 3.9 -0.6 w 0.3 c #444 line 3.5 0.6 4.7 0 cont 3.5 -0.6 w 0.3 c #777 line -4.6 0.6 -4.3 0.5 cont -3.7 0 cont -4.3 -0.5 cont -4.5 -0.6 w 0.3 c #444 line -4.8 0.6 -4.5 0.5 cont -3.9 0 cont -4.5 -0.5 cont -4.8 -0.6 w 0.2 line -4.9 0 4.5 0"
 
-player_body = "c #578dc1 w 1 square 0 0 8 8 w 2 square 0 0 7 7 c #fff w 1 square 0 0 6.5 6.5 w 3 square 0 0 5 5 square 0 0 4 4 w 13 dot 0 0"
-white_square = "w 20 dot 0 0"
-arrow_main = "c #444" + arrow_base
-arrow_charged = "c #578dc1" + arrow_base
-enemy_body = "c #666 w 1 line 0 9.5 9.5 0 cont 0 -9.5 cont -9.5 0 cont 0 9.5 w 4 line -7 0 7 0 w 6 line -5 0 5 0 c #888 w 1 line -7.5 3.5 0 11 cont 7.5 3.5 cont 4 0 cont 7.5 -3.5 cont 0 -11 cont -7.5 -3.5 cont -4 0 cont -7.5 3.5 w 4 line -5 3.5 5 3.5 line -5 -3.5 5 -3.5 line 0 8.5 0 -8.5 w 10.5 dot 0 3.7 dot 0 -3.7 c #fff w 1 line 0 5 5 0 cont 0 -5 cont -5 0 cont 0 5 w 3 line 0 3 3 0 cont 0 -3 cont -3 0 cont 0 3 w 8 dot 0 0 c #000 w 1 line 0 2.5 2.5 0 cont 0 -2.5 cont -2.5 0 cont 0 2.5 w 4 dot 0 0"
-map_main = "w 1.7 c #666 cutcircle 0 0 14 0 180 w 1.2 c #777 cutcircle 0 0 14 0 180 w 0.7 c #999 cutcircle 0 0 14 0 180"
+string player_body = "c #578dc1 w 1 square 0 0 8 8 w 2 square 0 0 7 7 c #fff w 1 square 0 0 6.5 6.5 w 3 square 0 0 5 5 square 0 0 4 4 w 13 dot 0 0"
+string white_square = "w 20 dot 0 0"
+string arrow_main = "c #444" + arrow_base
+string arrow_charged = "c #578dc1" + arrow_base
+string enemy_body = "c #666 w 1 line 0 9.5 9.5 0 cont 0 -9.5 cont -9.5 0 cont 0 9.5 w 4 line -7 0 7 0 w 6 line -5 0 5 0 c #888 w 1 line -7.5 3.5 0 11 cont 7.5 3.5 cont 4 0 cont 7.5 -3.5 cont 0 -11 cont -7.5 -3.5 cont -4 0 cont -7.5 3.5 w 4 line -5 3.5 5 3.5 line -5 -3.5 5 -3.5 line 0 8.5 0 -8.5 w 10.5 dot 0 3.7 dot 0 -3.7 c #fff w 1 line 0 5 5 0 cont 0 -5 cont -5 0 cont 0 5 w 3 line 0 3 3 0 cont 0 -3 cont -3 0 cont 0 3 w 8 dot 0 0 c #000 w 1 line 0 2.5 2.5 0 cont 0 -2.5 cont -2.5 0 cont 0 2.5 w 4 dot 0 0"
+string map_main = "w 1.7 c #666 cutcircle 0 0 14 0 180 w 1.2 c #777 cutcircle 0 0 14 0 180 w 0.7 c #999 cutcircle 0 0 14 0 180"
 
-crosshair = "w 3 line 7 7 10 10 line -7 7 -10 10 line -7 -7 -10 -10 line 7 -7 10 -10"
+string crosshair = "w 3 line 7 7 10 10 line -7 7 -10 10 line -7 -7 -10 -10 line 7 -7 10 -10"
 
 array gamepads = getGamepads()
 
@@ -19,9 +19,9 @@ if gamepads.len > 0 (
   say "Gamepad mode enabled"
 )
 
-start_timer = timer
-last_timer = timer
-game_timer = timer
+number start_timer = timer
+number last_timer = timer
+number game_timer = timer
 
 object abilities = {}
 object ability = {}
@@ -54,13 +54,13 @@ object io = {
     )
     return mouse_y
   ),
-  move_x: def(speed) -> (
-    return (gamepads.len > 0 ? gamepad.axes[1].x ("d".isKeyDown() - "a".isKeyDown())) * speed
+  move_x: def(number speed) -> (
+    return (gamepads.len > 0 ? gamepad.axes[1].x ("d".isKeyDown().toNum() - "a".isKeyDown().toNum())) * speed
   ),
-  move_y: def(speed) -> (
-    return (gamepads.len > 0 ? -gamepad.axes[1].y ("s".isKeyDown() - "w".isKeyDown())) * speed
+  move_y: def(number speed) -> (
+    return (gamepads.len > 0 ? -gamepad.axes[1].y ("s".isKeyDown().toNum() - "w".isKeyDown().toNum())) * speed
   ),
-  haptic: def(option) -> (
+  haptic: def(string option) -> (
     local configs = {
       weakest: {
         duration: 100,
@@ -102,29 +102,29 @@ object io = {
   )
 }
 
-def generateStars(density, c) (
+def generateStars(number density, string c) (
   local stars = "w 0.1 c " ++ c
 
   local dist = 10
   loop density (
     local dir = random(-180,180)
-    local dist = random(10,200).round() / 10
+    dist = random(10,200).round() / 10
     local x = dir.sin() * dist
     local y = dir.cos() * dist
-    local stars += " dot" + x + y
+    stars ++= " dot" + x + y
   )
   return stars
 )
 
-stars = generateStars(100,"#777")
-stars2 = generateStars(100,"#555")
-stars3 = generateStars(100,"#333")
+string stars = generateStars(100, "#777")
+string stars2 = generateStars(100, "#555")
+string stars3 = generateStars(100, "#333")
 
-rings = "w 0.1 c #999"
+string rings = "w 0.1 c #999"
 for i 3 (
   for i2 36 (
     dir = i2 * 10
-    rings += " dot" + x + y
+    rings ++= " dot" + x + y
   )
 )
 
@@ -132,10 +132,10 @@ for i 3 (
 
 window.framerate = 60
 
-load_queue = []
+array load_queue = []
 
-dir_x = 0
-dir_y = 0
+number dir_x = 0
+number dir_y = 0
 
 // a command to simply add urls to the load_queue
 def "load" "url" (
@@ -148,9 +148,23 @@ array notifs = []
 number notif_y = 20
 
 
+array enemies = []
+array arrows = []
+array bullets = []
+array particles = []
+
+// setup the max number of each thing that can exist
+number enemy_cap = 40
+number arrow_cap = 10
+number particle_cap = 50
+number bullet_cap = 1000
+
+number current_wave = 0
+
 // this command is run to reset the game
 def "setup" (
   // setup the player object
+  
   player = {
     "x": 0,
     "y": 0,
@@ -177,12 +191,6 @@ def "setup" (
   
   // a flag variable that controls the white flash when the player gets hit
   damaged = game_timer - 2
-  
-  // setup the max number of each thing that can exist
-  enemy_cap = 40
-  arrow_cap = 10
-  particle_cap = 50
-  bullet_cap = 1000
 
   // the arrays of each item to be rendered
   arrows = []
@@ -228,10 +236,10 @@ def "move" "dist" (
 // add an arrow object to the scene
 def "create_arrow" "x, y, dir, vel" (
   if arrows.len > arrow_cap (
-    arrows.delete(1)
+    void arrows.delete(1)
   )
   
-  arrows.append({
+  void arrows.append({
     "x":   x + (dir.sin() * vel * 2),
     "y":   y + (dir.cos() * vel * 2),
     "vel": vel,
@@ -251,10 +259,10 @@ def position_entity(x, y) (
 def "create_enemy" "x, y, health, reload" (
   // delete enemies if the total number exceeds the cap
   if enemies.len > enemy_cap (
-    enemies.delete(1)
+    void enemies.delete(1)
   )
   
-  enemies.append(this ++ {
+  void enemies.append(this ++ {
     "dir": 0,
     "vel": 3,
     "size": 1,
@@ -265,18 +273,18 @@ def "create_enemy" "x, y, health, reload" (
 // add an enemy bullet object to the scene
 def "create_bullet" "x, y, dir, vel" (
   if bullets.len > bullet_cap (
-    bullets.delete(1)
+    void bullets.delete(1)
   )
-  bullets.append(this)
+  void bullets.append(this)
 )
 
 // add a simple particle object to the scene
 def "create_particle" "x, y, dir, costume" (
   if particles.len > particle_cap (
-    particles.delete(1)
+    void particles.delete(1)
   )
   
-  particles.append(this ++ {
+  void particles.append(this ++ {
     "frames": 0
   })
 )
@@ -290,7 +298,7 @@ def "movement" "speed" (
   pointat player.xvel player.yvel
   player.dir = direction
   if io.ability() (
-    if boosted.not() and (game_timer - ability.last_used > ability.cooldown) (
+    if !boosted and (game_timer - ability.last_used > ability.cooldown) (
       switch ability.name (
         case "Dash"
           move_player 200
@@ -316,19 +324,25 @@ def "movement" "speed" (
 )
 
 // add velocity to the player in the direction its facing
-def "move_player" "speed" (
+def "move_player" "sp" (
+  number speed = sp
   player.xvel += player.dir.sin() * speed
   player.yvel += player.dir.cos() * speed
 )
 
 def "create_random_enemy" "level" (
+  if typeof(level) != "number" (
+    error "level must be a number, got: " ++ level
+  )
   goto player.x player.y
   direction random(-180,180)
   create_enemy direction.sin() * random(300,2000) direction.cos() * random(300,2000) level level
 )
 
 def "go" "x, y" (
-  goto x + cam_x y + cam_y
+  number vx = x
+  number vy = y
+  goto vx + cam_x vy + cam_y
 )
 
 def "apply_upgrade" "upgrade" (
@@ -357,16 +371,16 @@ object renderer = {
   )
 }
 
-per = 0
-s = 0.7
+number per = 0
+number s = 0.7
 s_target = 0.5
 
-cam_x = 0
-cam_y = 0
+number cam_x = 0
+number cam_y = 0
 
-paused = false
+boolean paused = false
 
-cycles = 0
+number cycles = 0
 
 def addLine(dir) (
   return "line" + (dir.sin() * 60 + 3) + (dir.cos() * 60 + 3) + (dir.sin() * 120 + 3) + (dir.cos() * 120 + 3)
@@ -377,14 +391,14 @@ ability_sel_icn += addLine(0)
 ability_sel_icn += addLine(360 / abilities.len)
 ability_sel_icn += "cont 123 123 cont 3 123 cutcircle 3 3 60" + (18 / abilities.len) + (180 / abilities.len)
 
-number.wrap = def(low, high) -> (
+number.wrap @= def(low, high) -> (
   return ((self - low) % (high - low + 1) + (high - low + 1)) % (high - low + 1) + low
 )
 
-can = mouse_down.not()
+boolean can = !mouse_down
 
-temp_fps = 0
-last_fps = timestamp
+number temp_fps = 0
+number last_fps = timestamp
 
 mainloop:
 
@@ -396,7 +410,7 @@ if timestamp - last_fps > 1000 (
   last_fps = timestamp
 )
 
-gamepads @= getGamepads()
+array gamepads @= getGamepads()
 
 if gamepads.len > 0 (
   gamepad @= gamepads[1]
@@ -456,7 +470,7 @@ if current_wave == 0 and ability.name == null (
   )
   direction 90
  
-  can = mouse_down.not()
+  can = !mouse_down
   import "win-buttons"
   exit
 )
@@ -467,12 +481,12 @@ if player.died (
   if io.down() (
     player.died = false
   )
-  can = mouse_down.not()
+  can = !mouse_down
   import "win-buttons"
   exit
 )
 
-if game_timer > (particle_timer + 0.02) and paused.not() (
+if game_timer > (particle_timer + 0.02) and !paused (
   goto random(-100,100) random(-100,100)
   pointat 0 0
   create_particle player.x + x_position player.y + y_position direction white_square
@@ -481,7 +495,7 @@ if game_timer > (particle_timer + 0.02) and paused.not() (
 
 w @= window
 
-if paused.not() (
+if !paused (
   movement player.speed
   game_timer += timer - last_timer
 )
@@ -491,8 +505,8 @@ cam_x += io.x() / -5 - cam_x / 10
 cam_y += io.y() / -5 - cam_y / 10
 frame w.left * 2 + cam_x w.top * 2 + cam_y w.right * 2 + cam_x w.bottom * 2 + cam_y
 
-x = player.x
-y = player.y
+number x = player.x
+number y = player.y
 direction 90
 goto x * -s y * -s
 icon stars 100
@@ -510,7 +524,7 @@ for i particles.len (
   c #888
   pen "opacity" 100 - (particle.frames * 5)
   icon particle.costume s s
-  if paused.not() (
+  if !paused (
     particle.frames ++
     particle.x += particle.dir.sin() * s * -3
     particle.y += particle.dir.cos() * s * -3
@@ -533,7 +547,7 @@ if game_timer - damaged < 0.3 (
 )
 
 player.damage_multiplier = 1
-if paused.not() (
+if !paused (
   if game_timer - ability.last_used < ability.cooldown / 2 (
     if ability.name == "Ghost" or ability.name == "Dash" (
       pen "opacity" 50
@@ -549,7 +563,7 @@ if paused.not() (
 )
 renderer.drawPlayer()
 
-if paused.not() (
+if !paused (
   if io.down() (
     draw = game_timer - mouse_down_start * player.drawspeed
     dif = draw.clamp(0,300)
@@ -576,7 +590,7 @@ player.aim = direction
 arrows_del = []
 for i arrows.len (
   arrow @= arrows[i]
-  if paused.not (
+  if !paused (
     arrow.x += arrow.dir.sin() * arrow.vel
     arrow.y += arrow.dir.cos() * arrow.vel
   )
@@ -598,7 +612,7 @@ each i arrows_del (
 bullets_del = []
 for i bullets.len (
   bullet @= bullets[i]
-  if paused.not (
+  if !paused (
     bullet.x += bullet.dir.sin() * bullet.vel
     bullet.y += bullet.dir.cos() * bullet.vel
   )
@@ -629,14 +643,15 @@ dist2 = 50 * s
 enemies_del = []
 for i enemies.len (
   enemy @= enemies[i]
-  x = player.x - enemy.x * -s
-  y = player.y - enemy.y * -s
+  local x = player.x - enemy.x * -s
+  local y = player.y - enemy.y * -s
+  log "x" x "y" y "px" player.x "py" player.y "ex" enemy.x "ey" enemy.y "s" s
   goto x y
   dist00 = dist(0,0,x,y).abs()
   pointat random(-100,100) random(-100,100)
   
   if dist00 < (2000 * s) (
-    if paused.not() (
+    if !paused (
       if game_timer - enemy.last > 2 / enemy.reload (
         create_bullet player.x + (x / s) player.y + (y / s) direction + random(-5,5) 20
         enemy.last = game_timer
@@ -650,15 +665,15 @@ for i enemies.len (
           void io.haptic("strong")
           damaged = game_timer - 0.3
           player.health -= 0.5
-          enemies_del.append(i)
+          void enemies_del.append(i)
         )
       )
       for i2 arrows.len (
         arrow @= arrows[i2]
         pos = position_entity(arrow.x,arrow.y)
         if dist(pos.x, pos.y, x, y).abs() < dist2 (
-          enemies_del.append(i)
-          arrows.delete(i2)
+          void enemies_del.append(i)
+          void arrows.delete(i2)
           loop 5 (
             direction random(-180,180)
             create_particle player.x + (x / s) player.y + (y / s) direction white_square
@@ -683,8 +698,8 @@ each i enemies_del (
     create_particle player.x + (x / s) player.y + (y / s) direction white_square
   )
 
-  enemies.delete(i - offset)
-  notifs.insert(1,{
+  void enemies.delete(i - offset)
+  void notifs.insert(1,{
     "txt":  "Enemy Killed",
     "time": timer
   })
@@ -720,7 +735,7 @@ if enemies.len == 0 (
   )
 
   current_wave ++
-  loop (current_wave * 1.5).round() (
+  loop ceil(current_wave * 1.5) (
     create_random_enemy 1
   )
   wave_popup.time = timer
@@ -771,7 +786,7 @@ if upgrade_mode (
     pen "opacity" time > 2 ? 100 - (time - 2 * 100) 100
     text notif.txt 10
     if timer - notif.time > 3 (
-      notifs.delete(i)
+      void notifs.delete(i)
       i --
     )
     change_y -20
@@ -783,6 +798,6 @@ c #fff
 loc 2 -2 10 20
 text bullets.len + enemies.len + particles.len + arrows.len + "Objects / " ++ fps + "Fps / Game Timer" + game_timer 10
 
-can = mouse_down.not()
+can = !mouse_down
 
 import "win-buttons"

@@ -2,12 +2,15 @@
   "title": "Arrow",
   "description": "Arrow is a wave based survival game where you must defeat enemies and level up your character.",
   "author": "Mist",
-  "version": "1.3",
+  "version": "1.4",
   "genre": "Action, Arcade, Shooter",
   "game_modes": [
     "Single-PLayer"
   ],
   "supports":[
     "originOS"
+  ],
+  "screenshots": [
+    "main.png"
   ]
 }
