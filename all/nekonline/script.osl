@@ -1,7 +1,8 @@
 // -------------------------------------
 //  Nekonline - Kitty Cat Online Counter
-//             Version 0.9
-//  Contributors: NamelessCat (nameless)
+//             Version 1.1
+//  Contributors: NamelessCat (nameless),
+//                Sophie (mistium)
 // -------------------------------------
 
 // Sprites were created by Elthen on itch.io:
@@ -89,7 +90,7 @@ def renderCats() (
       catMeta.nextTime = random(3000, 30000)
     )
     // Calculate any movement
-    if dragging == catMeta.name (
+    if dragging == name (
       catMeta.x = mouse_x.clamp(window.left + 80, window.right - 40)
       catMeta.target_x = catMeta.x
       catMeta.anim = "grabbed"
@@ -121,28 +122,28 @@ def renderCats() (
         change_y (frameN - catMeta.animstart).clamp(0, 3) * 5 - 15
         break
       case "walk"
-        carSprite = sprite.walk[(frameN / 2).floor() % 8 + 1]
+        carSprite = sprite.walk[floor(frameN / 2) % 8 + 1]
         break
       case "idle"
-        carSprite = sprite.idle[(frameN / 2).floor() % 4 + 1]
+        carSprite = sprite.idle[floor(frameN / 2) % 4 + 1]
         break
     )
     image carSprite catMeta.direction > 0 ? 70 -70 70
     
     // If car is touching mouse pointer, display it in front
     square 30 60 0 0 1
-    if mouse_touching and (dragging == "") (
+    if mouse_touching and dragging == "" (
       cursor "grab"
       catMeta.z = catsN
       catsN ++
       if onclick (
         catMeta.anim = "dragging"
-        dragging = catMeta.name
+        dragging = name
       )
     )
     
     // Draw nametag
-    local tagcolor = (friendslist.contains(catMeta.name) or (catMeta.name === username)) ? user.theme.accent user.theme.text
+    local tagcolor = (friendslist.contains(name) or (name === username)) ? user.theme.accent user.theme.text
     square catMeta.name.len * 5 + 10 10 5 : chy#5 c#user.theme.background
     centext catMeta.name 5 : c#tagcolor
     
@@ -163,7 +164,7 @@ frameN = 0
 
 // The networking parts :sob:
 
-friendslist = user["sys.friends"]
+friendslist @= user["sys.friends"]
 
 def updateCatche() (
   local online = network.online
@@ -174,7 +175,7 @@ def updateCatche() (
   )
   local keys = cats.getKeys()
   for i keys.len (
-    if online.contains(keys[i]).not (
+    if !online.contains(keys[i]) (
       void cats.delete(keys[i])
     )
   )
@@ -182,7 +183,8 @@ def updateCatche() (
 
 mainloop:
 window.width = screensize_x / 3
-window.callRender()
+goto -frame.x -frame.y
+image "wallpaper" background_width background_height
 
 if prevFrame + 100 < timestamp (
   prevFrame = timestamp
@@ -201,8 +203,8 @@ if cute_x != null (
   icon "favorites-full" 1 : c#f55
 )
 
-//if "Control".isKeyDown() (
-//  if "ArrowDown".onKeyDown() (
-//    window.close()
-//  )
-//)
+if "Control".isKeyDown() (
+  if "ArrowDown".onKeyDown() (
+    window.close()
+  )
+)
