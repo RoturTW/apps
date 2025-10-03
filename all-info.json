@@ -21,7 +21,7 @@
     "script": {
       "scriptSize": 3145,
       "scriptLines": 194,
-      "lastModified": 1759465749577
+      "lastModified": 1759466768420
     }
   },
   "arrow": {
@@ -48,7 +48,7 @@
     "script": {
       "scriptSize": 18551,
       "scriptLines": 804,
-      "lastModified": 1759465749578
+      "lastModified": 1759466768422
     }
   },
   "claw": {
@@ -82,7 +82,7 @@
     "script": {
       "scriptSize": 14732,
       "scriptLines": 618,
-      "lastModified": 1759465749581
+      "lastModified": 1759466768424
     }
   },
   "clicker game": {
@@ -107,7 +107,7 @@
     "script": {
       "scriptSize": 3125,
       "scriptLines": 125,
-      "lastModified": 1759465749581
+      "lastModified": 1759466768425
     }
   },
   "dock themer": {
@@ -134,7 +134,7 @@
     "script": {
       "scriptSize": 916,
       "scriptLines": 43,
-      "lastModified": 1759465749581
+      "lastModified": 1759466768425
     }
   },
   "flappy bird": {
@@ -159,7 +159,7 @@
     "script": {
       "scriptSize": 2960,
       "scriptLines": 146,
-      "lastModified": 1759465749582
+      "lastModified": 1759466768426
     }
   },
   "fluficord": {
@@ -189,7 +189,7 @@
     "script": {
       "scriptSize": 33987,
       "scriptLines": 1137,
-      "lastModified": 1759465749595
+      "lastModified": 1759466768439
     }
   },
   "focuser": {
@@ -211,7 +211,7 @@
     "script": {
       "scriptSize": 393,
       "scriptLines": 20,
-      "lastModified": 1759465749595
+      "lastModified": 1759466768439
     }
   },
   "fortnite skibidi 2024": {
@@ -239,7 +239,7 @@
     "script": {
       "scriptSize": 4619,
       "scriptLines": 223,
-      "lastModified": 1759465749603
+      "lastModified": 1759466768446
     }
   },
   "goose": {
@@ -264,7 +264,7 @@
     "script": {
       "scriptSize": 2332,
       "scriptLines": 95,
-      "lastModified": 1759465749605
+      "lastModified": 1759466768449
     }
   },
   "jump and run": {
@@ -289,7 +289,7 @@
     "script": {
       "scriptSize": 3956,
       "scriptLines": 194,
-      "lastModified": 1759465749606
+      "lastModified": 1759466768449
     }
   },
   "lights out": {
@@ -314,7 +314,7 @@
     "script": {
       "scriptSize": 1110,
       "scriptLines": 71,
-      "lastModified": 1759465749606
+      "lastModified": 1759466768449
     }
   },
   "mallet": {
@@ -338,14 +338,14 @@
     "script": {
       "scriptSize": 29643,
       "scriptLines": 1128,
-      "lastModified": 1759465749606
+      "lastModified": 1759466768450
     }
   },
   "nekonline": {
     "title": "Nekonline",
     "description": "A virtual pet widget that sits above the OriginOS dock, displaying all online users as cute lil kitty cats.\nControls:\n- Each cat cooresponds to a user actively on OriginOS. You and your Rotur friends are highlighted.\n- Cats can be dragged around by clicking and holding them.",
     "author": "Nameless",
-    "version": "0.9",
+    "version": "1.0",
     "genre": "Desktop Pet, Utility, Multiplayer",
     "game_modes": [
       "Multiplayer"
@@ -356,14 +356,14 @@
     ],
     "icon": "w 20 c #a88 dot 0 0 w 18 c #daa dot 0 0 image https://raw.githubusercontent.com/NexusKitten/images/main/nekonline/mrmowmow.png 16\n",
     "size": {
-      "bytes": 5354,
-      "kilobytes": "5.23",
+      "bytes": 5663,
+      "kilobytes": "5.53",
       "megabytes": "0.01"
     },
     "script": {
-      "scriptSize": 4725,
-      "scriptLines": 195,
-      "lastModified": 1759465749606
+      "scriptSize": 5034,
+      "scriptLines": 209,
+      "lastModified": 1759466768450
     }
   },
   "oft": {
@@ -390,7 +390,7 @@
     "script": {
       "scriptSize": 877,
       "scriptLines": 43,
-      "lastModified": 1759465749612
+      "lastModified": 1759466768456
     }
   },
   "originchats": {
@@ -420,7 +420,7 @@
     "script": {
       "scriptSize": 14238,
       "scriptLines": 573,
-      "lastModified": 1759465749613
+      "lastModified": 1759466768456
     }
   },
   "origincord": {
@@ -450,7 +450,7 @@
     "script": {
       "scriptSize": 39802,
       "scriptLines": 1543,
-      "lastModified": 1759465749613
+      "lastModified": 1759466768457
     }
   },
   "originfy": {
@@ -474,7 +474,7 @@
     "script": {
       "scriptSize": 7238,
       "scriptLines": 301,
-      "lastModified": 1759465749615
+      "lastModified": 1759466768459
     }
   },
   "originkill": {
@@ -504,7 +504,7 @@
     "script": {
       "scriptSize": 40739,
       "scriptLines": 1431,
-      "lastModified": 1759465749631
+      "lastModified": 1759466768475
     }
   },
   "ping pong": {
@@ -529,7 +529,7 @@
     "script": {
       "scriptSize": 1735,
       "scriptLines": 100,
-      "lastModified": 1759465749631
+      "lastModified": 1759466768475
     }
   },
   "rat simulater 2013": {
@@ -554,7 +554,7 @@
     "script": {
       "scriptSize": 6760,
       "scriptLines": 249,
-      "lastModified": 1759465749635
+      "lastModified": 1759466768478
     }
   },
   "salium": {
@@ -588,7 +588,7 @@
     "script": {
       "scriptSize": 4672,
       "scriptLines": 198,
-      "lastModified": 1759465749654
+      "lastModified": 1759466768497
     }
   },
   "slider": {
@@ -613,7 +613,7 @@
     "script": {
       "scriptSize": 2201,
       "scriptLines": 86,
-      "lastModified": 1759465749654
+      "lastModified": 1759466768497
     }
   },
   "snake": {
@@ -638,7 +638,7 @@
     "script": {
       "scriptSize": 2245,
       "scriptLines": 123,
-      "lastModified": 1759465749654
+      "lastModified": 1759466768497
     }
   },
   "super slime bros": {
@@ -668,7 +668,7 @@
     "script": {
       "scriptSize": 22775,
       "scriptLines": 930,
-      "lastModified": 1759465749658
+      "lastModified": 1759466768501
     }
   },
   "timer": {
@@ -690,7 +690,7 @@
     "script": {
       "scriptSize": 463,
       "scriptLines": 28,
-      "lastModified": 1759465749658
+      "lastModified": 1759466768501
     }
   },
   "todo": {
@@ -717,7 +717,7 @@
     "script": {
       "scriptSize": 1166,
       "scriptLines": 54,
-      "lastModified": 1759465749658
+      "lastModified": 1759466768501
     }
   },
   "ultimate monster collector": {
@@ -746,7 +746,7 @@
     "script": {
       "scriptSize": 6825,
       "scriptLines": 293,
-      "lastModified": 1759465749667
+      "lastModified": 1759466768510
     }
   },
   "wosle": {
@@ -776,7 +776,7 @@
     "script": {
       "scriptSize": 24916,
       "scriptLines": 254,
-      "lastModified": 1759465749672
+      "lastModified": 1759466768515
     }
   },
   "youtube": {
@@ -801,7 +801,7 @@
     "script": {
       "scriptSize": 3423,
       "scriptLines": 123,
-      "lastModified": 1759465749672
+      "lastModified": 1759466768515
     }
   }
 }
