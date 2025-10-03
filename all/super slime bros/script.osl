@@ -69,7 +69,7 @@ def addPlayer(x,y) (
   })
 )
 
-def "reset_data" (
+reset_data @= () -> (
   array players = []
 
   number guy1_frm = 0
@@ -140,7 +140,7 @@ def "reset_data" (
 )
 
 zoom = 1
-main_image = random(0,3)
+number main_image = random(0,3)
 
 object types = {
   "basic":"The Basic Slime :/",
@@ -251,14 +251,14 @@ def "attack" "player, attack_type" (
 )
 
 def "collide" "width, height, reset, droppable" (
-  hitbox width height player1_x + cam_x player1_y - 40 + cam_y
+  hitbox width height player1_x player1_y - 40
   if p1_upordown and droppable or droppable.not() and collided (
     player1_grounded = true
     player1_y = reset
     player1_yvel = 0
   )
 
-  hitbox width height player2_x + cam_x player2_y - 40 + cam_y
+  hitbox width height player2_x player2_y - 40
   if p2_upordown and droppable or droppable.not() and collided (
     player2_grounded = true
     player2_y = reset
@@ -284,8 +284,10 @@ def "slime" "sli_name, pl" (
     square 80 80 15 : c#000
   )
   square 80 80 10 : c#eee
-  if onclick "switchslime sli_name pl"
-  image github ++ "assets/" ++ sli_name ++ "/walk/" ++ curframe.round ++ ".png" 130
+  if onclick (
+    switchslime sli_name pl
+  )
+  image github ++ "assets/" ++ sli_name ++ "/walk/" ++ round(curframe) ++ ".png" 130
 )
 
 def "ability" "abi_name, pl" (
@@ -293,7 +295,9 @@ def "ability" "abi_name, pl" (
     square 80 80 15 : c#000
   )
   square 80 80 10 : c#eee
-  if onclick "switchability abi_name pl"
+  if onclick (
+    switchability abi_name pl
+  )
   image github ++ "assets/abilities/" ++ abi_name ++ ".png" 80
 )
 
@@ -318,7 +322,7 @@ def "update_stage_data" (
   stage_name = name
 )
 
-reset_data
+reset_data()
 
 loading_total = 0
 array loading = []
@@ -377,14 +381,16 @@ if loading.len > 0 (
   goto 0 0
   bar 300 20 10 load_percent
   goto -130 -30
-  text (load_percent * 100).round() ++ "% Loaded" 10 : c#000
+  text round(load_percent * 100) ++ "% Loaded" 10 : c#000
   loc 2 2 20 -20
   text `Loading: ${loading_cur}` 10 : c#000
   // renders a loading bar for the currently loading images
 
   loc 2 -2 100 30
   square 170 30 10 : c#ccc
-  if clicked "window stop"
+  if clicked (
+    window.close()
+  )
 
   loc 2 -2 30 30
   icon "close" 0.7 : c#000
@@ -394,7 +400,9 @@ if loading.len > 0 (
 )
 
 cur_loaded_image += 1
-if cur_loaded_image > loaded_images.len "cur_loaded_image = 1"
+if cur_loaded_image > loaded_images.len (
+  cur_loaded_image = 1
+)
 image loaded_images[cur_loaded_image] 0
 
 zoom += 1 - zoom / 20
@@ -409,12 +417,11 @@ if page == "win" (
       page = "main"
     )
   )
-  assets = "https://raw.githubusercontent.com/Mistium/Super-Slime-Bros/main/assets/"
   if player1_lives > 0 (
-    player_image = assets ++ player1_type ++ "/walk/1.png"
+    player_image = github ++ "assets/" ++ player1_type ++ "/walk/1.png"
     txt = "Player 1 Wins!"
   ) else (
-    player_image = assets ++ player2_type ++ "/walk/1.png"
+    player_image = github ++ "assets/" ++ player2_type ++ "/walk/1.png"
     txt = "Player 2 Wins!"
   )
   t = timer * 150
@@ -553,7 +560,9 @@ if stage == 0 and page == "main" (
           cursor "pointer"
           if onclick (
             lvl_page += 1
-            if lvl_page > tot_lvls "lvl_page = 1"
+            if lvl_page > tot_lvls (
+              lvl_page = 1
+            )
             update_stage_data
           )
         )
@@ -565,7 +574,9 @@ if stage == 0 and page == "main" (
           cursor "pointer"
           if onclick (
             lvl_page -= 1
-            if lvl_page < 1 "lvl_page = tot_lvls"
+            if lvl_page < 1 (
+              lvl_page = tot_lvls
+            )
             update_stage_data
           )
         )
@@ -573,14 +584,14 @@ if stage == 0 and page == "main" (
       case "play"
         page = 0
         stage = selected_stage
-        reset_data
+        reset_data()
         break
       case "fullscreen"
         window "maximise"
         page = "main"
         break
       case "quit"
-        window "stop"
+        window.close()
         break
     )
   )
@@ -660,21 +671,37 @@ if stage == 0 and page == "main" (
       )
     )
 
-    if player1_dir == "r" "player1_target = 100" else "player1_target = -100"
-    if player2_dir == "r" "player2_target = 100" else "player2_target = -100"
+    player1_target = player1_dir == "r" ? 100 -100
+    player2_target = player2_dir == "r" ? 100 -100
 
     player1_speedmod = player1_speed
-    if player1_grounded "player1_speedmod += 2"
-    if player1_ability == "dash" and player1_grounded.not() "player1_speedmod *= 2"
-    if timer - player1_ifrm < 0.5 "player1_speedmod /= 4"
+    if player1_grounded (
+      player1_speedmod += 2
+    )
+    if player1_ability == "dash" and player1_grounded.not() (
+      player1_speedmod *= 2
+    )
+    if timer - player1_ifrm < 0.5 (
+      player1_speedmod /= 4
+    )
 
     player2_speedmod = player2_speed
-    if player2_grounded "player2_speedmod += 2"
-    if player2_ability == "dash" and player2_grounded.not() "player2_speedmod *= 2"
-    if timer - player2_ifrm < 0.5 "player2_speedmod /= 4"
+    if player2_grounded (
+      player2_speedmod += 2
+    )
+    if player2_ability == "dash" and player2_grounded.not() (
+      player2_speedmod *= 2
+    )
+    if timer - player2_ifrm < 0.5 (
+      player2_speedmod /= 4
+    )
 
-    if player1_ability == "heal" "player1_health -= 0.02"
-    if player2_ability == "heal" "player2_health -= 0.02"
+    if player1_ability == "heal" (
+      player1_health -= 0.02
+    )
+    if player2_ability == "heal" (
+      player2_health -= 0.02
+    )
 
     player1_health.clamp(0,9999)
     player2_health.clamp(0,9999)
@@ -722,7 +749,7 @@ if stage == 0 and page == "main" (
       player2_target *= 0.1
       player2_startdou = true
     )
-    if player2_startdou and "arrowUp".isKeyDown().not (
+    if player2_startdou and "arrowUp".isKeyDown().not() (
       player2_double = true
     )
     player1_yvel -= player1_gravity
@@ -838,18 +865,22 @@ if stage == 0 and page == "main" (
 
     z = 20 * zoom
     goto player1_x * zoom player1_y * zoom + 20
-    if player1_type == "heavy" "change_y 25 * zoom"
-    stretch "x" player1_stretch.int
-    image `https://raw.githubusercontent.com/Mistium/Super-Slime-Bros/main/assets/${player1_type}/${player1_anim}/${player1_frame.round}.png` player1_size * zoom
+    if player1_type == "heavy" (
+      change_y 25 * zoom
+    )
+    stretch "x" player1_stretch.toNum()
+    image github ++ `assets/${player1_type}/${player1_anim}/${round(player1_frame)}.png` player1_size * zoom
     change_y 60 * zoom
     square z z 10 * zoom : c#8a3d34
     change_x -5 * zoom
     text "1" 10 * zoom : c#fff
 
     goto player2_x * zoom player2_y * zoom + 20
-    if player2_type == "heavy" "change_y 25 * zoom"
+    if player2_type == "heavy" (
+      change_y 25 * zoom
+    )
     stretch "x" player2_stretch.toNum()
-    image `https://raw.githubusercontent.com/Mistium/Super-Slime-Bros/main/assets/${player2_type}/${player2_anim}/${player2_frame.round}.png` player2_size * zoom
+    image github ++ `assets/${player2_type}/${player2_anim}/${round(player2_frame)}.png` player2_size * zoom
     change_y 60 * zoom
     square z z 10 * zoom : c#345b8a
     change_x -5 * zoom
@@ -871,10 +902,10 @@ if stage == 0 and page == "main" (
     square 150 30 10 : c#333
 
     loc 999 -2 -160 35
-    text `1: ${player1_health.round}%` 15 : c#fff
+    text `1: ${round(player1_health)}%` 15 : c#fff
 
     loc 999 -2 20 35
-    text `2: ${player2_health.round}%` 15
+    text `2: ${round(player2_health)}%` 15
 
     loc 999 -2 -150 100
     text `${player1_lives} Lives Left` 10
@@ -885,11 +916,15 @@ if stage == 0 and page == "main" (
     loc 2 2 25 -25
     square 30 30 15 : c#277564
     icon "home" 1 : c#fff
-    if mouse_touching "cursor pointer"
-    if clicked (
-      stage = 0
-      page = "main"
+    if mouse_touching (
+      cursor "pointer"
+      if clicked (
+        stage = 0
+        page = "main"
+      )
     )
   )
-if mouse_down.not() "can = true"
+  if mouse_down.not() (
+    can = true
+  )
 frame "clear"
