@@ -21,7 +21,7 @@
     "script": {
       "scriptSize": 3145,
       "scriptLines": 194,
-      "lastModified": 1759464103788
+      "lastModified": 1759465749577
     }
   },
   "arrow": {
@@ -48,7 +48,7 @@
     "script": {
       "scriptSize": 18551,
       "scriptLines": 804,
-      "lastModified": 1759464103790
+      "lastModified": 1759465749578
     }
   },
   "claw": {
@@ -82,7 +82,7 @@
     "script": {
       "scriptSize": 14732,
       "scriptLines": 618,
-      "lastModified": 1759464103792
+      "lastModified": 1759465749581
     }
   },
   "clicker game": {
@@ -107,7 +107,7 @@
     "script": {
       "scriptSize": 3125,
       "scriptLines": 125,
-      "lastModified": 1759464103793
+      "lastModified": 1759465749581
     }
   },
   "dock themer": {
@@ -134,7 +134,7 @@
     "script": {
       "scriptSize": 916,
       "scriptLines": 43,
-      "lastModified": 1759464103793
+      "lastModified": 1759465749581
     }
   },
   "flappy bird": {
@@ -159,7 +159,7 @@
     "script": {
       "scriptSize": 2960,
       "scriptLines": 146,
-      "lastModified": 1759464103794
+      "lastModified": 1759465749582
     }
   },
   "fluficord": {
@@ -189,7 +189,7 @@
     "script": {
       "scriptSize": 33987,
       "scriptLines": 1137,
-      "lastModified": 1759464103807
+      "lastModified": 1759465749595
     }
   },
   "focuser": {
@@ -211,7 +211,7 @@
     "script": {
       "scriptSize": 393,
       "scriptLines": 20,
-      "lastModified": 1759464103807
+      "lastModified": 1759465749595
     }
   },
   "fortnite skibidi 2024": {
@@ -239,7 +239,7 @@
     "script": {
       "scriptSize": 4619,
       "scriptLines": 223,
-      "lastModified": 1759464103814
+      "lastModified": 1759465749603
     }
   },
   "goose": {
@@ -264,7 +264,7 @@
     "script": {
       "scriptSize": 2332,
       "scriptLines": 95,
-      "lastModified": 1759464103817
+      "lastModified": 1759465749605
     }
   },
   "jump and run": {
@@ -289,7 +289,7 @@
     "script": {
       "scriptSize": 3956,
       "scriptLines": 194,
-      "lastModified": 1759464103817
+      "lastModified": 1759465749606
     }
   },
   "lights out": {
@@ -314,7 +314,7 @@
     "script": {
       "scriptSize": 1110,
       "scriptLines": 71,
-      "lastModified": 1759464103818
+      "lastModified": 1759465749606
     }
   },
   "mallet": {
@@ -338,7 +338,7 @@
     "script": {
       "scriptSize": 29643,
       "scriptLines": 1128,
-      "lastModified": 1759464103818
+      "lastModified": 1759465749606
     }
   },
   "nekonline": {
@@ -363,7 +363,7 @@
     "script": {
       "scriptSize": 4725,
       "scriptLines": 195,
-      "lastModified": 1759464103818
+      "lastModified": 1759465749606
     }
   },
   "oft": {
@@ -390,7 +390,7 @@
     "script": {
       "scriptSize": 877,
       "scriptLines": 43,
-      "lastModified": 1759464103824
+      "lastModified": 1759465749612
     }
   },
   "originchats": {
@@ -420,7 +420,7 @@
     "script": {
       "scriptSize": 14238,
       "scriptLines": 573,
-      "lastModified": 1759464103825
+      "lastModified": 1759465749613
     }
   },
   "origincord": {
@@ -450,7 +450,7 @@
     "script": {
       "scriptSize": 39802,
       "scriptLines": 1543,
-      "lastModified": 1759464103825
+      "lastModified": 1759465749613
     }
   },
   "originfy": {
@@ -474,7 +474,7 @@
     "script": {
       "scriptSize": 7238,
       "scriptLines": 301,
-      "lastModified": 1759464103827
+      "lastModified": 1759465749615
     }
   },
   "originkill": {
@@ -504,7 +504,7 @@
     "script": {
       "scriptSize": 40739,
       "scriptLines": 1431,
-      "lastModified": 1759464103843
+      "lastModified": 1759465749631
     }
   },
   "ping pong": {
@@ -529,7 +529,7 @@
     "script": {
       "scriptSize": 1735,
       "scriptLines": 100,
-      "lastModified": 1759464103843
+      "lastModified": 1759465749631
     }
   },
   "rat simulater 2013": {
@@ -554,7 +554,7 @@
     "script": {
       "scriptSize": 6760,
       "scriptLines": 249,
-      "lastModified": 1759464103847
+      "lastModified": 1759465749635
     }
   },
   "salium": {
@@ -588,7 +588,7 @@
     "script": {
       "scriptSize": 4672,
       "scriptLines": 198,
-      "lastModified": 1759464103865
+      "lastModified": 1759465749654
     }
   },
   "slider": {
@@ -613,7 +613,7 @@
     "script": {
       "scriptSize": 2201,
       "scriptLines": 86,
-      "lastModified": 1759464103865
+      "lastModified": 1759465749654
     }
   },
   "snake": {
@@ -638,14 +638,14 @@
     "script": {
       "scriptSize": 2245,
       "scriptLines": 123,
-      "lastModified": 1759464103866
+      "lastModified": 1759465749654
     }
   },
   "super slime bros": {
     "title": "super slime bros",
     "description": "Super Slime Bros is a remake of the core systems inside the game \"super smash bros\" written entirely in osl (origin scripting language)\n\nSSB is a video game tailored towards more competitive players who want to fight their friends in a complex games environment with many different play styles, there is no specific story that actually affects the gameplay, instead, the most popular version of the game is where you fight against other players using one of many different characters.\n\nIn SSB you can select characters and each character has a set of unique moves that it can use in order to deal damage to other players. Damage in this game doesn't work in the traditional sense, instead of dying when you hit a certain threshold, you get knocked further, the more damage you've taken, when you are hit by attacks from players.",
     "author": "Mist",
-    "version": "2.8",
+    "version": "2.9",
     "genre": "Fighting, Action, Multiplayer",
     "game_modes": [
       "local-multi-player"
@@ -661,14 +661,14 @@
     ],
     "icon": "image https://raw.githubusercontent.com/Mistium/Super-Slime-Bros/main/assets/icon.png 20\n",
     "size": {
-      "bytes": 898784,
-      "kilobytes": "877.72",
+      "bytes": 898793,
+      "kilobytes": "877.73",
       "megabytes": "0.86"
     },
     "script": {
-      "scriptSize": 22766,
-      "scriptLines": 895,
-      "lastModified": 1759464103870
+      "scriptSize": 22775,
+      "scriptLines": 930,
+      "lastModified": 1759465749658
     }
   },
   "timer": {
@@ -690,7 +690,7 @@
     "script": {
       "scriptSize": 463,
       "scriptLines": 28,
-      "lastModified": 1759464103870
+      "lastModified": 1759465749658
     }
   },
   "todo": {
@@ -717,7 +717,7 @@
     "script": {
       "scriptSize": 1166,
       "scriptLines": 54,
-      "lastModified": 1759464103870
+      "lastModified": 1759465749658
     }
   },
   "ultimate monster collector": {
@@ -746,7 +746,7 @@
     "script": {
       "scriptSize": 6825,
       "scriptLines": 293,
-      "lastModified": 1759464103879
+      "lastModified": 1759465749667
     }
   },
   "wosle": {
@@ -776,7 +776,7 @@
     "script": {
       "scriptSize": 24916,
       "scriptLines": 254,
-      "lastModified": 1759464103883
+      "lastModified": 1759465749672
     }
   },
   "youtube": {
@@ -801,7 +801,7 @@
     "script": {
       "scriptSize": 3423,
       "scriptLines": 123,
-      "lastModified": 1759464103883
+      "lastModified": 1759465749672
     }
   }
 }
