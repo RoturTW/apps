@@ -147,9 +147,9 @@ def renderCats() (
     square catMeta.name.len * 5 + 10 10 5 : chy#5 c#user.theme.background
     centext catMeta.name 5 : c#tagcolor
     
+    cute_x = null
     if name == "mist" and cats.iris != null (
       number cuteDist = catMeta.x - cats.iris.x
-      cute_x = null
       if abs(cuteDist) < 60 (
         cute_x = catMeta.x - (cuteDist / 2)
       )
