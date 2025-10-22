@@ -421,6 +421,7 @@ class UI (
                 UI.neededMessages[channel] = UI.neededMessagesDefault
                 UI.user_list.refresh()
                 UI.emote_menu.open = false
+                UI.messages.fr = 0
               )
             )
             goto frame.width * -.5 + 25 y
@@ -501,7 +502,14 @@ class UI (
     height = 1
     messageSize = 10
     cacheHeight = {}
+    lastW = 0
+    fr = 0
     def update() (
+      if window.width != self.lastW or self.fr < 2 (
+        self.lastW = window.width
+        self.cacheHeight @= {}
+      )
+      self.fr ++
       c prim
       frame window.left + UI.channel_list.real_width window.top - 40 window.right - UI.user_list.real_width window.bottom + UI.input_bar.height self.height "messages" (
         local messages @= Net.channelMessages[UI.selected_channel]
@@ -522,9 +530,6 @@ class UI (
         local drawText @= UI.drawText
         local drawEmote @= UI.drawEmote
         local messageSize = self.messageSize
-        contentCache ??= {}
-        heightCache ??= {}
-        isConnectedCache ??= {}
         for msgi this.messages.len (
           local msg @= this.messages[this.msgi]
           local msgData @= Net.messages[msg]
@@ -547,7 +552,7 @@ class UI (
             height = 0
           )
           
-          local content @= msgData.content.wrapText(frame.width / self.messageSize - 4).strip()
+          local content @= msgData.content.strip().wrapText(frame.width / self.messageSize - 4)
           local Muser @= msgData.user
           //temp = {}
           local doTitle @= (messages[msgi + 1] != null) ? isConnected(msgData,Net.messages[messages[msgi + 1]]).not() true
@@ -943,7 +948,6 @@ class UI (
                 local tagi = 0
                 for tagi tags.len (
                   local tag @= tags[tagi]
-                  log tags
                   square 20 20 0 0 1 : chx#22 tooltip#tag.tooltip
                   c txtc
                   if tag.color != null (
