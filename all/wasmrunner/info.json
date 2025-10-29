@@ -1,5 +1,5 @@
 {
-  "title": "Wasm Runner",
+  "title": "WasmRunner",
   "description": "Simple development app for running web assembly (text) through js",
   "author": "Flufi",
   "version": "1.0",
