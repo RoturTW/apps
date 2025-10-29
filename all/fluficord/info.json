@@ -4,8 +4,8 @@
   "author": "Flufi",
   "version": "0.9b",
   "genre": "Social, Communication, Messaging",
-  "game_modes": ["Single-player"],
+  "game_modes": ["Multi-player"],
   "permissions": [],
   "supports":["originOS"],
-  "screenshots": ["fluficord1.png","fluficord2.png","fluficord3.png"]
+  "screenshots": ["fluficord1.png"]
 }

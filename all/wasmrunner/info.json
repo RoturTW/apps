@@ -1,0 +1,11 @@
+{
+  "title": "Wasm Runner",
+  "description": "Simple development app for running web assembly (text) through js",
+  "author": "Flufi",
+  "version": "1.0",
+  "genre": "Utility",
+  "game_modes": ["Single-player"],
+  "permissions": ["javascript"],
+  "supports":["originOS"],
+  "screenshots": ["wasmrunner1.png", "wasmrunner2.png"]
+}
