@@ -1,0 +1,358 @@
+import "window_tools" as "wt"
+
+// TODO?: maybe check if its binary and convert it using wabt?
+
+file "use_type" "wasm"
+file "use_type" "wat"
+
+if windows.permissions.contains("javascript").not() (
+  permission "request" "javascript"
+)
+
+save "wasmRunner@flufi" "set_directory"
+
+def compileOHF(ohf) (
+  if typeof(ohf) != "object" (
+    return ""
+  )
+  
+  local output = {
+    tokens: {},
+    overrides: {},
+    parser: {}
+  }
+
+  try (
+    if ohf.categories != null (
+      each o ohf.categories.getValues() (
+        each r o.tokens (
+          output.tokens["tkn:" ++ r] = o.color
+        )
+      )
+    )
+  
+    if ohf.overrides != null (
+      each o ohf.overrides.getKeys() (
+        output.overrides[o] = ohf.overrides[o]
+      )
+    )
+  
+    output.parser = ohf.parser ?? {}
+    output.highlighter = ohf.highlighter ?? {}
+  ) catch o (
+    error o
+    return ""
+  )
+
+  return output
+)
+
+def getOHF(string type) (
+  type = type.toUpper()
+  if type.startsWith(".") (
+    type.trim(2,-1)
+  )
+  local load_save = false
+  if (type ++ ".ohf").saveExists() (
+    load_save = timestamp - (type ++ ".ohf").saveGet(10) < 86400000
+  )
+  if load_save (
+    return (type ++ ".ohf").saveGet()
+  ) else (
+    local OHF = ("https://origin.mistium.com/Other/OHF/" ++ type.toUpper() ++ ".ohf").httpGet()
+    if OHF == "404: Not Found" and (type ++ ".ohf").saveExists() (
+      return (type ++ ".ohf").saveGet()
+    ) else (
+      save type ++ ".ohf" "set" OHF
+      return OHF
+    )
+  )
+)
+
+class Topbar (
+  array rightButtons = [
+    {
+      icon: "close",
+      click: window.close
+    },
+    {
+      icon: "down",
+      click: window.minimise
+    },
+    {
+      icon: "maximise",
+      click: window.fullscreen
+    }
+  ]
+  array leftButtons = [
+    {
+      icon: "play",
+      click: def() -> (
+        Runtime.runInput()
+      )
+    },
+    {
+      icon: "bin",
+      icon_size: 1.2,
+      click: def() -> (
+        Runtime.logs = []
+      )
+    }
+  ]
+  
+  def buttons() (
+    loc -2 9999 -20 0
+    change_x 25
+    
+    for i rightButtons.len (
+      local button @= rightButtons[i]
+      
+      c txtc
+      icon button.icon 0.6 * (button.icon_size ?? 1) : hover_size#1.1 chx#-25
+      if mouse_touching (
+        cursor "pointer"
+        if onclick (
+          void button.click()
+        )
+      )
+    )
+    
+    loc 2 9999 15 0
+    change_x -25
+    
+    for i leftButtons.len (
+      local button @= leftButtons[i]
+      
+      c txtc
+      icon button.icon 0.6 * (button.icon_size ?? 1) : hover_size#1.1 chx#30
+      if mouse_touching (
+        cursor "pointer"
+        if onclick (
+          void button.click()
+        )
+      )
+    )
+  )
+  
+  def main() (
+    frame editor_split window.top window.right window.top - 40 (
+      goto 0 0
+      square frame.width 40 : c#prim
+      
+      self.buttons()
+    )
+  )
+)
+
+class StatusBar (
+  def main() (
+    goto 0 0
+    square frame.width frame.height 0 : c#prim
+    
+    local fileTypes @= "osl_filetypes".eval()
+    
+    goto frame.right - 17.5 0
+    
+    square 17 17 10 0 1
+    if mouse_touching (
+      cursor "pointer"
+      if onclick (
+        editor_mode = "wat"
+      )
+    )
+    if editor_mode == "wat" (
+      square 17 17 10 : c#seco
+    )
+    icon fileTypes[".wat"][1] 1
+    
+    change_x -30
+    
+    square 17 17 10 0 1
+    if mouse_touching (
+      cursor "pointer"
+      if onclick (
+        editor_mode = "js"
+      )
+    )
+    if editor_mode == "js" (
+      square 17 17 10 : c#seco
+    )
+    icon fileTypes[".js"][1] .9
+  )
+)
+
+class Runtime (
+  array logs = []
+  
+  def runJs(string js) (
+    void "window.wasmoutput = []".eval()
+    
+    void "window.wasmconsole = { log: (...text) => wasmconsole.add(\"log\", ...text), error: (...text) => wasmconsole.add(\"error\", ...text), add: (type, ...text) => {window.wasmoutput = [...window.wasmoutput, ...text.map(v => ({type,text:typeof v == \"object\" ? JSON.stringify(v, null, \"  \") : v.toString()}))]}}".eval()
+    
+    void ("(function(console, module){try{eval(" ++ js.JsonStringify() ++ ")}catch(e){console.error(e.name + \": \" + (e.message ?? e))}})(window.wasmconsole, window.wasmmodule)").eval()
+    
+    self.logs @= self.logs.concat("window.wasmoutput".eval())
+  )
+  
+  def runInput() (
+    if "window.wabt != null".eval() (
+      log window
+      local js @= [
+        "let o = null",
+        "try {",
+        "const mod = wabt.parseWat(\"main.wat\", osl_clone[" ++ window.id ++ "].inputs.wat.join(\"\\n\"))",
+        "WebAssembly.compile(mod.toBinary({}).buffer).then(r => window.wasmmodule = r)",
+        "} catch (e) { o = e.name + \": \" + (e.message ?? e) }",
+        "o"
+      ]
+      local out @= js.join(";").eval()
+      
+      if out != null (
+        void self.logs.append({
+          type: "error",
+          text: out
+        })
+      )
+    )
+    if "window.wasmmodule".eval() == null (
+      void self.logs.append({
+        type: "error",
+        text: "no wasm module"
+      })
+      return
+    )
+    self.runJs(inputs.js.join("\n"))
+  )
+  
+  def fetchWabt() (
+    void "fetch(\"https://raw.githubusercontent.com/AssemblyScript/wabt.js/refs/heads/main/index.js\").then(r => r.text()).then(async(r) => {eval(r + \"window.wabtmod = WabtModule\"); window.wabt = await wabtmod()})".eval()
+  )
+)
+
+string editor_mode = "wat"
+number editor_split = 0
+boolean editor_grabbing = false
+string openFile = ""
+
+inputs.js @= [
+  "const instance =",
+  "  new WebAssembly.Instance(module);",
+  "",
+  "const { main } = instance.exports;",
+  "console.log(main());"
+]
+inputs.wat @= [
+  "(module",
+  "  (func (export \"main\") (result i32)",
+  "    i32.const 5",
+  "  )",
+  ")"
+]
+
+if passed_data != "" (
+  local data @= open(passed_data)
+  inputs.wat @= data.split("\n")
+  openFile = passed_data
+)
+
+object ohfs = {
+  js: compileOHF(getOHF("js")),
+  wat: compileOHF(getOHF("wat"))
+}
+
+Runtime.fetchWabt()
+
+mainloop:
+  wt:load_theme
+  
+  window.setDragbox([9999, 2, editor_split, 0],[-2, 2, -90, -40])
+  window.show()
+  
+  frame window.left window.top editor_split window.bottom + 36 (
+    goto 0 0
+    c prim
+    textbox frame.width frame.height editor_mode 0 {
+      line_numbers: {
+        bg_colour: prim
+      },
+      sel_colour: seco,
+      text_colour: txtc,
+      ohf: ohfs[editor_mode]
+    }
+    if openFile != "" and editor_mode == "wat" (
+      file "open" openFile "onlyaccess"
+      file "set" 4 inputs.wat.join("\n")
+      file "close"
+    )
+  )
+  
+  c prim
+  frame editor_split window.top - 40 window.right window.bottom logsHeight "logs" (
+    local start = frame.top + frame.scroll
+    local y = start
+    for logI Runtime.logs.len (
+      local log @= Runtime.logs[logI]
+      
+      local content = log.text.wrapText(frame.width - 10 / 10)
+      local lines = content.split("\n")
+      
+      local height = lines.len * 30
+      
+      if log.type != "log" (
+        frame frame.left y frame.right y - height (
+          if log.type == "error" (
+            c #f00
+          )
+          pen "opacity" 20
+          pen "size" 10000
+          pen "down"
+          pen "up"
+        )
+      )
+      y -= height / 2
+      
+      goto frame.left + 5 y
+      
+      for i lines.len (
+        local line = lines[i]
+        goto frame.left + 5 y + (height / 2) - (i - .5 * 30)
+        text line 10 : c#txtc
+      )
+      
+      y -= height / 2
+      
+      c prim
+      pen "size" 2
+      goto 0 y
+      line frame.left 0 frame.right 0
+    )
+    logsHeight = start - y - 10
+  )
+  
+  c prim
+  pen "size" 2
+  goto 0 0
+  line editor_split window.bottom editor_split window.top
+  
+  editor_grabbing = editor_grabbing and mouse_down
+  if abs(mouse_x - editor_split) < 5 (
+    cursor "col-resize"
+    square 10000 10000 0 0 1
+    if onclick (
+      editor_grabbing = true
+    )
+  )
+  if editor_grabbing (
+    editor_split = mouse_x
+  )
+  editor_split = max(editor_split, window.left + 100)
+  editor_split = min(editor_split, window.right - 150)
+  
+  frame window.left window.bottom + 36 editor_split window.bottom + 1 (
+    StatusBar.main()
+  )
+  
+  if mouse_x > 0 and mouse_y > window.top - 40 and mouse_x < window.right - 90 (
+    cursor mouse_down ? "grabbing" "grab"
+  )
+Topbar.main()
