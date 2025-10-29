@@ -2,7 +2,7 @@
   "title": "WasmRunner",
   "description": "Simple development app for running web assembly (text) through js",
   "author": "Flufi",
-  "version": "1.0",
+  "version": "1.1",
   "genre": "Utility",
   "game_modes": ["Single-player"],
   "permissions": ["javascript"],
