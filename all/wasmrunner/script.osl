@@ -87,15 +87,25 @@ class Topbar (
   array leftButtons = [
     {
       icon: "play",
+      tooltip: "Run module",
       click: def() -> (
         Runtime.runInput()
       )
     },
     {
       icon: "bin",
+      tooltip: "Clear console",
       icon_size: 1.2,
       click: def() -> (
-        Runtime.logs = []
+        Runtime.logs @= []
+      )
+    },
+    {
+      icon: "sync",
+      tooltip: "Reload wabt and the wasm module",
+      click: def() -> (
+        void "window.wabt = null; window.wasmmodule = null".eval()
+        Runtime.fetchWabt()
       )
     }
   ]
@@ -124,7 +134,11 @@ class Topbar (
       local button @= leftButtons[i]
       
       c txtc
-      icon button.icon 0.6 * (button.icon_size ?? 1) : hover_size#1.1 chx#30
+      if button.tooltip != null (
+        icon button.icon 0.6 * (button.icon_size ?? 1) : hover_size#1.1 chx#30 tooltip#button.tooltip
+      ) else (
+        icon button.icon 0.6 * (button.icon_size ?? 1) : hover_size#1.1 chx#30
+      )
       if mouse_touching (
         cursor "pointer"
         if onclick (
@@ -178,6 +192,30 @@ class StatusBar (
       square 17 17 10 : c#seco
     )
     icon fileTypes[".js"][1] .9
+    
+    // compiling icon + text
+    local status = null
+    if "window.wabt == null".eval() (
+      status = "loading wabt"
+    ) else if "window.wasmcompiling".eval() (
+      status = "compiling wasm module"
+    ) else if compileFail (
+      status = "compilation failed"
+    )
+    
+    if status != null (
+      goto frame.left + 17.5
+      
+      if status == "compilation failed" (
+        icon "w 2.5 cutcircle 0 0 9 0 180 dot -3 1.5 dot 3 1.5 cutcircle 0 -8.5 6 0 30" 1 : c#txtc
+      ) else (
+        direction waitRunTime * 1000
+        icon "sync" .6 : c#txtc
+        direction 90
+      )
+      
+      text status 10 : chx#20
+    )
   )
 )
 
@@ -187,7 +225,7 @@ class Runtime (
   def runJs(string js) (
     void "window.wasmoutput = []".eval()
     
-    void "window.wasmconsole = { log: (...text) => wasmconsole.add(\"log\", ...text), error: (...text) => wasmconsole.add(\"error\", ...text), add: (type, ...text) => {window.wasmoutput = [...window.wasmoutput, ...text.map(v => ({type,text:typeof v == \"object\" ? JSON.stringify(v, null, \"  \") : v.toString()}))]}}".eval()
+    void "window.wasmconsole = { log: (...text) => {console.log(...text);wasmconsole.add(\"log\", ...text)}, warn: (...text) => {console.warn(...text);wasmconsole.add(\"warn\", ...text)}, error: (...text) => {console.error(...text);wasmconsole.add(\"error\", ...text)}, add: (type, ...text) => {window.wasmoutput = [...window.wasmoutput, ...text.map(v => ({type,text:typeof v == \"object\" ? JSON.stringify(v, null, \"  \") : v.toString()}))]}}".eval()
     
     void ("(function(console, module){try{eval(" ++ js.JsonStringify() ++ ")}catch(e){console.error(e.name + \": \" + (e.message ?? e))}})(window.wasmconsole, window.wasmmodule)").eval()
     
@@ -196,32 +234,52 @@ class Runtime (
   
   def runInput() (
     if "window.wabt != null".eval() (
-      log window
+      compileFail = false
       local js @= [
         "let o = null",
         "try {",
+        "window.wasmcompiling = true",
+        "window.wasmmodule = null",
         "const mod = wabt.parseWat(\"main.wat\", osl_clone[" ++ window.id ++ "].inputs.wat.join(\"\\n\"))",
-        "WebAssembly.compile(mod.toBinary({}).buffer).then(r => window.wasmmodule = r)",
-        "} catch (e) { o = e.name + \": \" + (e.message ?? e) }",
+        "WebAssembly.compile(mod.toBinary({}).buffer)",
+        "  .catch(e => {o = e; console.log(e)})",
+        "  .then(r => {window.wasmmodule = r; window.wasmcompiling = false})",
+        "} catch (e) { o = e.name + \": \" + (e.message ?? e) };",
         "o"
       ]
-      local out @= js.join(";").eval()
+      local out @= js.join("\n").eval()
       
       if out != null (
+        void "window.wasmcompiling = false".eval()
+        compileFail = true
         void self.logs.append({
           type: "error",
           text: out
         })
       )
-    )
-    if "window.wasmmodule".eval() == null (
+      waitRun = true
+      waitRunTime = 0
+    ) else (
       void self.logs.append({
         type: "error",
-        text: "no wasm module"
+        text: "wabt not loaded yet"
       })
       return
     )
-    self.runJs(inputs.js.join("\n"))
+    //if "window.wasmmodule".eval() == null (
+    //  void self.logs.append({
+    //    type: "error",
+    //    text: "wasm module not loaded yet"
+    //  })
+    //  return
+    //)
+  )
+  def update() (
+    if "window.wasmmodule".eval() != null and waitRun (
+      waitRun = false
+      self.runJs(inputs.js.join("\n"))
+    )
+    waitRunTime += delta_time
   )
   
   def fetchWabt() (
@@ -233,6 +291,12 @@ string editor_mode = "wat"
 number editor_split = 0
 boolean editor_grabbing = false
 string openFile = ""
+boolean waitRun = false
+number waitRunTime = 0
+boolean compileFail = false
+
+void "window.wasmmodule = null".eval()
+void "window.wasmcompiling = false".eval()
 
 inputs.js @= [
   "const instance =",
@@ -264,6 +328,8 @@ Runtime.fetchWabt()
 
 mainloop:
   wt:load_theme
+  
+  Runtime.update()
   
   window.setDragbox([9999, 2, editor_split, 0],[-2, 2, -90, -40])
   window.show()
@@ -302,6 +368,9 @@ mainloop:
         frame frame.left y frame.right y - height (
           if log.type == "error" (
             c #f00
+          )
+          if log.type == "warn" (
+            c #edaa2d
           )
           pen "opacity" 20
           pen "size" 10000
@@ -346,7 +415,7 @@ mainloop:
     editor_split = mouse_x
   )
   editor_split = max(editor_split, window.left + 100)
-  editor_split = min(editor_split, window.right - 150)
+  editor_split = min(editor_split, window.right - 180)
   
   frame window.left window.bottom + 36 editor_split window.bottom + 1 (
     StatusBar.main()
